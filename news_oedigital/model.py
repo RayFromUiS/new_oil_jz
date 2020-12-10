@@ -32,7 +32,7 @@ class OeNews(Base):
     categories = Column(String(255))
     crawl_time = Column(String(255))
     url = Column(String(255))
-    processed_marker = Column(String(64),default=None)
+    #processed_marker = Column(String(64),default=None)
 
 if __name__ == "__main__":
     db_connect()
