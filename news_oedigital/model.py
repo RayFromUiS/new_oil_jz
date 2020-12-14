@@ -32,7 +32,21 @@ class OeNews(Base):
     categories = Column(String(255))
     crawl_time = Column(String(255))
     url = Column(String(255))
-    #processed_marker = Column(String(64),default=None)
+    # processed_marker = Column(String(64))
+
+
+class WorldOil(Base):
+    __tablename__ = 'world_oil'
+    id = Column(Integer, primary_key=True)
+    title = Column(String(255))
+    pre_title = Column(String(255))
+    author = Column(String(255))
+    pub_time = Column(String(255))
+    preview_img_link = Column(String(255))
+    content = Column(Text)
+    categories = Column(String(255))
+    crawl_time = Column(String(255))
+    url = Column(String(255))
 
 if __name__ == "__main__":
     db_connect()

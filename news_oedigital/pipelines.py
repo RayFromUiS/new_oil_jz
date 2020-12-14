@@ -6,7 +6,7 @@
 
 # useful for handling different item types with a single interface
 from itemadapter import ItemAdapter
-from news_oedigital.model import OeNews, db_connect, create_table
+from news_oedigital.model import OeNews,WorldOil, db_connect, create_table
 # from news_oedigital.spiders.oe_offshore import NewsOeOffshoreSpider
 
 class NewsOedigitalPipeline:
@@ -17,6 +17,32 @@ class NewsOedigitalPipeline:
         # try:
             # if not result:
         new_item = OeNews(title=item.get('title'), author=item.get('author'), pre_title=item.get('pre_title'), \
+                          preview_img_link=item.get('preview_img_link'), pub_time=item.get('pub_time'), \
+                          content=item.get('content'), crawl_time=item.get('crawl_time'), url=item.get('url'), \
+                          categories=item.get('categories'))
+
+
+        try:
+            spider.session.add(new_item)
+            spider.session.commit()
+        except:
+            spider.session.rollback()
+            raise
+        return item
+
+    def close_spider(self, spider):
+    #     # We commit and save all items to DB when spider finished scraping.
+        spider.session.close()
+
+
+class WorldOilPipeline:
+    def process_item(self, item, spider):
+        # session = self.Session()
+        # query_col = item.get('url')
+        # result = session.query(OeNews).filter(OeNews.url == query_col).first()
+        # try:
+            # if not result:
+        new_item = WorldOil(title=item.get('title'), author=item.get('author'), pre_title=item.get('pre_title'), \
                           preview_img_link=item.get('preview_img_link'), pub_time=item.get('pub_time'), \
                           content=item.get('content'), crawl_time=item.get('crawl_time'), url=item.get('url'), \
                           categories=item.get('categories'))
