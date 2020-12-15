@@ -11,6 +11,9 @@ class NewsOeOffshoreSpider(scrapy.Spider):
     name = 'news_oe_offshore'
     allowed_domains = ['oedigital.com']
     start_urls = ['http://www.oedigital.com/']
+    custom_settings = {
+        'ITEM_PIPELINES': {'news_oedigital.pipelines.NewsOedigitalPipeline': 300},
+    }
 
     def __init__(self):
         """
@@ -108,6 +111,9 @@ class WorldOilSpider(scrapy.Spider):
     name='world_oil_spider'
     allowed_domains = ['worldoil.com']
     start_urls = ['http://www.worldoil.com/topics/offshore']
+    custom_settings = {
+        'ITEM_PIPELINES': {'news_oedigital.pipelines.WorldOilPipeline': 301},
+    }
 
     def __init__(self):
         """
@@ -184,3 +190,49 @@ class WorldOilSpider(scrapy.Spider):
         # item['categories'] = response.css('div.categories a::text').getall()
         item['content'] = str(response.css('div#news p').getall())
 
+class HartEnergy(scrapy.Spider):
+    name = 'hart_energy'
+    allowed_domains = ['hartenergy.com']
+    start_urls = ['http://www.hartenergy.com/']
+
+    def __init__(self):
+        """
+        Initializes database connection and sessionmaker.
+        Creates deals table.
+        """
+        self.engine = db_connect()
+        Session = sessionmaker(bind=self.engine)
+        self.session = Session()
+        create_table(self.engine)
+
+    def start_requests(self):
+        for url in self.start_urls:
+            yield scrapy.Request(url=url, callback=self.parse_cate_links)
+
+    def parse_cate_links(self,response):
+
+        cate_lis = response.css('li.nav-item')[:9] ## only extract 9 of category
+        for cate_li in cate_lis:
+            cate_url = cate_li.css('a').attrib['href']
+            cate_name =cate_li.css('a::text').get()  # main category name
+            yield response.follow(url=cate_url,callback=self.parse_subcate_links,cb_kwargs={'cate':cate_name})
+
+    def parse_subcate_links(self,response):
+            # category_names = response.css('ul.topic-list a::text').getall()
+        sub_cate_lis= response.css('div.taxonomy-page-header ul.nav').css('li a')
+        # for i  in range(len(sub_cate_lis)-1):
+        for sub_cate_li in sub_cate_lis:
+            if re.search('^/',sub_cate_li.attrib['href']):
+
+
+
+
+
+
+
+
+        # category_hrefs = response.css('ul.topic-list li')
+        # for category_href in category_hrefs:
+        #     cate_href = category_href.css('a').attrib['href']
+        #     cate = category_href.css('a::text').get()
+        #     yield response.follow(url=cate_href,callback=self.parse_page_links,cb_kwargs={'categories':cate})sc
