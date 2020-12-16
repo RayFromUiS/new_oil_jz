@@ -80,9 +80,9 @@ COOKIES_ENABLED = False
 # DOWNLOADER_MIDDLEWARES = {
 #    'news_oedigital.middlewares.NewsOedigitalDownloaderMiddleware': 543,
 # }
-# DOWNLOADER_MIDDLEWARES = {
-#     'scrapy_selenium.SeleniumMiddleware': 800
-# }
+DOWNLOADER_MIDDLEWARES = {
+    'scrapy_selenium.SeleniumMiddleware': 800
+}
 
 # Enable or disable extensions
 # See https://docs.scrapy.org/en/latest/topics/extensions.html
@@ -96,6 +96,7 @@ ITEM_PIPELINES = {
     'news_oedigital.pipelines.NewsOedigitalPipeline': 300,
     'news_oedigital.pipelines.WorldOilPipeline': 301,
     'news_oedigital.pipelines.CnpcNewsPipeline': 302,
+    'news_oedigital.pipelines.HartEnergyPipeline': 303,
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)

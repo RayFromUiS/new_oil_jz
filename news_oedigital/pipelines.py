@@ -6,7 +6,7 @@
 
 # useful for handling different item types with a single interface
 from itemadapter import ItemAdapter
-from news_oedigital.model import OeNews,WorldOil,CnpcNews, db_connect, create_table
+from news_oedigital.model import OeNews,WorldOil,CnpcNews,HartEnergy, db_connect, create_table
 # from news_oedigital.spiders.oe_offshore import NewsOeOffshoreSpider
 
 class NewsOedigitalPipeline:
@@ -38,6 +38,27 @@ class NewsOedigitalPipeline:
 class WorldOilPipeline:
     def process_item(self, item, spider):
         new_item = WorldOil(title=item.get('title'), author=item.get('author'), pre_title=item.get('pre_title'), \
+                          preview_img_link=item.get('preview_img_link'), pub_time=item.get('pub_time'), \
+                          content=item.get('content'), crawl_time=item.get('crawl_time'), url=item.get('url'), \
+                          categories=item.get('categories'))
+
+
+        try:
+            spider.session.add(new_item)
+            spider.session.commit()
+        except:
+            spider.session.rollback()
+            raise
+        return item
+
+    def close_spider(self, spider):
+        spider.session.close()
+
+
+
+class HartEnergyPipeline:
+    def process_item(self, item, spider):
+        new_item = HartEnergy(title=item.get('title'), author=item.get('author'), pre_title=item.get('pre_title'), \
                           preview_img_link=item.get('preview_img_link'), pub_time=item.get('pub_time'), \
                           content=item.get('content'), crawl_time=item.get('crawl_time'), url=item.get('url'), \
                           categories=item.get('categories'))
