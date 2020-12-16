@@ -40,3 +40,6 @@ class WorldOilItem(NewsOedigitalItem):
     # crawl_time = scrapy.Field()
     # crawl_time = scrapy.Field()
     # processed_marker = scrapy.Field()
+
+class CnpcNewsItem(NewsOedigitalItem):
+    pass

@@ -58,7 +58,7 @@ SQL_DB_NAME = 'news_oil'
 # CONCURRENT_REQUESTS_PER_IP = 16
 
 # Disable cookies (enabled by default)
-# COOKIES_ENABLED = False
+COOKIES_ENABLED = False
 
 # Disable Telnet Console (enabled by default)
 # TELNETCONSOLE_ENABLED = False
@@ -80,6 +80,9 @@ SQL_DB_NAME = 'news_oil'
 # DOWNLOADER_MIDDLEWARES = {
 #    'news_oedigital.middlewares.NewsOedigitalDownloaderMiddleware': 543,
 # }
+# DOWNLOADER_MIDDLEWARES = {
+#     'scrapy_selenium.SeleniumMiddleware': 800
+# }
 
 # Enable or disable extensions
 # See https://docs.scrapy.org/en/latest/topics/extensions.html
@@ -91,7 +94,8 @@ SQL_DB_NAME = 'news_oil'
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
     'news_oedigital.pipelines.NewsOedigitalPipeline': 300,
-    'news_oedigital.pipelines.WorldOilPipeline': 301
+    'news_oedigital.pipelines.WorldOilPipeline': 301,
+    'news_oedigital.pipelines.CnpcNewsPipeline': 302,
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)

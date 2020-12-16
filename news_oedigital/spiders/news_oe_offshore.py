@@ -2,10 +2,13 @@ import os
 import re
 import scrapy
 from datetime import datetime
-from news_oedigital.items import NewsOedigitalItem,WorldOilItem
-from news_oedigital.model import OeNews, db_connect, create_table,WorldOil
+from news_oedigital.items import NewsOedigitalItem,WorldOilItem,CnpcNewsItem
+from news_oedigital.model import OeNews, db_connect, create_table,WorldOil,CnpcNews
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import and_
+from scrapy_selenium import SeleniumRequest
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as EC
 
 class NewsOeOffshoreSpider(scrapy.Spider):
     name = 'news_oe_offshore'
@@ -154,12 +157,13 @@ class WorldOilSpider(scrapy.Spider):
                 .filter(and_(WorldOil.url == item_href,WorldOil.title==title))\
                 .first()
             results.append(result)
-            yield response.follow(url=title_url, callback=self.parse,
-                                  cb_kwargs={'title': title, 'title_url': title_url,
-                                             'pub_time': pub_time,
-                                             'abstract': abstract,
-                                             'category':categories,
-                                             'preview_img_link':preview_img_link})
+            if not result:
+                yield response.follow(url=title_url, callback=self.parse,
+                                      cb_kwargs={'title': title, 'title_url': title_url,
+                                                 'pub_time': pub_time,
+                                                 'abstract': abstract,
+                                                 'category':categories,
+                                                 'preview_img_link':preview_img_link})
         # if preview_img_link is not None:
         # if len([result for result in results if result is None]) == len(results):  ## if all the element is not crawled
         #skip the preview image links,since it's not been found generally
@@ -167,12 +171,12 @@ class WorldOilSpider(scrapy.Spider):
             next_page = response.css('a#ContentPlaceHolderDefault_mainContent_btnNext').attrib['href']
             yield response.follow(url=next_page,callback=self.parse_page_links,cb_kwargs={'categories':categories})
 
-    def parse(self,response,title,title_url,pub_time,abstract,category,preview_img_link):
+    def parse(self,response,title,pub_time,abstract,category,preview_img_link):
         # from scrapy.shell import inspect_response
         # inspect_response(response,self)
         item =WorldOilItem()
 
-        item['url'] = title_url
+        item['url'] = response.url
         item['preview_img_link'] = preview_img_link
         item['pre_title'] = abstract
         item['title'] = title
@@ -188,9 +192,101 @@ class WorldOilSpider(scrapy.Spider):
         item['categories'] = str(category)
         item['crawl_time'] = datetime.now().strftime('%m/%d/%Y %H:%M')
         # item['categories'] = response.css('div.categories a::text').getall()
-        item['content'] = str(response.css('div#news p').getall())
+        # item['content'] = str(response.css('div#news p').getall()
+        item['content'] = str(response.css('div#news').get())
+        yield item
 
-# class HartEnergy(scrapy.Spider):
+class CnpcNewsSpider(scrapy.Spider):
+    name = 'cnpc_news'
+    allowed_domains = ['news.cnpc.com.cn']
+    start_urls = ['http://news.cnpc.com.cn/']
+    custom_settings = {
+        'ITEM_PIPELINES': {'news_oedigital.pipelines.CnpcNewsPipeline': 302},
+    }
+    def __init__(self):
+        """
+        Initializes database connection and sessionmaker.
+        Creates deals table.
+        """
+        self.engine = db_connect()
+        Session = sessionmaker(bind=self.engine)
+        self.session = Session()
+        create_table(self.engine)
+
+    def start_requests(self):
+
+        for url in self.start_urls:
+            yield scrapy \
+                .Request(url=url, callback=self.parse_sub_cate)
+
+    # extract all the sub category url
+    def parse_sub_cate(self, response):
+        main_ele = 'div.mysubnav'
+        sub_ele = 'li a'
+        # id = 'downpage'
+        sub_divs = response.css(main_ele)
+        for sub_div in sub_divs:
+            li_links = sub_div.css(sub_ele) ## all the selector of sub div
+            for li_link in li_links:
+                # sub_cate = li_link.css('a::text').get()
+                sub_cate_link = li_link.css('a::attr(href)').get()
+                if re.match(r'\/', sub_cate_link):
+                    yield SeleniumRequest(  ## to return a response with driver object
+                        url=sub_cate_link,
+                        callback=self.parse_page_links()
+                    )
+
+    ## grap all the url of each sub category
+    def parse_page_links(self, response,sub_category):
+        next_id = 'downpage'
+        from scrapy.shell import inspect_response
+        inspect_response(response, self)
+        results = []
+        articles = response.css('li.ejli a')
+        for article in articles:
+            title = article.css('a::text').get()
+            title_url = article.css('a').attrib['href']
+            result = self.session.query(CnpcNews) \
+                .filter(and_(CnpcNews.url == title_url, CnpcNews.title == title)) \
+                .first()
+            results.append(result)
+            if not result:
+                yield scrapy.Request(url=title_url,callback=self.parse)
+
+        driver = response.request.meta['driver']
+        while driver.find_element_by_id(next_id) is not None:
+            driver.find_element_by_id(next_id).click()
+
+            # print('current url is once clicked', driver.current_url)
+            yield SeleniumRequest \
+                (url=driver.current_url,
+                 wait_time=10,
+                 callback=self.parse_page_links,
+                 wait_until=EC.element_to_be_clickable((By.ID, id))
+                 )
+        # time.sleep(10)
+
+    def parse(self, response):
+        from scrapy.shell import inspect_response
+        inspect_response(response, self)
+        item = CnpcNewsItem()
+        item['url'] = response.url
+        item['cate'] = response.css('div.sj-nav span.as06 a::text')[-1].get()
+        item['pre_title'] = response.css('div.sj-title h4::text').get()
+        item['title'] = response.css('div.sj-title h2 a::text').get()
+        # news_item['sub_title'] = response.css('div.sj-title h6 a::text').get()
+        item['sub_title'] = response.css('div.sj-title h6::text').get()
+        item['dep'] = response.css('div.sj-n a::text').get()
+        item['pub_time'] = '-'.join(response.url.split('/')[-4:-1])
+        item['content'] = response.css('div.sj-main').getall()
+        # news_item['content_other'] = response.css('div.sj-main p::text').getall()
+        item['crawl_time'] = datetime.now().strftime('%m/%d/%Y %H:%M')
+        # from scrapy.shell import inspect_response
+        # inspect_response(response, self)
+        yield item
+
+
+# class HartEnergySpider(scrapy.Spider):
 #     name = 'hart_energy'
 #     allowed_domains = ['hartenergy.com']
 #     start_urls = ['http://www.hartenergy.com/']
@@ -218,12 +314,20 @@ class WorldOilSpider(scrapy.Spider):
 #             yield response.follow(url=cate_url,callback=self.parse_subcate_links,cb_kwargs={'cate':cate_name})
 #
 #     def parse_subcate_links(self,response):
+#
+#         ignore_subcate = ['unconventional']
 #             # category_names = response.css('ul.topic-list a::text').getall()
 #         sub_cate_lis= response.css('div.taxonomy-page-header ul.nav').css('li a')
 #         # for i  in range(len(sub_cate_lis)-1):
 #         for sub_cate_li in sub_cate_lis:
 #             if re.search('^/',sub_cate_li.attrib['href']):
+#                 sub_cate = sub_cate_li.css('a::text').get().strip()
+#                 sub_cate_link = sub_cate_li.attrib['href']
+#                 if not sub_cate.lower() in ignore_subcate: ## screen out the subactegor with subscription
 #
+#
+
+
 
 
 
