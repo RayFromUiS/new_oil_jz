@@ -47,3 +47,6 @@ class HartEnergyItem(NewsOedigitalItem):
 
 class CnpcNewsItem(NewsOedigitalItem):
     pass
+
+class OilFieldTechItem(NewsOedigitalItem):
+    pass

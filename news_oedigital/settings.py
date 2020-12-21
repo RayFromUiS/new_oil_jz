@@ -20,7 +20,7 @@ DOWNLOAD_DELAY = 0.25
 RANDOMIZE_DOWNLOAD_DELAY = True
 SELENIUM_DRIVER_NAME = 'chrome'
 SELENIUM_DRIVER_EXECUTABLE_PATH = which('chromedriver')
-SELENIUM_DRIVER_ARGUMENTS = ['--headless']  # '--headless' if using chrome instead of firefox
+SELENIUM_DRIVER_ARGUMENTS = ['-headless']  # '--headless' if using chrome instead of firefox
 RETRY_TIMES = 10
 # Retry on most error codes since proxies fail for different reasons
 RETRY_HTTP_CODES = [500, 503, 504, 400, 403, 404, 408]
@@ -80,9 +80,9 @@ COOKIES_ENABLED = False
 # DOWNLOADER_MIDDLEWARES = {
 #    'news_oedigital.middlewares.NewsOedigitalDownloaderMiddleware': 543,
 # }
-DOWNLOADER_MIDDLEWARES = {
-    'scrapy_selenium.SeleniumMiddleware': 800
-}
+# DOWNLOADER_MIDDLEWARES = {
+#     'scrapy_selenium.SeleniumMiddleware': 800
+# }
 
 # Enable or disable extensions
 # See https://docs.scrapy.org/en/latest/topics/extensions.html
@@ -97,6 +97,7 @@ ITEM_PIPELINES = {
     'news_oedigital.pipelines.WorldOilPipeline': 301,
     'news_oedigital.pipelines.CnpcNewsPipeline': 302,
     'news_oedigital.pipelines.HartEnergyPipeline': 303,
+    'news_oedigital.pipelines.OilFieldTechPipeline': 304,
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)

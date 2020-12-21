@@ -2,8 +2,8 @@ import os
 import re
 import scrapy
 from datetime import datetime
-from news_oedigital.items import NewsOedigitalItem,WorldOilItem,CnpcNewsItem,HartEnergyItem
-from news_oedigital.model import OeNews, db_connect, create_table,WorldOil,CnpcNews,HartEnergy
+from news_oedigital.items import NewsOedigitalItem,WorldOilItem,CnpcNewsItem,HartEnergyItem,OilFieldTechItem
+from news_oedigital.model import OeNews, db_connect, create_table,WorldOil,CnpcNews,HartEnergy,OilFieldTech
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import and_
 from scrapy_selenium import SeleniumRequest
@@ -30,7 +30,8 @@ class NewsOeOffshoreSpider(scrapy.Spider):
 
     def start_requests(self):
         for url in self.start_urls:
-            yield scrapy.Request(url=url, callback=self.parse_cate_links)
+            yield scrapy.Request(url=url,
+                                 callback=self.parse_cate_links)
 
     def parse_cate_links(self,response):
         '''
@@ -164,11 +165,11 @@ class WorldOilSpider(scrapy.Spider):
                                                  'category':categories,
                                                  'preview_img_link':preview_img_link})
         # if preview_img_link is not None:
-        # if len([result for result in results if result is None]) == len(results):  ## if all the element is not crawled
+        if len([result for result in results if result is None]) == len(results):  ## if all the element is not crawled
         #skip the preview image links,since it's not been found generally
-        if response.css('a#ContentPlaceHolderDefault_mainContent_btnNext') :
-            next_page = response.css('a#ContentPlaceHolderDefault_mainContent_btnNext').attrib['href']
-            yield response.follow(url=next_page,callback=self.parse_page_links)
+            if response.css('a#ContentPlaceHolderDefault_mainContent_btnNext') :
+                next_page = response.css('a#ContentPlaceHolderDefault_mainContent_btnNext').attrib['href']
+                yield response.follow(url=next_page,callback=self.parse_page_links)
 
     def parse(self,response,title,pub_time,abstract,category,preview_img_link):
         # from scrapy.shell import inspect_response
@@ -380,6 +381,105 @@ class HartEnergySpider(scrapy.Spider):
 
 
 
+
+class OilFieldTechSpider(scrapy.Spider):
+    name = 'oilfield_tech'
+    # allowed_domains = 'oilfieldtechnology.com/'
+    start_urls = ['https://www.oilfieldtechnology.com']
+    custom_settings = {
+        'ITEM_PIPELINES': {'news_oedigital.pipelines.OilFieldTechPipeline': 304},
+    }
+
+    def __init__(self):
+        """
+        Initializes database connection and sessionmaker.
+        Creates deals table.
+        """
+        self.engine = db_connect()
+        Session = sessionmaker(bind=self.engine)
+        self.session = Session()
+        create_table(self.engine)
+
+    def start_requests(self):
+        for url in self.start_urls:
+            yield scrapy.Request(
+                url=url,
+                callback=self.parse_cate_links
+            )
+
+    def parse_cate_links(self,response):
+        # from scrapy.shell import in
+        # elf)
+        cate_lis = response.css('ul.list-unstyled')[1].css('li')
+        for cate_li in cate_lis:
+            cate_url = cate_li.css('a').attrib['href']
+            cate_name = cate_li.css('a::text').get()  # main category name
+            yield response.follow(url=cate_url,
+                                  callback=self.parse_page_links,
+                                  cb_kwargs={'category':cate_name}
+                                  )
+        # print(cate_lis)
+        # from scrapy.shell import inspect_response
+        # inspect_response(response, self)
+    def parse_page_links(self,response,category):
+        # from scrapy.shell import inspect_response
+        # inspect_response(response, self)
+        results = [] # list for saving the crawled items preview
+        feature_articles =[]
+        top_articles = []
+        tripple_articles =  response.css('article.article-list.article')##  all the articles include others
+        if response.css('article.article-featured.article') is not None:
+            feature_articles = response.css('article.article-featured.article')
+        if response.css('article.article-top.article'):
+            top_articles = response.css('article.article-top.article')
+        articles = tripple_articles + feature_articles + top_articles
+        preview_img_link = None
+        for article in articles:
+            if article.css('p.text-center img::attr(data-src)') is not None \
+                    and len(article.css('p.text-center img::attr(data-src)'))>0:
+                preview_img_link = article.css('p.text-center img::attr(data-src)')[0].get()
+            title = article.css('header a::text').get()
+            abstracts = article.css('p::text')[-1].get()
+            rel_title_url = article.css('header a::attr(href)').get()
+            title_url = 'https://www.oilfieldtechnology.com' + rel_title_url
+            result = self.session.query(OilFieldTech) \
+                .filter(and_(OilFieldTech.url == title_url, OilFieldTech.title == title)) \
+                .first()
+            results.append(result)
+            if  not result:
+                yield response.follow(url=rel_title_url,
+                                      callback=self.parse,
+                                      cb_kwargs={'preview_img_link':preview_img_link,
+                                                 'abstracts':abstracts,
+                                                 'categories':category,
+                                                 'title':title}
+                                      )
+
+        # if len([result for result in results if result is None]) == len(results):  ## if all the element is not crawled
+        if response.css('li.previous a::attr(href)') is not None:
+            next_page = response.css('li.previous a::attr(href)').get()
+            yield response.follow(url=next_page,
+                                  callback=self.parse_page_links,cb_kwargs={'category':category})
+
+    def parse(self,response,abstracts,categories,preview_img_link,title):
+            # from scrapy.shell import inspect_response
+            # inspect_response(response, self)
+            item = OilFieldTechItem()
+            item['url'] = response.url
+            item['categories'] = categories.strip()
+            item['preview_img_link'] = preview_img_link
+            item['pre_title'] = abstracts
+            item['title'] = title
+            item['pub_time'] = response.css('article.article.article-detail header')[0].css('time::text').get()
+                               # .datetime.strptime(,'%A-%d-%B-%Y-%H:%M').strftime('%Y-%m-%d %H:%M')
+            if response.css('article.article.article-detail header')[0].css('a::attr(rel)'):
+                item['author'] = response.css('article.article.article-detail header')[0].css('a::text').get()
+            else:
+                item['author'] = None
+            item['content'] = response.css('div[itemprop="articleBody"]').get()
+            item['crawl_time'] = datetime.now().strftime('%m/%d/%Y %H:%M')
+
+            yield item
 
 
 
