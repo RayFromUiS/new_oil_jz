@@ -12,7 +12,7 @@ from selenium.webdriver.support import expected_conditions as EC
 
 class NewsOeOffshoreSpider(scrapy.Spider):
     name = 'news_oe_offshore'
-    allowed_domains = ['oedigital.com']
+    # allowed_domains = ['oedigital.com']
     start_urls = ['http://www.oedigital.com/']
     custom_settings = {
         'ITEM_PIPELINES': {'news_oedigital.pipelines.NewsOedigitalPipeline': 300},
@@ -112,7 +112,7 @@ class NewsOeOffshoreSpider(scrapy.Spider):
 
 class WorldOilSpider(scrapy.Spider):
     name='world_oil_spider'
-    allowed_domains = ['worldoil.com']
+    # allowed_domains = ['worldoil.com']
     start_urls = ['http://www.worldoil.com/topics/offshore']
     custom_settings = {
         'ITEM_PIPELINES': {'news_oedigital.pipelines.WorldOilPipeline': 301},
@@ -169,7 +169,7 @@ class WorldOilSpider(scrapy.Spider):
         #skip the preview image links,since it's not been found generally
             if response.css('a#ContentPlaceHolderDefault_mainContent_btnNext') :
                 next_page = response.css('a#ContentPlaceHolderDefault_mainContent_btnNext').attrib['href']
-                yield response.follow(url=next_page,callback=self.parse_page_links)
+                yield response.follow(url=next_page,callback=self.parse_page_links,cb_kwargs={'categories':categories})
 
     def parse(self,response,title,pub_time,abstract,category,preview_img_link):
         # from scrapy.shell import inspect_response
@@ -198,7 +198,7 @@ class WorldOilSpider(scrapy.Spider):
 
 class CnpcNewsSpider(scrapy.Spider):
     name = 'cnpc_news'
-    allowed_domains = ['news.cnpc.com.cn']
+    # allowed_domains = ['news.cnpc.com.cn']
     start_urls = ['http://news.cnpc.com.cn/']
     custom_settings = {
         'ITEM_PIPELINES': {'news_oedigital.pipelines.CnpcNewsPipeline': 302},
@@ -288,7 +288,7 @@ class CnpcNewsSpider(scrapy.Spider):
 
 class HartEnergySpider(scrapy.Spider):
     name = 'hart_energy'
-    allowed_domains = ['hartenergy.com']
+    # allowed_domains = ['hartenergy.com']
     start_urls = ['http://www.hartenergy.com/']
     custom_settings = {
         'ITEM_PIPELINES': {'news_oedigital.pipelines.HartEnergyPipeline': 303},
@@ -384,7 +384,7 @@ class HartEnergySpider(scrapy.Spider):
 
 class OilFieldTechSpider(scrapy.Spider):
     name = 'oilfield_tech'
-    # allowed_domains = 'oilfieldtechnology.com/'
+    # allowed_domains = 'oilfieldtechnology.com'
     start_urls = ['https://www.oilfieldtechnology.com']
     custom_settings = {
         'ITEM_PIPELINES': {'news_oedigital.pipelines.OilFieldTechPipeline': 304},
@@ -456,10 +456,15 @@ class OilFieldTechSpider(scrapy.Spider):
                                       )
 
         # if len([result for result in results if result is None]) == len(results):  ## if all the element is not crawled
-        if response.css('li.previous a::attr(href)') is not None:
+        if len(response.css('li.previous a::attr(href)'))>=1:
             next_page = response.css('li.previous a::attr(href)').get()
             yield response.follow(url=next_page,
                                   callback=self.parse_page_links,cb_kwargs={'category':category})
+        elif len(response.css('div.pager a[rel="next"]'))>=1:
+            next_page =response.css('div.pager a[rel="next"]').attrib['href']
+            yield response.follow(url=next_page,
+                                  callback=self.parse_page_links, cb_kwargs={'category': category})
+
 
     def parse(self,response,abstracts,categories,preview_img_link,title):
             # from scrapy.shell import inspect_response
