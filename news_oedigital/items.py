@@ -50,3 +50,6 @@ class CnpcNewsItem(NewsOedigitalItem):
 
 class OilFieldTechItem(NewsOedigitalItem):
     pass
+
+class OilAndGasItem(NewsOedigitalItem):
+    pass
