@@ -53,3 +53,6 @@ class OilFieldTechItem(NewsOedigitalItem):
 
 class OilAndGasItem(NewsOedigitalItem):
     pass
+
+class InEnStorageItem(NewsOedigitalItem):
+    pass

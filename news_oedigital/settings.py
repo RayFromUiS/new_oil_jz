@@ -37,7 +37,7 @@ DOWNLOADER_MIDDLEWARES = {
     'scrapy.downloadermiddlewares.httpproxy.HttpProxyMiddleware': 110,
 }
 
-SQL_CONNECT_STRING = 'mysql+pymysql://root:password@localhost:3308/news_oil'
+SQL_CONNECT_STRING = 'mysql+pymysql://root:jinzheng1706@139.198.191.224:3308/news_oil'
 SQL_DB_NAME = 'news_oil'
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
@@ -99,6 +99,7 @@ ITEM_PIPELINES = {
     'news_oedigital.pipelines.HartEnergyPipeline': 303,
     'news_oedigital.pipelines.OilFieldTechPipeline': 304,
     'news_oedigital.pipelines.OilAndGasPipeline': 305,
+    'news_oedigital.pipelines.InEnEnergyPipeline': 306
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)
