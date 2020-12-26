@@ -648,7 +648,7 @@ class InEnStorageSpider(scrapy.Spider):
         item = InEnStorageItem()
         item['url'] = response.url
         item['categories'] = str(response.css('div.leftBox.fl').css('div.rightDetail.fr').css('p.keyWords a::text').getall())
-        item['preview_img_link'] = preview_img_linkgit
+        item['preview_img_link'] = preview_img_link
         item['pre_title'] = None  ## fixed for all the spiders
         item['title'] = response.css('div.leftBox.fl').css('h1::text').get()
         if len(response.css('div.leftBox.fl').css('p.source').css('b')) == 2:
