@@ -6,7 +6,7 @@
 
 # useful for handling different item types with a single interface
 from itemadapter import ItemAdapter
-from news_oedigital.model import OeNews,WorldOil,CnpcNews,HartEnergy,OilFieldTech, db_connect, create_table,OilAndGas,InEnEnergy
+from news_oedigital.model import OeNews,WorldOil,CnpcNews,HartEnergy,OilFieldTech, db_connect, create_table,OilAndGas,InEnStorage
 # from news_oedigital.spiders.oe_offshore import NewsOeOffshoreSpider
 
 class NewsOedigitalPipeline:
@@ -136,7 +136,7 @@ class OilAndGasPipeline:
 
 class InEnEnergyPipeline:
     def process_item(self, item, spider):
-        new_item = InEnEnergy(title=item.get('title'), author=item.get('author'), pre_title=item.get('pre_title'), \
+        new_item = InEnStorage(title=item.get('title'), author=item.get('author'), pre_title=item.get('pre_title'), \
                           preview_img_link=item.get('preview_img_link'), pub_time=item.get('pub_time'), \
                           content=item.get('content'), crawl_time=item.get('crawl_time'), url=item.get('url'), \
                           categories=item.get('categories'))

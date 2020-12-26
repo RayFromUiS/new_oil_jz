@@ -104,9 +104,9 @@ class OilAndGas(Base):
     crawl_time = Column(String(255))
     url = Column(String(1024))
 
-class InEnEnergy(Base):
+class InEnStorage(Base):
 
-    __tablename__ = 'in_en_energy'
+    __tablename__ = 'in_en_storage'
     id = Column(Integer, primary_key=True)
     title = Column(String(1024))
     pre_title = Column(String(2048))

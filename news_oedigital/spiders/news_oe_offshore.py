@@ -5,7 +5,7 @@ from datetime import datetime
 from news_oedigital.items import \
     NewsOedigitalItem, WorldOilItem, CnpcNewsItem, HartEnergyItem, OilFieldTechItem, OilAndGasItem,InEnStorageItem
 from news_oedigital.model import OeNews, db_connect, create_table, WorldOil, CnpcNews, HartEnergy, OilFieldTech, \
-    OilAndGas,InEnEnergy
+    OilAndGas,InEnStorage
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import and_
 from scrapy_selenium import SeleniumRequest
@@ -155,7 +155,7 @@ class WorldOilSpider(scrapy.Spider):
             abstract = article.css('p::text').get()
             item_href = 'https://www.worldoil.com' + title_url
             result = self.session.query(WorldOil) \
-                .filter(and_(WorldOil.url == item_href, WorldOil.title == title)) \
+                .filter(and_(WorldOil.url == item_href)) \
                 .first()
             results.append(result)
             if not result:
@@ -251,7 +251,7 @@ class CnpcNewsSpider(scrapy.Spider):
             title = article.css('a::text').get()
             title_url = article.css('a').attrib['href']
             result = self.session.query(CnpcNews) \
-                .filter(and_(CnpcNews.url == title_url, CnpcNews.title == title)) \
+                .filter(and_(CnpcNews.url == title_url)) \
                 .first()
             results.append(result)
             if not result:
@@ -346,7 +346,7 @@ class HartEnergySpider(scrapy.Spider):
             pub_time = view_row.css('div.text-wrap div.field_published_on::text').get()
             title_url = response.urljoin(rel_title_url)
             result = self.session.query(HartEnergy) \
-                .filter(and_(HartEnergy.url == title_url, HartEnergy.title == title)) \
+                .filter(and_(HartEnergy.url == title_url)) \
                 .first()
             results.append(result)
             if not result:
@@ -447,7 +447,7 @@ class OilFieldTechSpider(scrapy.Spider):
             rel_title_url = article.css('header a::attr(href)').get()
             title_url = 'https://www.oilfieldtechnology.com' + rel_title_url
             result = self.session.query(OilFieldTech) \
-                .filter(and_(OilFieldTech.url == title_url, OilFieldTech.title == title)) \
+                .filter(and_(OilFieldTech.url == title_url)) \
                 .first()
             results.append(result)
             if not result:
@@ -546,7 +546,7 @@ class OilAndGasSpider(scrapy.Spider):
             abstracts = ' '.join([re.sub(r'\xa0', '', abstract) for abstract in abstracts if abstract])
 
             result = self.session.query(OilAndGas) \
-                .filter(and_(OilAndGas.url == title_url, OilAndGas.title == title)) \
+                .filter(OilAndGas.url == title_url) \
                 .first()
             results.append(result)
             if not result:
@@ -623,10 +623,10 @@ class InEnStorageSpider(scrapy.Spider):
             preview_img_link = article.css('div.imgBox img').attrib.get('src') if article.css('div.imgBox') is not None else None
             title = article.css('div.listTxts h5 a::text').get() if article.css('div.listTxts') is not None \
                                 else article.css('div.listTxts_pic h5 a::text').get()
-            title_url = article.css('div.listTxts h5 a').attrib.get('href') if len(article.css('div.listTxts'))==1 \
+            title_url = article.css('div.listTxts h5 a').attrib.get('href').strip() if len(article.css('div.listTxts'))==1 \
                 else article.css('div.listTxts_pic h5 a').attrib.get('href')
-            result = self.session.query(InEnEnergy) \
-                .filter(and_(InEnEnergy.url == title_url, InEnEnergy.title == title)) \
+            result = self.session.query(InEnStorage) \
+                .filter(and_(InEnStorage.url == title_url)) \
                 .first()
             results.append(result)
             if not result:
@@ -648,7 +648,7 @@ class InEnStorageSpider(scrapy.Spider):
         item = InEnStorageItem()
         item['url'] = response.url
         item['categories'] = str(response.css('div.leftBox.fl').css('div.rightDetail.fr').css('p.keyWords a::text').getall())
-        item['preview_img_link'] = preview_img_link
+        item['preview_img_link'] = preview_img_linkgit
         item['pre_title'] = None  ## fixed for all the spiders
         item['title'] = response.css('div.leftBox.fl').css('h1::text').get()
         if len(response.css('div.leftBox.fl').css('p.source').css('b')) == 2:
