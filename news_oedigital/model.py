@@ -119,5 +119,20 @@ class InEnStorage(Base):
     url = Column(String(1024))
 
 
+class JptLatest(Base):
+
+    __tablename__ = 'jpt_latest'
+    id = Column(Integer, primary_key=True)
+    title = Column(String(1024))
+    pre_title = Column(String(2048))
+    author = Column(String(255))
+    pub_time = Column(String(255))
+    preview_img_link = Column(String(2048))
+    content = Column(Text)
+    categories = Column(String(255))
+    crawl_time = Column(String(255))
+    url = Column(String(1024))
+
+
 if __name__ == "__main__":
     db_connect()

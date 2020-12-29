@@ -6,8 +6,40 @@
 
 # useful for handling different item types with a single interface
 from itemadapter import ItemAdapter
-from news_oedigital.model import OeNews,WorldOil,CnpcNews,HartEnergy,OilFieldTech, db_connect, create_table,OilAndGas,InEnStorage
+from news_oedigital.model import OeNews,WorldOil,CnpcNews,HartEnergy,OilFieldTech, \
+    db_connect, create_table,OilAndGas,InEnStorage,JptLatest
 # from news_oedigital.spiders.oe_offshore import NewsOeOffshoreSpider
+
+import pymongo
+from scrapy.exceptions import DropItem
+from itemadapter import ItemAdapter
+
+class InEnMongoDBPipeline:
+    collection_name = 'InEn_items'
+
+    def __init__(self, mongo_uri, mongo_db):
+        self.mongo_uri = mongo_uri
+        self.mongo_db = mongo_db
+
+    @classmethod
+    def from_crawler(cls, crawler):
+        return cls(
+            mongo_uri=crawler.settings.get('MONGO_URI'),
+            mongo_db=crawler.settings.get('MONGO_DATABASE', 'items')
+        )
+
+    def open_spider(self, spider):
+        self.client = pymongo.MongoClient(self.mongo_uri)
+        self.db = self.client[self.mongo_db]
+
+    def close_spider(self, spider):
+        self.client.close()
+
+    def process_item(self, item, spider):
+        if not self.db[self.collection_name].find_one({'url':item.get('url')}):
+            self.db[self.collection_name].insert_one(ItemAdapter(item).asdict())
+        return item
+
 
 class NewsOedigitalPipeline:
     def process_item(self, item, spider):
@@ -23,11 +55,15 @@ class NewsOedigitalPipeline:
 
 
         try:
+
+            # if item.get('content') is not None or not len(item.get('pub_time'))==4:
             spider.session.add(new_item)
             spider.session.commit()
+            # else:
+            #     raise DropItem('no content is downloaded')
         except:
             spider.session.rollback()
-            raise
+            # raise
         return item
 
     def close_spider(self, spider):
@@ -37,18 +73,22 @@ class NewsOedigitalPipeline:
 
 class WorldOilPipeline:
     def process_item(self, item, spider):
+
         new_item = WorldOil(title=item.get('title'), author=item.get('author'), pre_title=item.get('pre_title'), \
                           preview_img_link=item.get('preview_img_link'), pub_time=item.get('pub_time'), \
                           content=item.get('content'), crawl_time=item.get('crawl_time'), url=item.get('url'), \
                           categories=item.get('categories'))
 
+        adapter = ItemAdapter(item)
 
         try:
-            spider.session.add(new_item)
-            spider.session.commit()
+            if adapter.get('content') or len(item.get('pub_time'))>4:
+                spider.session.add(new_item)
+                spider.session.commit()
+            else:
+                raise DropItem(f"Missing content in {item}")
         except:
             spider.session.rollback()
-            raise
         return item
 
     def close_spider(self, spider):
@@ -149,6 +189,24 @@ class InEnEnergyPipeline:
             spider.session.rollback()
             raise
         return item
+
+class JptLatestPipeline:
+    def process_item(self, item, spider):
+        new_item = JptLatest(title=item.get('title'), author=item.get('author'), pre_title=item.get('pre_title'), \
+                               preview_img_link=item.get('preview_img_link'), pub_time=item.get('pub_time'), \
+                               content=item.get('content'), crawl_time=item.get('crawl_time'), url=item.get('url'), \
+                               categories=item.get('categories'))
+
+        try:
+            spider.session.add(new_item)
+            spider.session.commit()
+        except:
+            spider.session.rollback()
+            raise
+        return item
+
+    def close_spider(self, spider):
+        spider.session.close()
 
     def close_spider(self, spider):
         spider.session.close()

@@ -16,11 +16,11 @@ BOT_NAME = 'news_oedigital'
 SPIDER_MODULES = ['news_oedigital.spiders']
 NEWSPIDER_MODULE = 'news_oedigital.spiders'
 
-DOWNLOAD_DELAY = 0.25
+# DOWNLOAD_DELAY = 0.25
 RANDOMIZE_DOWNLOAD_DELAY = True
 SELENIUM_DRIVER_NAME = 'chrome'
 SELENIUM_DRIVER_EXECUTABLE_PATH = which('chromedriver')
-SELENIUM_DRIVER_ARGUMENTS = ['-headless']  # '--headless' if using chrome instead of firefox
+SELENIUM_DRIVER_ARGUMENTS = ['--headless']  # '--headless' if using chrome instead of firefox
 RETRY_TIMES = 10
 # Retry on most error codes since proxies fail for different reasons
 RETRY_HTTP_CODES = [500, 503, 504, 400, 403, 404, 408]
@@ -39,6 +39,9 @@ DOWNLOADER_MIDDLEWARES = {
 
 SQL_CONNECT_STRING = 'mysql+pymysql://root:jinzheng1706@139.198.191.224:3308/news_oil'
 SQL_DB_NAME = 'news_oil'
+MONGO_URI= 'mongodb://root:password@localhost:27017/'
+
+MONGO_DATABASE='petroleum_news'
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 # USER_AGENT = 'news_oedigital (+http://www.yourdomain.com)'
@@ -99,7 +102,10 @@ ITEM_PIPELINES = {
     'news_oedigital.pipelines.HartEnergyPipeline': 303,
     'news_oedigital.pipelines.OilFieldTechPipeline': 304,
     'news_oedigital.pipelines.OilAndGasPipeline': 305,
-    'news_oedigital.pipelines.InEnEnergyPipeline': 306
+    'news_oedigital.pipelines.InEnEnergyPipeline': 306,
+    'news_oedigital.pipelines.InEnMongoDBPipeline': 307,
+    'news_oedigital.pipelines.JptLatestPipeline': 308,
+    # 'news_oedigital.pipelines.JptLastestMongoPipeline': 308,
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)

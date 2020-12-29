@@ -3,14 +3,16 @@ import re
 import scrapy
 from datetime import datetime
 from news_oedigital.items import \
-    NewsOedigitalItem, WorldOilItem, CnpcNewsItem, HartEnergyItem, OilFieldTechItem, OilAndGasItem,InEnStorageItem
+    NewsOedigitalItem, WorldOilItem, CnpcNewsItem, HartEnergyItem, OilFieldTechItem, OilAndGasItem, InEnStorageItem,\
+    JptLatestItem
 from news_oedigital.model import OeNews, db_connect, create_table, WorldOil, CnpcNews, HartEnergy, OilFieldTech, \
-    OilAndGas,InEnStorage
+    OilAndGas, InEnStorage,JptLatest
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import and_
 from scrapy_selenium import SeleniumRequest
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
+import pymongo
 
 
 class NewsOeOffshoreSpider(scrapy.Spider):
@@ -114,7 +116,7 @@ class NewsOeOffshoreSpider(scrapy.Spider):
 class WorldOilSpider(scrapy.Spider):
     name = 'world_oil_spider'
     # allowed_domains = ['worldoil.com']
-    start_urls = ['http://www.worldoil.com/topics/offshore']
+    start_urls = ['http://www.worldoil.com']
     custom_settings = {
         'ITEM_PIPELINES': {'news_oedigital.pipelines.WorldOilPipeline': 301},
     }
@@ -151,7 +153,8 @@ class WorldOilSpider(scrapy.Spider):
         for article in articles:
             title = article.css('h2 a::text').get()
             title_url = article.css('a').attrib['href']
-            pub_time = article.css('div.source a::text').get().strip().split(' ')[-1]
+            pub_time = article.css('div.source a::text').get().strip().split(' ')[-1] \
+                if re.search(r'[0-9]', article.css('div.source a::text').get()) else None
             abstract = article.css('p::text').get()
             item_href = 'https://www.worldoil.com' + title_url
             result = self.session.query(WorldOil) \
@@ -160,17 +163,17 @@ class WorldOilSpider(scrapy.Spider):
             results.append(result)
             if not result:
                 yield response.follow(url=title_url, callback=self.parse,
-                                      cb_kwargs={'title': title, 'title_url': title_url,
+                                      cb_kwargs={'title': title,
                                                  'pub_time': pub_time,
                                                  'abstract': abstract,
                                                  'category': categories,
                                                  'preview_img_link': preview_img_link})
         # if preview_img_link is not None:
-        if len([result for result in results if result is None]) == len(results):  ## if all the element is not crawled
+        # if len([result for result in results if result is None]) == len(results):  ## if all the element is not crawled
             # skip the preview image links,since it's not been found generally
-            if response.css('a#ContentPlaceHolderDefault_mainContent_btnNext'):
-                next_page = response.css('a#ContentPlaceHolderDefault_mainContent_btnNext').attrib['href']
-                yield response.follow(url=next_page, callback=self.parse_page_links,
+        if response.css('a#ContentPlaceHolderDefault_mainContent_btnNext'):
+            next_page = response.css('a#ContentPlaceHolderDefault_mainContent_btnNext').attrib['href']
+            yield response.follow(url=next_page, callback=self.parse_page_links,
                                       cb_kwargs={'categories': categories})
 
     def parse(self, response, title, pub_time, abstract, category, preview_img_link):
@@ -184,13 +187,11 @@ class WorldOilSpider(scrapy.Spider):
         item['title'] = title
         if len(response.css('div.author span')) == 2:
             item['author'] = response.css('div.author span::text')[0].get()
-            item['pub_time'] = response.css('div.author span::text')[1].get()
+            # item['pub_time'] = response.css('div.author span::text')[1].get()
         elif len(response.css('div.author span')) == 1:
             item['author'] = None
-            item['pub_time'] = response.css('div.author span::text')[0].get()
-        else:
-            item['author'] = None
-            item['pub_time'] = None
+
+        item['pub_time'] = pub_time
         item['categories'] = str(category)
         item['crawl_time'] = datetime.now().strftime('%m/%d/%Y %H:%M')
         # item['categories'] = response.css('div.categories a::text').getall()
@@ -539,8 +540,8 @@ class OilAndGasSpider(scrapy.Spider):
                 .css('div.post-thumb').attrib.get('src') else None
             title_url = article.css('div.post-content h2 a').attrib['href'] \
                 if article.css('div.post-content h2 a') else None
-            title = article.css('div.post-content h2 a::text').get() \
-                if article.css('div.post-content h2 a') else None
+            # title = article.css('div.post-content h2 a::text').get() \
+            #     if article.css('div.post-content h2 a') else None
             # abastracts = article.css('div.post-content div.entry p:last-child').xpath('desendant::text()').getall()
             abstracts = article.css('div.post-content div.entry p:last-child').xpath('descendant::text()').getall()
             abstracts = ' '.join([re.sub(r'\xa0', '', abstract) for abstract in abstracts if abstract])
@@ -557,7 +558,7 @@ class OilAndGasSpider(scrapy.Spider):
                                      )
 
         if len([result for result in results if result is None]) == len(results):  ## if all the element is not crawled
-        # if len(response.css('li.previous a::attr(href)')) >= 1:
+            # if len(response.css('li.previous a::attr(href)')) >= 1:
             next_page = response.css('a.next.page-numbers').attrib['href'] if \
                 response.css('a.next.page-numbers').attrib.get('href') is not None else None
             if next_page is not None:
@@ -589,7 +590,99 @@ class InEnStorageSpider(scrapy.Spider):
     # allowed_domains = 'oilfieldtechnology.com'
     start_urls = ['https://www.in-en.com/tag/储气库']
     custom_settings = {
-        'ITEM_PIPELINES': {'news_oedigital.pipelines.InEnEnergyPipeline': 306},
+        'ITEM_PIPELINES': {'news_oedigital.pipelines.InEnMongoDBPipeline': 307},
+    }
+
+    # def __init__(self):
+    #     """
+    #     Initializes database connection and sessionmaker.
+    #     Creates deals table.
+    #     """
+    #     self.engine = db_connect()
+    #     Session = sessionmaker(bind=self.engine)
+    #     self.session = Session()
+    #     create_table(self.engine)
+    # def __init__(self):
+    #     uri = 'mongodb://localhost:27017/petroleum_news'
+    #     connection = pymongo.MongoClient(uri
+    #     )
+    #     self.db = connection["InEnStorage"]
+    #     self.collection = self.db["Item"]
+
+    def start_requests(self):
+        for url in self.start_urls:
+            yield scrapy.Request(
+                url=url,
+                callback=self.parse_page_links
+            )
+
+    def parse_page_links(self, response):
+        # from scrapy.shell import inspect_response
+        # inspect_response(response, self)
+        results = []
+        # preview_img_link = None
+        articles = response.css('ul.infoLists  li ')
+        # articles= response.css('ul.infoLists  li div.listTxts ') + response.css('ul.infoLists  li div.listTxts_pic ')
+
+        for article in articles:
+            preview_img_link = article.css('div.imgBox img').attrib.get('src') if article.css(
+                'div.imgBox') is not None else None
+            title = article.css('div.listTxts h5 a::text').get() if article.css('div.listTxts') is not None \
+                else article.css('div.listTxts_pic h5 a::text').get()
+            title_url = article.css('div.listTxts h5 a').attrib.get('href').strip() if len(
+                article.css('div.listTxts')) == 1 \
+                else article.css('div.listTxts_pic h5 a').attrib.get('href')
+            # result = self.session.query(InEnStorage) \
+            #     .filter(and_(InEnStorage.url == title_url)) \
+            # #     .first()
+            # result = self.db.getCollection("InEnStorage").findOne({"url" :title_url})
+            # results.append(result)
+            # if not result:
+            yield scrapy.Request(url=title_url, callback=self.parse,
+                                 cb_kwargs={'preview_img_link': preview_img_link
+                                            }
+                                 )
+
+        # if len([result for result in results if result is None]) == len(results):  ## if all the element is not crawled
+        # if len(response.css('li.previous a::attr(href)')) >= 1:
+        next_page = response.css('div.pages').css('a')[-1] if response.css('div.pages') else None
+        if next_page is not None and next_page.attrib['href'] is not None and re.search('下一页',
+                                                                                        next_page.css('a::text').get()):
+            yield scrapy.Request(url=next_page.attrib['href'],
+                                 callback=self.parse_page_links)
+
+    def parse(self, response, preview_img_link):
+        # from scrapy.shell import inspect_response
+        # inspect_response(response, self)
+        item = InEnStorageItem()
+        item['url'] = response.url
+        item['categories'] = str(
+            response.css('div.leftBox.fl').css('div.rightDetail.fr').css('p.keyWords a::text').getall())
+        item['preview_img_link'] = preview_img_link
+        item['pre_title'] = None  ## fixed for all the spiders
+        item['title'] = response.css('div.leftBox.fl').css('h1::text').get()
+        if len(response.css('div.leftBox.fl').css('p.source').css('b')) == 2:
+            item['pub_time'] = response.css('div.leftBox.fl').css('p.source').css('b::text')[0].get().split('：')[
+                -1].strip()
+            item['author'] = response.css('div.leftBox.fl').css('p.source').css('b::text')[1].get().split('：')[
+                -1].strip()
+        # .datetime.strptime(,'%A-%d-%B-%Y-%H:%M').strftime('%Y-%m-%d %H:%M')
+        if len(response.css('div.leftBox.fl').css('p.source').css('b')) == 1:
+            item['pub_time'] = response.css('div.leftBox.fl').css('p.source').css('b::text')[0].get().split('：')[
+                -1].strip()
+        # item['author'] = None
+        item['content'] = str(response.css('div#content').get())
+        item['crawl_time'] = datetime.now().strftime('%m/%d/%Y %H:%M')
+
+        yield item
+
+
+class JptLatestSpider(scrapy.Spider):
+    name = 'jpt_latest'
+    # allowed_domains = 'oilfieldtechnology.com'
+    start_urls = ['https://pubs.spe.org/en/jpt/latest-news/']
+    custom_settings = {
+        'ITEM_PIPELINES': {'news_oedigital.pipelines.JptLatestPipeline': 308},
     }
 
     def __init__(self):
@@ -603,63 +696,43 @@ class InEnStorageSpider(scrapy.Spider):
         create_table(self.engine)
 
     def start_requests(self):
+
         for url in self.start_urls:
             yield scrapy.Request(
                 url=url,
                 callback=self.parse_page_links
             )
 
-
-
     def parse_page_links(self, response):
-        # from scrapy.shell import inspect_response
-        # inspect_response(response, self)
-        results = []
         # preview_img_link = None
-        articles = response.css('ul.infoLists  li ')
-        # articles= response.css('ul.infoLists  li div.listTxts ') + response.css('ul.infoLists  li div.listTxts_pic ')
-
+        articles = response.css('article.tile.story')
         for article in articles:
-            preview_img_link = article.css('div.imgBox img').attrib.get('src') if article.css('div.imgBox') is not None else None
-            title = article.css('div.listTxts h5 a::text').get() if article.css('div.listTxts') is not None \
-                                else article.css('div.listTxts_pic h5 a::text').get()
-            title_url = article.css('div.listTxts h5 a').attrib.get('href').strip() if len(article.css('div.listTxts'))==1 \
-                else article.css('div.listTxts_pic h5 a').attrib.get('href')
-            result = self.session.query(InEnStorage) \
-                .filter(and_(InEnStorage.url == title_url)) \
+            preview_img_link = 'https://pubs.spe.org'+article.css('div.story-wrap').\
+                css('div.img-wrap').attrib['style'].split('(')[-1].split(')')[0]
+            pub_time = article.css('div.story-wrap').css('span.pub-date::text').get().strip()
+            title_url = article.css('a::attr(href)').get()
+            result = self.session.query(JptLatest) \
+                .filter(JptLatest.url == title_url) \
                 .first()
-            results.append(result)
             if not result:
-                yield scrapy.Request(url=title_url, callback=self.parse,
-                                     cb_kwargs={'preview_img_link': preview_img_link
-                                                }
-                                     )
+                yield response.follow(url=title_url, callback=self.parse,
+                                 cb_kwargs={'preview_img_link': preview_img_link,
+                                            'pub_time': pub_time
+                                            }
+                                 )
 
-        # if len([result for result in results if result is None]) == len(results):  ## if all the element is not crawled
-        # if len(response.css('li.previous a::attr(href)')) >= 1:
-        next_page = response.css('div.pages').css('a')[-1]
-        if next_page.attrib['href'] is not None and re.search('下一页',next_page.css('a::text').get()):
-            yield scrapy.Request(url=next_page.attrib['href'],
-                                 callback=self.parse_page_links)
-
-    def parse(self, response, preview_img_link):
-        # from scrapy.shell import inspect_response
-        # inspect_response(response, self)
-        item = InEnStorageItem()
+    def parse(self,response,preview_img_link,pub_time):
+        item = JptLatestItem()
         item['url'] = response.url
-        item['categories'] = str(response.css('div.leftBox.fl').css('div.rightDetail.fr').css('p.keyWords a::text').getall())
         item['preview_img_link'] = preview_img_link
-        item['pre_title'] = None  ## fixed for all the spiders
-        item['title'] = response.css('div.leftBox.fl').css('h1::text').get()
-        if len(response.css('div.leftBox.fl').css('p.source').css('b')) == 2:
-            item['pub_time'] = response.css('div.leftBox.fl').css('p.source').css('b::text')[0].get().split('：')[-1].strip()
-            item['author'] = response.css('div.leftBox.fl').css('p.source').css('b::text')[1].get().split('：')[-1].strip()
-        # .datetime.strptime(,'%A-%d-%B-%Y-%H:%M').strftime('%Y-%m-%d %H:%M')
-        if len(response.css('div.leftBox.fl').css('p.source').css('b')) == 1:
-            item['pub_time'] = response.css('div.leftBox.fl').css('p.source').css('b::text')[0].get().split('：')[
-                -1].strip()
-        # item['author'] = None
-        item['content'] = response.css('div#content').get()
+        item['pub_time'] = pub_time
+        item['title'] = response.css('div.articleTitleBox h2::text').get()
+        item['categories'] = response.css('span.topicItem a::text').get()
+        item['content'] = response.css('div.articleBodyText').get()
+        item['author'] = None
+        item['pre_title'] = None
         item['crawl_time'] = datetime.now().strftime('%m/%d/%Y %H:%M')
 
         yield item
+
+

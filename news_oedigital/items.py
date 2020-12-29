@@ -56,3 +56,6 @@ class OilAndGasItem(NewsOedigitalItem):
 
 class InEnStorageItem(NewsOedigitalItem):
     pass
+
+class JptLatestItem(NewsOedigitalItem):
+    pass
