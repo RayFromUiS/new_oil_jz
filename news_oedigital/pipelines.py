@@ -7,7 +7,7 @@
 # useful for handling different item types with a single interface
 from itemadapter import ItemAdapter
 from news_oedigital.model import OeNews,WorldOil,CnpcNews,HartEnergy,OilFieldTech, \
-    db_connect, create_table,OilAndGas,InEnStorage,JptLatest
+    db_connect, create_table,OilAndGas,InEnStorage,JptLatest,EnergyVoice,UpStream,OilPrice
 # from news_oedigital.spiders.oe_offshore import NewsOeOffshoreSpider
 
 import pymongo
@@ -56,11 +56,11 @@ class NewsOedigitalPipeline:
 
         try:
 
-            # if item.get('content') is not None or not len(item.get('pub_time'))==4:
-            spider.session.add(new_item)
-            spider.session.commit()
-            # else:
-            #     raise DropItem('no content is downloaded')
+            if item.get('content') is not None or not len(item.get('pub_time'))==4:
+                spider.session.add(new_item)
+                spider.session.commit()
+            else:
+                raise DropItem('no content is downloaded')
         except:
             spider.session.rollback()
             # raise
@@ -105,8 +105,11 @@ class HartEnergyPipeline:
 
 
         try:
-            spider.session.add(new_item)
-            spider.session.commit()
+            if item.get('content'):
+                spider.session.add(new_item)
+                spider.session.commit()
+            else:
+                raise DropItem(f"Missing content in {item}")
         except:
             spider.session.rollback()
             raise
@@ -124,8 +127,11 @@ class CnpcNewsPipeline:
 
 
         try:
-            spider.session.add(new_item)
-            spider.session.commit()
+            if item.get('content'):
+                spider.session.add(new_item)
+                spider.session.commit()
+            else:
+                raise DropItem(f"Missing content in {item}")
         except:
             spider.session.rollback()
             raise
@@ -143,8 +149,11 @@ class OilFieldTechPipeline:
 
 
         try:
-            spider.session.add(new_item)
-            spider.session.commit()
+            if item.get('content'):
+                spider.session.add(new_item)
+                spider.session.commit()
+            else:
+                raise DropItem(f"Missing content in {item}")
         except:
             spider.session.rollback()
             raise
@@ -163,8 +172,11 @@ class OilAndGasPipeline:
 
 
         try:
-            spider.session.add(new_item)
-            spider.session.commit()
+            if item.get('content'):
+                spider.session.add(new_item)
+                spider.session.commit()
+            else:
+                raise DropItem(f"Missing content in {item}")
         except:
             spider.session.rollback()
             raise
@@ -183,8 +195,11 @@ class InEnEnergyPipeline:
 
 
         try:
-            spider.session.add(new_item)
-            spider.session.commit()
+            if item.get('content'):
+                spider.session.add(new_item)
+                spider.session.commit()
+            else:
+                raise DropItem(f"Missing content in {item}")
         except:
             spider.session.rollback()
             raise
@@ -198,8 +213,86 @@ class JptLatestPipeline:
                                categories=item.get('categories'))
 
         try:
-            spider.session.add(new_item)
-            spider.session.commit()
+            if item.get('content'):
+                spider.session.add(new_item)
+                spider.session.commit()
+            else:
+                raise DropItem(f"Missing content in {item}")
+        except:
+            spider.session.rollback()
+            raise
+        return item
+
+    def close_spider(self, spider):
+        spider.session.close()
+
+    def close_spider(self, spider):
+        spider.session.close()
+
+class EnergyVoicePipeline:
+    def process_item(self, item, spider):
+        new_item = EnergyVoice(title=item.get('title'), author=item.get('author'), pre_title=item.get('pre_title'), \
+                               preview_img_link=item.get('preview_img_link'), pub_time=item.get('pub_time'), \
+                               content=item.get('content'), crawl_time=item.get('crawl_time'), url=item.get('url'), \
+                               categories=item.get('categories'))
+
+        try:
+            if item.get('content'):
+                spider.session.add(new_item)
+                spider.session.commit()
+            else:
+                raise DropItem(f"Missing content in {item}")
+        except:
+            spider.session.rollback()
+            raise
+        return item
+
+    def close_spider(self, spider):
+        spider.session.close()
+
+    def close_spider(self, spider):
+        spider.session.close()
+
+
+class UpStreamPipeline:
+
+
+    def process_item(self, item, spider):
+        new_item = UpStream(title=item.get('title'), author=item.get('author'), pre_title=item.get('pre_title'), \
+                               preview_img_link=item.get('preview_img_link'), pub_time=item.get('pub_time'), \
+                               content=item.get('content'), crawl_time=item.get('crawl_time'), url=item.get('url'), \
+                               categories=item.get('categories'))
+
+        try:
+            if item.get('content'):
+                spider.session.add(new_item)
+                spider.session.commit()
+            else:
+                raise DropItem(f"Missing content in {item}")
+        except:
+            spider.session.rollback()
+            raise
+        return item
+
+    def close_spider(self, spider):
+        spider.session.close()
+
+    def close_spider(self, spider):
+        spider.session.close()
+
+class OilPricePipeline:
+    def process_item(self, item, spider):
+        new_item = OilPrice(title=item.get('title'), author=item.get('author'), pre_title=item.get('pre_title'), \
+                               preview_img_link=item.get('preview_img_link'), pub_time=item.get('pub_time'), \
+                               content=item.get('content'), crawl_time=item.get('crawl_time'), url=item.get('url'), \
+                               categories=item.get('categories'))
+
+        try:
+            if item.get('content'):
+                spider.session.add(new_item)
+                spider.session.commit()
+            else:
+                raise DropItem(f"Missing content in {item}")
         except:
             spider.session.rollback()
             raise

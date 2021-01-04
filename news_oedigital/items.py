@@ -59,3 +59,11 @@ class InEnStorageItem(NewsOedigitalItem):
 
 class JptLatestItem(NewsOedigitalItem):
     pass
+
+class EnergyVoiceItem(NewsOedigitalItem):
+    pass
+
+class UpStreamItem(NewsOedigitalItem):
+    pass
+class OilPriceItem(NewsOedigitalItem):
+    pass

@@ -33,8 +33,13 @@ DOWNLOADER_MIDDLEWARES = {
     'scrapy.downloadermiddlewares.useragent.UserAgentMiddleware': None,
     'scrapy_user_agents.middlewares.RandomUserAgentMiddleware': 400,
     'scrapy.downloadermiddlewares.retry.RetryMiddleware': 900,
-    'scrapy_proxies.RandomProxy': 350,
-    'scrapy.downloadermiddlewares.httpproxy.HttpProxyMiddleware': 110,
+    # 'scrapy.downloadermiddlewares.httpproxy.HttpProxyMiddleware': None,
+    'scrapy_proxies.RandomProxy': 700,
+    'scrapy.downloadermiddlewares.httpproxy.HttpProxyMiddleware': 710,
+    # 'scrapy_selenium.SeleniumMiddleware': 720,
+    'scrapy_splash.SplashCookiesMiddleware': 650,
+    'scrapy_splash.SplashMiddleware': 652,
+    'scrapy.downloadermiddlewares.httpcompression.HttpCompressionMiddleware': 810,
 }
 
 SQL_CONNECT_STRING = 'mysql+pymysql://root:jinzheng1706@139.198.191.224:3308/news_oil'
@@ -42,7 +47,13 @@ SQL_DB_NAME = 'news_oil'
 MONGO_URI= 'mongodb://root:password@localhost:27017/'
 
 MONGO_DATABASE='petroleum_news'
+SPLASH_URL = 'http://127.0.0.1:8050/'
 
+SPIDER_MIDDLEWARES = {
+    'scrapy_splash.SplashDeduplicateArgsMiddleware': 100,
+}
+DUPEFILTER_CLASS = 'scrapy_splash.SplashAwareDupeFilter'
+HTTPCACHE_STORAGE = 'scrapy_splash.SplashAwareFSCacheStorage'
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 # USER_AGENT = 'news_oedigital (+http://www.yourdomain.com)'
 
@@ -61,7 +72,7 @@ MONGO_DATABASE='petroleum_news'
 # CONCURRENT_REQUESTS_PER_IP = 16
 
 # Disable cookies (enabled by default)
-COOKIES_ENABLED = False
+# COOKIES_ENABLED = False
 
 # Disable Telnet Console (enabled by default)
 # TELNETCONSOLE_ENABLED = False
@@ -106,6 +117,9 @@ ITEM_PIPELINES = {
     'news_oedigital.pipelines.InEnMongoDBPipeline': 307,
     'news_oedigital.pipelines.JptLatestPipeline': 308,
     # 'news_oedigital.pipelines.JptLastestMongoPipeline': 308,
+    'news_oedigital.pipelines.EnergyVoicePipeline': 309,
+    'news_oedigital.pipelines.UpStreamPipeline': 310,
+    'news_oedigital.pipelines.OilPricePipeline': 311,
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)

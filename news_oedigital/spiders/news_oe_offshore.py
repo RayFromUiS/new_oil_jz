@@ -1,18 +1,20 @@
 import os
 import re
+import time
 import scrapy
 from datetime import datetime
 from news_oedigital.items import \
     NewsOedigitalItem, WorldOilItem, CnpcNewsItem, HartEnergyItem, OilFieldTechItem, OilAndGasItem, InEnStorageItem,\
-    JptLatestItem
+    JptLatestItem,EnergyVoiceItem,UpStreamItem,OilPriceItem
 from news_oedigital.model import OeNews, db_connect, create_table, WorldOil, CnpcNews, HartEnergy, OilFieldTech, \
-    OilAndGas, InEnStorage,JptLatest
+    OilAndGas, InEnStorage,JptLatest,EnergyVoice,UpStream,OilPrice
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy import and_
+from sqlalchemy import and_,or_
 from scrapy_selenium import SeleniumRequest
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 import pymongo
+from scrapy_splash import SplashRequest
 
 
 class NewsOeOffshoreSpider(scrapy.Spider):
@@ -735,4 +737,237 @@ class JptLatestSpider(scrapy.Spider):
 
         yield item
 
+
+class EnergyVoiceSpider(scrapy.Spider):
+    name = 'energy_voice'
+    # allowed_domains = 'oilfieldtechnology.com'
+    start_urls = ['https://www.energyvoice.com/category/oilandgas']
+    custom_settings = {
+        'ITEM_PIPELINES': {'news_oedigital.pipelines.EnergyVoicePipeline': 309},
+    }
+
+    def __init__(self):
+        """
+        Initializes database connection and sessionmaker.
+        Creates deals table.
+        """
+        self.engine = db_connect()
+        Session = sessionmaker(bind=self.engine)
+        self.session = Session()
+        create_table(self.engine)
+
+    def start_requests(self):
+
+        for url in self.start_urls:
+            yield scrapy.Request(
+                url=url,
+                callback=self.parse_page_links
+            )
+
+    def parse_page_links(self, response):
+        # preview_img_link = None
+        results=[]
+        articles = response.css('article.post')
+        for article in articles:
+            preview_img_link = article.css('figure img').attrib.get('src')
+            pub_time = article.css('div.timestamp::text').get()
+            categoires = article.css('a.category-label::text').get()
+            title_url =article.css('h2.title a').attrib.get('href')
+            title =article.css('h2.title a::text').get()
+            author =article.css('a.byline').attrib.get('title')
+
+            result = self.session.query(EnergyVoice) \
+                .filter(EnergyVoice.url == title_url) \
+                .first()
+            results.append(result)
+            if not result:
+                yield response.follow(url=title_url, callback=self.parse,
+                                 cb_kwargs={'preview_img_link': preview_img_link,
+                                            'pub_time': pub_time,
+                                            'categories':categoires,
+                                            'title':title,
+                                            'author':author
+                                            }
+                                 )
+        # if len([result for result in results if result is None]) == len(results):
+        next_page = response.css('nav.navigation.pagination').css('a.next') \
+        #     if response.css('nav.navigation.pagination').css('a.next') else None
+        if next_page is not None and next_page.attrib['href'] is not None and \
+                re.search('Next',next_page.css('a::text').get()):
+            yield scrapy.Request(url=next_page.attrib.get('href'),
+                                 callback=self.parse_page_links)
+
+    def parse(self,response,preview_img_link,pub_time,categories,title,author):
+        item = EnergyVoiceItem()
+        item['url'] = response.url
+        item['preview_img_link'] = preview_img_link
+        item['pub_time'] = pub_time
+        item['title'] = title
+        item['categories'] = categories
+        item['content'] = response.css('div.entry-content').get()
+        item['author'] = author
+        item['pre_title'] = None
+        item['crawl_time'] = datetime.now().strftime('%m/%d/%Y %H:%M')
+
+        yield item
+
+
+class UpStreamSpider(scrapy.Spider):
+    name = 'upstream'
+    # allowed_domains = 'oilfieldtechnology.com'
+    start_urls = ['https://www.upstreamonline.com']
+    custom_settings = {
+        'ITEM_PIPELINES': {'news_oedigital.pipelines.UpStreamPipeline': 310},
+    }
+
+    def __init__(self):
+        """
+        Initializes database connection and sessionmaker.
+        Creates deals table.
+        """
+        self.engine = db_connect()
+        Session = sessionmaker(bind=self.engine)
+        self.session = Session()
+        create_table(self.engine)
+
+    def start_requests(self):
+
+        for url in self.start_urls:
+            yield scrapy.Request(
+                url=url,
+                callback=self.parse_page_links
+            )
+            # yield SplashRequest(url, self.parse_page_links,
+            #                     endpoint='render.json',
+            #                     args = {'timeout':600,'images':0,'render_all': 1,'wait':300})
+
+    def parse_page_links(self, response):
+        # pass
+        # print(type(response),dir(response))
+        # from scrapy.shell import  inspect_response
+        # inspect_response(self,response)
+        articles = response.css('div.card-body')
+        for article in articles:
+            title_url = article.css('a.card-link').attrib.get('href')
+            preview_img_link = article.css('div.img-wrapper').css('img').attrib.get('src')
+            title = article.css('h2.teaser-title::text').get().strip()
+            # print(preview_img_link)
+            result = self.session.query(UpStream) \
+                .filter(or_(UpStream.title == title, UpStream.url == title_url)) \
+                .first()
+            if result is not None:
+                yield response.follow(url=title_url,
+                                      cb_kwargs={'preview_img_link':preview_img_link}
+                                      )
+
+
+
+    def parse(self,response,preview_img_link):
+        item = UpStreamItem()
+        item['title'] = response.css('h1.article-title::text').get().strip()
+        item['url'] = response.url
+        item['categories'] = response.url.split('com/')[1].split('/')[0]
+        item['pre_title'] = response.css('p.article-lead-text::text').get()
+        item['author'] = response.css('span.authors a::text').get().strip()
+        item['pub_time'] = response.css('span.st-italic::text').get().strip().split('G')[0].strip()
+        item['preview_img_link'] = preview_img_link
+        item['content'] = response.css('div.article-body').get()
+        item['crawl_time'] = datetime.now().strftime('%m/%d/%Y %H:%M')
+
+        yield item
+
+
+class OilPriceSpider(scrapy.Spider):
+    name = 'oil_price'
+    # allowed_domains = 'oilfieldtechnology.com'
+    start_urls = ['https://oilprice.com/Latest-Energy-News/World-News/']
+    custom_settings = {
+        'ITEM_PIPELINES': {'news_oedigital.pipelines.OilPricePipeline': 311},
+    }
+    lua_script='''
+    function main(splash)
+    local num_scrolls = 10
+    local scroll_delay = 1.0
+
+    local scroll_to = splash:jsfunc("window.scrollTo")
+    local get_body_height = splash:jsfunc(
+        "function() {return document.body.scrollHeight;}"
+    )
+    assert(splash:go(splash.args.url))
+    splash:wait(splash.args.wait)
+
+    for _ = 1, num_scrolls do
+        scroll_to(0, get_body_height())
+        splash:wait(scroll_delay)
+    end        
+    return splash:html()
+    end
+    
+    '''
+
+    def __init__(self):
+        """
+        Initializes database connection and sessionmaker.
+        Creates deals table.
+        """
+        self.engine = db_connect()
+        Session = sessionmaker(bind=self.engine)
+        self.session = Session()
+        create_table(self.engine)
+
+    def start_requests(self):
+        for url in self.start_urls:
+            # yield SplashRequest(url, self.parse_page_links, endpoint='execute',
+            #                 args={'wait':2, 'lua_source': self.lua_script})
+
+            yield scrapy.Request(url=url,callback=self.parse_page_links)
+
+    def parse_page_links(self,response):
+        results = []
+        articles = response.css('div.categoryArticle')
+        for article in articles:
+            title = article.css('h2.categoryArticle__title::text').get()
+            pub_time = article.css('p.categoryArticle__meta::text').get().split('|')[0].strip().replace('at','')
+            author = article.css('p.categoryArticle__meta::text').get().split('|')[-1]
+            pre_title =article.css('p.categoryArticle__excerpt::text').get().strip()
+            preview_img_link = article.css('a.categoryArticle__imageHolder img').attrib.get('src')
+            title_url =  article.css('div.categoryArticle__content a ').attrib.get('href')
+            result = self.session.query(UpStream) \
+                .filter(or_(UpStream.url == title, UpStream.url == title_url)) \
+                .first()
+            if result is not None:
+                yield response.follow(url=title_url,
+                                      cb_kwargs={'preview_img_link': preview_img_link}
+                                      )
+            results.append(result)
+            yield scrapy.Request(url=title_url,callback=self.parse,
+                                 cb_kwargs={
+                                     'title':title,
+                                     'pub_time':pub_time,
+                                     'author':author,
+                                     'pre_title':pre_title,
+                                     'preview_img_link':preview_img_link
+                                 })
+        time.sleep(7200) ## give it a long sleep
+        # page_number = int(response.css('div.pagination span.num_pages').get().replace('/')
+        next_page = response.css('div.pagination a.next').attrib.get('href')
+        # if len([result for result in results if result is None]) == len(results):
+        if next_page:
+            yield scrapy.Request(url=next_page,callback=self.parse)
+
+
+
+    def parse(self,response,title,pub_time,author,pre_title,preview_img_link):
+        item = OilPriceItem()
+        item['title'] = title
+        item['url'] = response.url
+        item['categories'] = None
+        item['pre_title'] = pre_title
+        item['author'] = author
+        item['pub_time'] = pub_time
+        item['preview_img_link'] = preview_img_link
+        item['content'] = response.css('div.singleArticle__content').get()
+        item['crawl_time'] = datetime.now().strftime('%m/%d/%Y %H:%M')
+
+        yield item
 
