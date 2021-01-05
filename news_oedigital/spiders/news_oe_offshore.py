@@ -344,11 +344,11 @@ class HartEnergySpider(scrapy.Spider):
             if view_row.css('div.img-wrap'):
                 preview_img_link = response.urljoin(response.css('div.img-wrap img').attrib['src'])
             categories = view_row.css('div.text-wrap h2.he-category a::text').getall()
-            title_url = view_row.css('div.text-wrap h3 a').attrib['href']
+            rel_title_url = view_row.css('div.text-wrap h3 a').attrib['href']
             title = view_row.css('div.text-wrap h3 a::text').get()
             abstracts = view_row.css('div.text-wrap p::text').get()
             pub_time = view_row.css('div.text-wrap div.field_published_on::text').get()
-            title_url = base_url+title_url
+            title_url = base_url+rel_title_url
             result = self.session.query(HartEnergy) \
                 .filter(or_(HartEnergy.url == title_url,HartEnergy.title==title)) \
                 .first()
