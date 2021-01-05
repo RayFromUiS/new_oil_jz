@@ -37,9 +37,9 @@ DOWNLOADER_MIDDLEWARES = {
     'scrapy_proxies.RandomProxy': 700,
     'scrapy.downloadermiddlewares.httpproxy.HttpProxyMiddleware': 710,
     # 'scrapy_selenium.SeleniumMiddleware': 720,
-    'scrapy_splash.SplashCookiesMiddleware': 650,
-    'scrapy_splash.SplashMiddleware': 652,
-    'scrapy.downloadermiddlewares.httpcompression.HttpCompressionMiddleware': 810,
+    # 'scrapy_splash.SplashCookiesMiddleware': 650,
+    # 'scrapy_splash.SplashMiddleware': 652,
+    # 'scrapy.downloadermiddlewares.httpcompression.HttpCompressionMiddleware': 810,
 }
 
 SQL_CONNECT_STRING = 'mysql+pymysql://root:jinzheng1706@139.198.191.224:3308/news_oil'
@@ -120,6 +120,7 @@ ITEM_PIPELINES = {
     'news_oedigital.pipelines.EnergyVoicePipeline': 309,
     'news_oedigital.pipelines.UpStreamPipeline': 310,
     'news_oedigital.pipelines.OilPricePipeline': 311,
+    'news_oedigital.pipelines.GulfOilGasPipeline': 312,
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)

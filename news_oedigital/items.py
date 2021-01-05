@@ -67,3 +67,6 @@ class UpStreamItem(NewsOedigitalItem):
     pass
 class OilPriceItem(NewsOedigitalItem):
     pass
+
+class GulfOilGasItem(NewsOedigitalItem):
+    pass
