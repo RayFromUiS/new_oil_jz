@@ -707,32 +707,38 @@ class JptLatestSpider(scrapy.Spider):
 
     def parse_page_links(self, response):
         # preview_img_link = None
+        base_url =  'https://pubs.spe.org'
         articles = response.css('article.tile.story')
         for article in articles:
             preview_img_link = 'https://pubs.spe.org' + article.css('div.story-wrap'). \
                 css('div.img-wrap').attrib['style'].split('(')[-1].split(')')[0]
+            title = article.css('div.story-wrap').css('h3::text').get().strip()
             pub_time = article.css('div.story-wrap').css('span.pub-date::text').get().strip()
             title_url = article.css('a::attr(href)').get()
+            pre_title = article.css('div.story-wrap').css('p::text').get().strip()
             result = self.session.query(JptLatest) \
-                .filter(JptLatest.url == title_url) \
+                .filter(or_(JptLatest.url == base_url + title_url,JptLatest.title==title)) \
                 .first()
             if not result:
                 yield response.follow(url=title_url, callback=self.parse,
                                       cb_kwargs={'preview_img_link': preview_img_link,
-                                                 'pub_time': pub_time
+                                                 'pub_time': pub_time,
+                                                 'title':title,
+                                                 'pre_title':pre_title
                                                  }
                                       )
 
-    def parse(self, response, preview_img_link, pub_time):
+    def parse(self, response, preview_img_link, pub_time,title,pre_title):
         item = JptLatestItem()
         item['url'] = response.url
         item['preview_img_link'] = preview_img_link
         item['pub_time'] = pub_time
-        item['title'] = response.css('div.articleTitleBox h2::text').get()
+        # item['title'] = response.css('div.articleTitleBox h2::text').get()
+        item['title'] = title
         item['categories'] = response.css('span.topicItem a::text').get()
         item['content'] = response.css('div.articleBodyText').get()
         item['author'] = None
-        item['pre_title'] = None
+        item['pre_title'] = pre_title
         item['crawl_time'] = datetime.now().strftime('%m/%d/%Y %H:%M')
 
         yield item

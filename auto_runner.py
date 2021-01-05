@@ -6,7 +6,7 @@ from scrapy.utils.log import configure_logging
 
 from news_oedigital.spiders.news_oe_offshore import \
     NewsOeOffshoreSpider,WorldOilSpider,CnpcNewsSpider,HartEnergySpider,OilFieldTechSpider,\
-    OilAndGasSpider,InEnStorageSpider,JptLatestSpider,EnergyVoiceSpider,UpStreamSpider,OilPriceSpider \
+    OilAndGasSpider,InEnStorageSpider,JptLatestSpider,EnergyVoiceSpider,UpStreamSpider,OilPriceSpider,\
     GulfOilGasSpider
 
 from scrapy.settings import Settings
@@ -31,7 +31,7 @@ def run_scraper():
     process.crawl(InEnStorageSpider)
     process.crawl(JptLatestSpider)
     process.crawl(EnergyVoiceSpider)
-    process.crawl(OilAndGasSpider)
+    process.crawl(GulfOilGasSpider)
     process.start()
 
 
