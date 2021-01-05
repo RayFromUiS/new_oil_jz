@@ -160,7 +160,7 @@ class WorldOilSpider(scrapy.Spider):
             abstract = article.css('p::text').get()
             item_href = 'https://www.worldoil.com' + title_url
             result = self.session.query(WorldOil) \
-                .filter(or_(WorldOil.url == item_href),WorldOil.title==title) \
+                .filter(or_(WorldOil.url == item_href,WorldOil.title==title)) \
                 .first()
             results.append(result)
             if not result:
@@ -338,16 +338,17 @@ class HartEnergySpider(scrapy.Spider):
     def parse_page_links(self, response):
         results = []  # list for saving the crawled items preview
         view_rows = response.css('div.views-row')
+        base_url ='https://www.hartenergy.com/'
         preview_img_link = None
         for view_row in view_rows:
             if view_row.css('div.img-wrap'):
                 preview_img_link = response.urljoin(response.css('div.img-wrap img').attrib['src'])
             categories = view_row.css('div.text-wrap h2.he-category a::text').getall()
-            rel_title_url = view_row.css('div.text-wrap h3 a').attrib['href']
+            title_url = view_row.css('div.text-wrap h3 a').attrib['href']
             title = view_row.css('div.text-wrap h3 a::text').get()
             abstracts = view_row.css('div.text-wrap p::text').get()
             pub_time = view_row.css('div.text-wrap div.field_published_on::text').get()
-            title_url = response.urljoin(rel_title_url)
+            title_url = base_url+title_url
             result = self.session.query(HartEnergy) \
                 .filter(or_(HartEnergy.url == title_url,HartEnergy.title==title)) \
                 .first()
@@ -853,6 +854,7 @@ class UpStreamSpider(scrapy.Spider):
         # print(type(response),dir(response))
         # from scrapy.shell import  inspect_response
         # inspect_response(self,response)
+        base_url = 'https://www.upstreamonline.com/'
         articles = response.css('div.card-body')
         for article in articles:
             title_url = article.css('a.card-link').attrib.get('href')
@@ -861,7 +863,7 @@ class UpStreamSpider(scrapy.Spider):
                 else None
             # print(preview_img_link)
             result = self.session.query(UpStream) \
-                .filter(or_(UpStream.title == title, UpStream.url == title_url)) \
+                .filter(or_(UpStream.title == title, UpStream.url == base_url+title_url)) \
                 .first()
             if not result:
                 yield response.follow(url=title_url,
@@ -940,8 +942,8 @@ class OilPriceSpider(scrapy.Spider):
             pre_title = article.css('p.categoryArticle__excerpt::text').get().strip()
             preview_img_link = article.css('a.categoryArticle__imageHolder img').attrib.get('src')
             title_url = article.css('div.categoryArticle__content a ').attrib.get('href')
-            result = self.session.query(UpStream) \
-                .filter(or_(UpStream.url == title, UpStream.url == title_url)) \
+            result = self.session.query(OilPrice) \
+                .filter(or_(OilPrice.url == title, OilPrice.url == title_url)) \
                 .first()
             if not result:
                 yield response.follow(url=title_url,
