@@ -973,7 +973,7 @@ class OilPriceSpider(scrapy.Spider):
         yield item
 
 
-class GulfOilGas(scrapy.Spider):
+class GulfOilGasSpider(scrapy.Spider):
     name = 'gulf_oil_gas'
     # allowed_domains = 'oilfieldtechnology.com'
     start_urls = ['https://www.gulfoilandgas.com/webpro1/main/newshome.asp']
