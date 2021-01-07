@@ -5,9 +5,9 @@ import scrapy
 from datetime import datetime
 from news_oedigital.items import \
     NewsOedigitalItem, WorldOilItem, CnpcNewsItem, HartEnergyItem, OilFieldTechItem, OilAndGasItem, InEnStorageItem, \
-    JptLatestItem, EnergyVoiceItem, UpStreamItem, OilPriceItem, GulfOilGasItem
+    JptLatestItem, EnergyVoiceItem, UpStreamItem, OilPriceItem, GulfOilGasItem,EnergyPediaItem
 from news_oedigital.model import OeNews, db_connect, create_table, WorldOil, CnpcNews, HartEnergy, OilFieldTech, \
-    OilAndGas, InEnStorage, JptLatest, EnergyVoice, UpStream, OilPrice, GulfOilGas
+    OilAndGas, InEnStorage, JptLatest, EnergyVoice, UpStream, OilPrice, GulfOilGas,EnergyPedia
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import and_, or_
 from scrapy_selenium import SeleniumRequest
@@ -1052,5 +1052,82 @@ class GulfOilGasSpider(scrapy.Spider):
         item['preview_img_link'] = None
         item['content'] = response.css('div.newsbodytext').get()
         item['crawl_time'] = datetime.now().strftime('%m/%d/%Y %H:%M')
+
+        yield item
+
+
+class EnergyPediaSpider(scrapy.Spider):
+    name = 'energy_pedia'
+    # allowed_domains = 'oilfieldtechnology.com'
+    start_urls = ['https://www.energy-pedia.com/articles.aspx?filter1=1&filter2=0']
+    custom_settings = {
+        'ITEM_PIPELINES': {'news_oedigital.pipelines.EnergyPediaPipeline': 313},
+    }
+
+    def __init__(self):
+        """
+        Initializes database connection and sessionmaker.
+        Creates deals table.
+        """
+        self.engine = db_connect()
+        Session = sessionmaker(bind=self.engine)
+        self.session = Session()
+        create_table(self.engine)
+
+    def start_requests(self):
+
+        for url in self.start_urls:
+            yield scrapy.Request(
+                url=url,
+                callback=self.parse_page_links,
+
+            )
+
+
+    def parse_page_links(self, response):
+        response.css('table.listing tr')
+
+        articles = response.css('table.listing tr')
+        for article in articles:
+            pub_time = article.css('td::text')[0].get()
+            preview_img_link = article.css('td')[0].css('img').attrib.get('src')
+            title = article.css('td')[1].css('a::text').get()
+            pre_title = article.css('td::text')[1].get()
+            title_url = article.css('td ')[1].css('a').attrib.get('href')
+            result = self.session.query(EnergyPedia).filter(
+                or_(EnergyPedia.url == title_url, EnergyPedia.title == title)
+            ).first()
+            # .filter(or_(GulfOilGas.title == title, GulfOilGas.url == abs_url+title_url)) \
+            if not result:
+                yield response.follow(url=title_url,
+                                      callback=self.parse,
+                                      cb_kwargs={'title': title,
+                                                 'pre_title': pre_title,
+                                                 # 'categories': categories,
+                                                 'preview_img_link':preview_img_link,
+                                                 'pub_time': pub_time}
+                                      )
+        # for next_page in response.css('div#pagedrecordset a::text'):
+
+        next_pages = response.css('div#pagedrecordset a::text').getall()
+        if 'Next' in next_pages:
+            next_page_index = next_pages.index('Next')
+            next_page_link = response.css('div#pagedrecordset a')[next_page_index].attrib.get('href')
+            yield response.follow(url=next_page_link,callback=self.parse_page_links)
+
+
+    def parse(self, response, title, pre_title, pub_time,preview_img_link):
+        # from scrapy.shell import inspect_response
+        # inspect_response(response,self)
+        item = EnergyPediaItem()
+        item['url'] = response.url
+        item['title'] = title
+        item['pre_title'] = pre_title
+        item['pub_time'] = pub_time
+        item['author'] = None
+        item['content'] = response.css('div.articlepreview').get()
+        item['crawl_time'] = datetime.now().strftime('%m/%d/%Y %H:%M')
+        item['preview_img_link'] = preview_img_link
+        item['categories'] = None
 
         yield item

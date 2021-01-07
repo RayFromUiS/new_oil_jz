@@ -70,3 +70,6 @@ class OilPriceItem(NewsOedigitalItem):
 
 class GulfOilGasItem(NewsOedigitalItem):
     pass
+
+class EnergyPediaItem(NewsOedigitalItem):
+    pass
