@@ -1,1 +1,3 @@
-# new_oil_jz
+## this is a spider project to crawl the news from petroleum subjects
+
+
