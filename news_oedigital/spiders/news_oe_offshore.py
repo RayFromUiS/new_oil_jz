@@ -12,6 +12,7 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy import and_, or_
 from scrapy_selenium import SeleniumRequest
 from selenium.webdriver.common.by import By
+from selenium.webdriver import PhantomJS
 from selenium.webdriver.support import expected_conditions as EC
 import pymongo
 from scrapy_splash import SplashRequest
@@ -825,6 +826,7 @@ class UpStreamSpider(scrapy.Spider):
     start_urls = ['https://www.upstreamonline.com']
     custom_settings = {
         'ITEM_PIPELINES': {'news_oedigital.pipelines.UpStreamPipeline': 310},
+        'DOWNLOADER_MIDDLEWARES' :{'news_oedigital.middlewares.NewsOedigitalDownloaderMiddleware': 543}
     }
 
     def __init__(self):
@@ -835,6 +837,7 @@ class UpStreamSpider(scrapy.Spider):
         self.engine = db_connect()
         Session = sessionmaker(bind=self.engine)
         self.session = Session()
+        # self.driver = PhantomsJs('')
         create_table(self.engine)
 
     def start_requests(self):
@@ -843,17 +846,19 @@ class UpStreamSpider(scrapy.Spider):
             yield SeleniumRequest(
                 url=url,
                 callback=self.parse_page_links,
-                wait_time=30
+                script='window.scrollTo(0, document.body.scrollHeight);',
+                wait_time=300
             )
+            # yield scrapy.Request(url=url,callback=self.parse_page_links())
             # yield SplashRequest(url, self.parse_page_links,
             #                     endpoint='render.json',
-            #                     args = {'timeout':600,'images':0,'render_all': 1,'wait':300})
+            #                     args = {'timeout':600,'images':0,'render_all': 1,'wait':300,'dont_process_response':True})
 
     def parse_page_links(self, response):
         # pass
         # print(type(response),dir(response))
-        # from scrapy.shell import  inspect_response
-        # inspect_response(self,response)
+        # from scrapy.shell import inspect_response
+        # inspect_response(response,self)
         base_url = 'https://www.upstreamonline.com/'
         articles = response.css('div.card-body')
         for article in articles:
@@ -880,7 +885,7 @@ class UpStreamSpider(scrapy.Spider):
         item['pre_title'] = response.css('p.article-lead-text::text').get()
         item['author'] = response.css('span.authors a::text').get().strip()
         item['pub_time'] = response.css('span.st-italic::text').get().strip().split('G')[0].strip()
-        item['preview_img_link'] = preview_img_link
+        item['preview_img_link'] = response.css('div.img-wrapper ').extract_first()
         item['content'] = response.css('div.article-body').get()
         item['crawl_time'] = datetime.now().strftime('%m/%d/%Y %H:%M')
 
@@ -888,7 +893,7 @@ class UpStreamSpider(scrapy.Spider):
 
 
 class OilPriceSpider(scrapy.Spider):
-    name = 'oil_price'
+    name = 'oil_price_spider'
     # allowed_domains = 'oilfieldtechnology.com'
     start_urls = ['https://oilprice.com/Latest-Energy-News/World-News/']
     custom_settings = {
@@ -945,12 +950,10 @@ class OilPriceSpider(scrapy.Spider):
             result = self.session.query(OilPrice) \
                 .filter(or_(OilPrice.url == title, OilPrice.url == title_url)) \
                 .first()
-            if not result:
-                yield response.follow(url=title_url,
-                                      cb_kwargs={'preview_img_link': preview_img_link}
-                                      )
+
             results.append(result)
-            yield scrapy.Request(url=title_url, callback=self.parse,
+            if not result:
+                yield scrapy.Request(url=title_url, callback=self.parse,
                                  cb_kwargs={
                                      'title': title,
                                      'pub_time': pub_time,
@@ -958,13 +961,13 @@ class OilPriceSpider(scrapy.Spider):
                                      'pre_title': pre_title,
                                      'preview_img_link': preview_img_link
                                  })
-        time.sleep(7200)  ## give it a long sleep
+        # time.sleep(7200)  ## give it a long sleep
         # if len([result for result in results if result is None]) == len(results):
         # page_number = int(response.css('div.pagination span.num_pages').get().replace('/')
         next_page = response.css('div.pagination a.next').attrib.get('href')
         #
         if next_page:
-            yield scrapy.Request(url=next_page, callback=self.parse)
+            yield scrapy.Request(url=next_page, callback=self.parse_page_links)
 
     def parse(self, response, title, pub_time, author, pre_title, preview_img_link):
         item = OilPriceItem()

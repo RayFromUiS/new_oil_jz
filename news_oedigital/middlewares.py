@@ -71,6 +71,8 @@ class NewsOedigitalDownloaderMiddleware:
     def process_request(self, request, spider):
         # Called for each request that goes through the downloader
         # middleware.
+        # spider.driver.get(request.url)
+
 
         # Must either:
         # - return None: continue processing this request

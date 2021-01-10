@@ -31,6 +31,8 @@ def run_scraper():
     process.crawl(InEnStorageSpider)
     process.crawl(JptLatestSpider)
     process.crawl(EnergyVoiceSpider)
+    process.crawl(UpStreamSpider)
+    process.crawl(OilPriceSpider)
     process.crawl(GulfOilGasSpider)
     process.start()
 

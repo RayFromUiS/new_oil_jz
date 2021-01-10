@@ -36,9 +36,9 @@ DOWNLOADER_MIDDLEWARES = {
     # 'scrapy.downloadermiddlewares.httpproxy.HttpProxyMiddleware': None,
     'scrapy_proxies.RandomProxy': 700,
     'scrapy.downloadermiddlewares.httpproxy.HttpProxyMiddleware': 710,
-    # 'scrapy_selenium.SeleniumMiddleware': 720,
-    # 'scrapy_splash.SplashCookiesMiddleware': 650,
-    # 'scrapy_splash.SplashMiddleware': 652,
+    # 'scrapy_selenium.SeleniumMiddleware': 300,
+    'scrapy_splash.SplashCookiesMiddleware': 650,
+    'scrapy_splash.SplashMiddleware': 652,
     # 'scrapy.downloadermiddlewares.httpcompression.HttpCompressionMiddleware': 810,
 }
 
