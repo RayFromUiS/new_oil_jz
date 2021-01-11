@@ -73,3 +73,9 @@ class GulfOilGasItem(NewsOedigitalItem):
 
 class EnergyPediaItem(NewsOedigitalItem):
     pass
+
+class InenTechItem(NewsOedigitalItem):
+    pass
+
+class InenNewEnergyItem(NewsOedigitalItem):
+    pass

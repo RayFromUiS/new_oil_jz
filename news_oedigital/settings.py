@@ -16,7 +16,7 @@ BOT_NAME = 'news_oedigital'
 SPIDER_MODULES = ['news_oedigital.spiders']
 NEWSPIDER_MODULE = 'news_oedigital.spiders'
 
-# DOWNLOAD_DELAY = 0.25
+DOWNLOAD_DELAY = 0.25
 RANDOMIZE_DOWNLOAD_DELAY = True
 SELENIUM_DRIVER_NAME = 'chrome'
 SELENIUM_DRIVER_EXECUTABLE_PATH = which('chromedriver')
@@ -37,8 +37,8 @@ DOWNLOADER_MIDDLEWARES = {
     'scrapy_proxies.RandomProxy': 700,
     'scrapy.downloadermiddlewares.httpproxy.HttpProxyMiddleware': 710,
     # 'scrapy_selenium.SeleniumMiddleware': 300,
-    'scrapy_splash.SplashCookiesMiddleware': 650,
-    'scrapy_splash.SplashMiddleware': 652,
+    # 'scrapy_splash.SplashCookiesMiddleware': 650,
+    # 'scrapy_splash.SplashMiddleware': 652,
     # 'scrapy.downloadermiddlewares.httpcompression.HttpCompressionMiddleware': 810,
 }
 
@@ -122,6 +122,8 @@ ITEM_PIPELINES = {
     'news_oedigital.pipelines.OilPricePipeline': 311,
     'news_oedigital.pipelines.GulfOilGasPipeline': 312,
     'news_oedigital.pipelines.EnergyPediaPipeline': 313,
+    'news_oedigital.pipelines.InenTechPipeline': 314,
+    'news_oedigital.pipelines.InenNewEnergyPipeline': 315
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)
