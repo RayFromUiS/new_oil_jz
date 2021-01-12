@@ -79,3 +79,7 @@ class InenTechItem(NewsOedigitalItem):
 
 class InenNewEnergyItem(NewsOedigitalItem):
     pass
+
+
+class DrillContractorItem(NewsOedigitalItem):
+    pass

@@ -6,10 +6,10 @@ from datetime import datetime
 from news_oedigital.items import \
     NewsOedigitalItem, WorldOilItem, CnpcNewsItem, HartEnergyItem, OilFieldTechItem, OilAndGasItem, InEnStorageItem, \
     JptLatestItem, EnergyVoiceItem, UpStreamItem, OilPriceItem, GulfOilGasItem,EnergyPediaItem,InenTechItem,\
-    InenNewEnergyItem
+    InenNewEnergyItem,DrillContractorItem
 from news_oedigital.model import OeNews, db_connect, create_table, WorldOil, CnpcNews, HartEnergy, OilFieldTech, \
     OilAndGas, InEnStorage, JptLatest, EnergyVoice, UpStream, OilPrice, GulfOilGas,EnergyPedia,InenTech, \
-    InenNewEnergy
+    InenNewEnergy,DrillContractor
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import and_, or_
 from scrapy_selenium import SeleniumRequest
@@ -1325,6 +1325,81 @@ class InenNewEnergySpider(scrapy.Spider):
                 -1].strip()
         # item['author'] = None
         item['content'] = response.css('div#content').get()
+        item['crawl_time'] = datetime.now().strftime('%m/%d/%Y %H:%M')
+
+        yield item
+
+
+class DrillContractorSpider(scrapy.Spider):
+    name = 'drill_contractor'
+    # allowed_domains = 'oilfieldtechnology.com'
+    start_urls = ['https://www.drillingcontractor.org/news']
+    custom_settings = {
+        'ITEM_PIPELINES': {'news_oedigital.pipelines.DrillContractorPipeline': 316}
+    }
+
+    def __init__(self):
+        """
+        Initializes database connection and sessionmaker.
+        Creates deals table.
+        """
+        self.engine = db_connect()
+        Session = sessionmaker(bind=self.engine)
+        self.session = Session()
+        create_table(self.engine)
+
+
+    def start_requests(self):
+
+        for url in self.start_urls:
+            yield scrapy.Request(url=url,
+                                  callback=self.parse_page_links)
+
+    def parse_page_links(self,response):
+        results =[]
+        articles = response.css('div.post-listing ').css('article.item-list')
+        for article in articles:
+            title = article.css('h2.post-title a::text').get()
+            title_url = article.css('h2.post-title a').attrib.get('href')
+            pub_time = article.css('p.post-meta span.tie-date::text ').get()
+            preview_img_link = article.css('div.post-thumbnail').css('img').attrib.get('src')
+            pre_title = article.css('div.entry p::text').extract_first()
+            result = self.session.query(DrillContractor) \
+                .filter(or_(DrillContractor.url == title_url, DrillContractor.title == title)) \
+                .first()
+            # result = self.db.getCollection("InEnStorage").findOne({"url" :title_url})
+            # print(title_url)
+            results.append(result)
+            if not result:
+                yield scrapy.Request(url=title_url,
+                                     callback=self.parse,
+                                     cb_kwargs={'preview_img_link': preview_img_link,
+                                                'title':title,
+                                                'pub_time':pub_time,
+                                                'pre_title':pre_title
+                                                }
+                                     )
+
+            # if len([result for result in results if result is None]) == len(results):
+        # print(next_page)
+        page_numbers = int(response.css('div.pagination').css('span.pages::text').get().split(' ')[-1])
+        for page in range(2,page_numbers+1):
+            next_page = 'https://www.drillingcontractor.org/news/page'+'/'+str(page)
+            # if next_page is not None:
+            yield scrapy.Request(url=next_page,
+                                 callback=self.parse_page_links)
+
+    def parse(self,response,preview_img_link,title,pub_time,pre_title):
+        item = DrillContractorItem()
+
+        item['url'] = response.url
+        item['author'] = None
+        item['title'] = title
+        item['preview_img_link'] = preview_img_link
+        item['content'] = str(response.css('div.entry p').getall())
+        item['pre_title'] = pre_title
+        item['pub_time'] = pub_time
+        item['categories'] = None
         item['crawl_time'] = datetime.now().strftime('%m/%d/%Y %H:%M')
 
         yield item
