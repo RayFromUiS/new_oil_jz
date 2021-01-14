@@ -6,10 +6,10 @@ from datetime import datetime
 from news_oedigital.items import \
     NewsOedigitalItem, WorldOilItem, CnpcNewsItem, HartEnergyItem, OilFieldTechItem, OilAndGasItem, InEnStorageItem, \
     JptLatestItem, EnergyVoiceItem, UpStreamItem, OilPriceItem, GulfOilGasItem,EnergyPediaItem,InenTechItem,\
-    InenNewEnergyItem,DrillContractorItem
+    InenNewEnergyItem,DrillContractorItem,RogTechItem
 from news_oedigital.model import OeNews, db_connect, create_table, WorldOil, CnpcNews, HartEnergy, OilFieldTech, \
     OilAndGas, InEnStorage, JptLatest, EnergyVoice, UpStream, OilPrice, GulfOilGas,EnergyPedia,InenTech, \
-    InenNewEnergy,DrillContractor
+    InenNewEnergy,DrillContractor,RogTech
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import and_, or_
 from scrapy_selenium import SeleniumRequest
@@ -1400,6 +1400,71 @@ class DrillContractorSpider(scrapy.Spider):
         item['pre_title'] = pre_title
         item['pub_time'] = pub_time
         item['categories'] = None
+        item['crawl_time'] = datetime.now().strftime('%m/%d/%Y %H:%M')
+
+        yield item
+
+
+class RogTecSpider(scrapy.Spider):
+    name = 'rog_tec'
+    # allowed_domains = 'oilfieldtechnology.com'
+    start_urls = ['https://rogtecmagazine.com/oil_gas_industry_news/']
+    custom_settings = {
+        'ITEM_PIPELINES': {'news_oedigital.pipelines.RogTecPipeline': 317}
+    }
+
+    def __init__(self):
+        """
+        Initializes database connection and sessionmaker.
+        Creates deals table.
+        """
+        self.engine = db_connect()
+        Session = sessionmaker(bind=self.engine)
+        self.session = Session()
+        create_table(self.engine)
+
+
+    def start_requests(self):
+
+        for url in self.start_urls:
+            yield scrapy.Request(url=url,
+                                  callback=self.parse_page_links)
+
+    def parse_page_links(self,response):
+        articles = response.css('div.vw-column-shortcode.vw-one-half').css('div.block-grid-item')
+        for article in articles:
+            title = article.css('h5.vw-post-box-post-title a::text').get()
+            title_url = article.css('h5.vw-post-box-post-title a').attrib.get('href')
+            preview_img_link = article.css('a.vw-post-box-thumbnail').css('img').attrib.get('src')
+            pub_time = article.css('div.vw-post-meta-left').css('a::text').get()
+
+            result = self.session.query(RogTech) \
+                .filter(or_(RogTech.url == title_url, RogTech.title == title)) \
+                .first()
+            # result = self.db.getCollection("InEnStorage").findOne({"url" :title_url})
+            # print(title_url)
+            if not result:
+                yield scrapy.Request(url=title_url,
+                                     callback=self.parse,
+                                     cb_kwargs={'preview_img_link': preview_img_link,
+                                                'title': title,
+                                                'pub_time': pub_time,
+                                                # 'pre_title': pre_title
+                                                }
+                                     )
+
+
+    def parse(self,response,title,preview_img_link,pub_time):
+
+        item=RogTechItem()
+        item['url'] = response.url
+        item['title'] = title
+        item['pub_time'] = pub_time
+        item['preview_img_link'] = preview_img_link
+        item['pre_title'] = response.css('div.vw-featured-image').css('img').attrib.get('src') ##saving img tag tempor
+        item['author'] = None
+        item['categories'] = None
+        item['content'] = str(response.css('div.entry-content p').getall())
         item['crawl_time'] = datetime.now().strftime('%m/%d/%Y %H:%M')
 
         yield item
