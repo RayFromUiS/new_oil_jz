@@ -8,7 +8,7 @@
 from itemadapter import ItemAdapter
 from news_oedigital.model import OeNews,WorldOil,CnpcNews,HartEnergy,OilFieldTech, \
     db_connect, create_table,OilAndGas,InEnStorage,JptLatest,EnergyVoice,UpStream,OilPrice,GulfOilGas,EnergyPedia, \
-    InenTech,InenNewEnergy,DrillContractor,RogTech
+    InenTech,InenNewEnergy,DrillContractor,RogTech,NaturalGas
 # from news_oedigital.spiders.oe_offshore import NewsOeOffshoreSpider
 
 import pymongo
@@ -431,9 +431,34 @@ class DrillContractorPipeline:
         spider.session.close()
 
 
-class RogTecPipeline:
+class RogTechPipeline:
     def process_item(self, item, spider):
         new_item = RogTech(title=item.get('title'), author=item.get('author'), pre_title=item.get('pre_title'), \
+                                   preview_img_link=item.get('preview_img_link'), pub_time=item.get('pub_time'), \
+                                   content=item.get('content'), crawl_time=item.get('crawl_time'), url=item.get('url'), \
+                                   categories=item.get('categories'))
+
+        try:
+            if item.get('content'):
+                spider.session.add(new_item)
+                spider.session.commit()
+            else:
+                raise DropItem(f"Missing content in {item}")
+        except:
+            spider.session.rollback()
+            raise
+        return item
+
+    def close_spider(self, spider):
+        spider.session.close()
+
+    def close_spider(self, spider):
+        spider.session.close()
+
+
+class NaturalGasPipeline:
+    def process_item(self, item, spider):
+        new_item = NaturalGas(title=item.get('title'), author=item.get('author'), pre_title=item.get('pre_title'), \
                                    preview_img_link=item.get('preview_img_link'), pub_time=item.get('pub_time'), \
                                    content=item.get('content'), crawl_time=item.get('crawl_time'), url=item.get('url'), \
                                    categories=item.get('categories'))

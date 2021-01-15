@@ -16,8 +16,8 @@ BOT_NAME = 'news_oedigital'
 SPIDER_MODULES = ['news_oedigital.spiders']
 NEWSPIDER_MODULE = 'news_oedigital.spiders'
 
-DOWNLOAD_DELAY = 0.25
-RANDOMIZE_DOWNLOAD_DELAY = True
+DOWNLOAD_DELAY = 20
+# RANDOMIZE_DOWNLOAD_DELAY = True
 SELENIUM_DRIVER_NAME = 'chrome'
 SELENIUM_DRIVER_EXECUTABLE_PATH = which('chromedriver')
 SELENIUM_DRIVER_ARGUMENTS = ['--headless']  # '--headless' if using chrome instead of firefox
@@ -125,7 +125,9 @@ ITEM_PIPELINES = {
     'news_oedigital.pipelines.InenTechPipeline': 314,
     'news_oedigital.pipelines.InenNewEnergyPipeline': 315,
     'news_oedigital.pipelines.DrillContractorPipeline': 316,
-    'news_oedigital.pipelines.RogTecPipeline': 317
+    'news_oedigital.pipelines.RogTechPipeline': 317,
+    'news_oedigital.pipelines.NaturalGasPipeline': 318,
+
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)
