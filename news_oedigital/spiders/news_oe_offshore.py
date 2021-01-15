@@ -1374,14 +1374,14 @@ class DrillContractorSpider(scrapy.Spider):
                                                 }
                                      )
 
-            # if len([result for result in results if result is None]) == len(results):
+        if len([result for result in results if result is None]) == len(results):
         # print(next_page)
-        page_numbers = int(response.css('div.pagination').css('span.pages::text').get().split(' ')[-1])
-        for page in range(2, page_numbers + 1):
-            next_page = 'https://www.drillingcontractor.org/news/page' + '/' + str(page)
-            # if next_page is not None:
-            yield scrapy.Request(url=next_page,
-                                 callback=self.parse_page_links)
+            page_numbers = int(response.css('div.pagination').css('span.pages::text').get().split(' ')[-1])
+            for page in range(2, page_numbers + 1):
+                next_page = 'https://www.drillingcontractor.org/news/page' + '/' + str(page)
+                # if next_page is not None:
+                yield scrapy.Request(url=next_page,
+                                     callback=self.parse_page_links)
 
     def parse(self, response, preview_img_link, title, pub_time, pre_title):
         item = DrillContractorItem()
