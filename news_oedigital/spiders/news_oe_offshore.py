@@ -6,10 +6,10 @@ from datetime import datetime
 from news_oedigital.items import \
     NewsOedigitalItem, WorldOilItem, CnpcNewsItem, HartEnergyItem, OilFieldTechItem, OilAndGasItem, InEnStorageItem, \
     JptLatestItem, EnergyVoiceItem, UpStreamItem, OilPriceItem, GulfOilGasItem, EnergyPediaItem, InenTechItem, \
-    InenNewEnergyItem, DrillContractorItem, RogTechItem, NaturalGasItem
+    InenNewEnergyItem, DrillContractorItem, RogTechItem, NaturalGasItem, RigZoneItem
 from news_oedigital.model import OeNews, db_connect, create_table, WorldOil, CnpcNews, HartEnergy, OilFieldTech, \
     OilAndGas, InEnStorage, JptLatest, EnergyVoice, UpStream, OilPrice, GulfOilGas, EnergyPedia, InenTech, \
-    InenNewEnergy, DrillContractor, RogTech, NaturalGas
+    InenNewEnergy, DrillContractor, RogTech, NaturalGas, RigZone
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import and_, or_
 from scrapy_selenium import SeleniumRequest
@@ -1375,7 +1375,7 @@ class DrillContractorSpider(scrapy.Spider):
                                      )
 
         if len([result for result in results if result is None]) == len(results):
-        # print(next_page)
+            # print(next_page)
             page_numbers = int(response.css('div.pagination').css('span.pages::text').get().split(' ')[-1])
             for page in range(2, page_numbers + 1):
                 next_page = 'https://www.drillingcontractor.org/news/page' + '/' + str(page)
@@ -1508,7 +1508,7 @@ class NaturalGasSpider(scrapy.Spider):
                                                 'title': title,
                                                 'pub_time': pub_time,
                                                 'pre_title': pre_title,
-                                                'categories':categories
+                                                'categories': categories
                                                 }
                                      )
         next_page = response.css('div.c-pagination').css('a.next').attrib.get('href')
@@ -1516,9 +1516,8 @@ class NaturalGasSpider(scrapy.Spider):
             yield scrapy.Request(url=next_page,
                                  callback=self.parse_page_links)
 
-
-    def parse(self, response,preview_img_link,pre_title,title,pub_time,categories):
-        pass
+    def parse(self, response, preview_img_link, pre_title, title, pub_time, categories):
+        # pass
 
         item = NaturalGasItem()
         item['url'] = response.url
@@ -1529,6 +1528,77 @@ class NaturalGasSpider(scrapy.Spider):
         item['author'] = response.css('span.c-story-author__name::text').get()
         item['categories'] = categories
         item['content'] = response.css('div.article-body').get()
+        item['crawl_time'] = datetime.now().strftime('%m/%d/%Y %H:%M')
+
+        yield item
+
+
+class RigZoneSpider(scrapy.Spider):
+    name = 'rig_zone'
+    # allowed_domains = 'oilfieldtechnology.com'
+    start_urls = ['https://www.rigzone.com/news/']
+    custom_settings = {
+        'ITEM_PIPELINES': {'news_oedigital.pipelines.RigZonePipeline': 319}
+    }
+
+    def __init__(self):
+        """
+        Initializes database connection and sessionmaker.
+        Creates deals table.
+        """
+        self.engine = db_connect()
+        Session = sessionmaker(bind=self.engine)
+        self.session = Session()
+        create_table(self.engine)
+
+    def start_requests(self):
+
+        for url in self.start_urls:
+            yield scrapy.Request(url=url,
+                                 callback=self.parse_more)
+
+    def parse_more(self, response):
+
+        more_articles = response.css('a.rz-sponsors-all-button')
+        for more_article in more_articles:
+            yield response.follow(more_article,
+                                  callback=self.parse_page_links)
+
+    def parse_page_links(self, response):
+        articles = response.css('div.smallHeadline')
+        base_url = 'https://www.rigzone.com/news'
+        for article in articles:
+            title = article.css('a::text').get()
+            title_url = article.css('a').attrib.get('href')
+            abs_url = base_url + title_url
+            pre_title = article.css('div.description::text').get().strip()
+            pub_time = article.css('div.articleSource span.date::text').get()
+            result = self.session.query(RigZone) \
+                .filter(or_(RigZone.url == abs_url, RigZone.title == title)) \
+                .first()
+            # result = self.db.getCollection("InEnStorage").findOne({"url" :title_url})
+            # print(title_url)
+            if not result:
+                yield response.follow(url=title_url,
+                                      callback=self.parse,
+                                      cb_kwargs={'title':title,
+                                                 'pre_title':pre_title}
+                                      )
+
+    def parse(self, response,title,pre_title):
+        # from scrapy.shell import inspect_response
+        # inspect_response(response,self)
+        item = RigZoneItem()
+        item['url'] = response.url
+        item['title'] = title
+        item['pub_time'] = response.css('div.articleDate::text').get()
+        item['preview_img_link'] = response.css('div#content').css('div#c_img_wrapper img').get() #main img link
+        item['pre_title'] = pre_title
+        item['author'] = response.css('div.articleAuthor a::text').get() \
+                            if response.css('div.articleAuthor a') else \
+                            response.css('div.articleAuthor::text').get().replace('\xa0','').split('by')[-1]
+        item['categories'] = None
+        item['content'] = response.css('div.divArticleText').get()
         item['crawl_time'] = datetime.now().strftime('%m/%d/%Y %H:%M')
 
         yield item

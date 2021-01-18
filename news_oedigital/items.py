@@ -92,3 +92,7 @@ class RogTechItem(NewsOedigitalItem):
 
 class NaturalGasItem(NewsOedigitalItem):
     pass
+
+
+class RigZoneItem(NewsOedigitalItem):
+    pass
