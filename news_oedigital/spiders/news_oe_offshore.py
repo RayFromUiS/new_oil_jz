@@ -1611,8 +1611,8 @@ class OffshoreTechSpider(scrapy.Spider):
     start_urls = ['https://www.offshore-technology.com/latest-news']
     custom_settings = {
         'ITEM_PIPELINES': {'news_oedigital.pipelines.OffshoreTechPipeline': 320},
-        'COOKIES_DEBUG ':True,
-        'COOKIES_ENABLED' :True,
+        # 'COOKIES_DEBUG ':True,
+        # 'COOKIES_ENABLED' :True,
         # 'CookiesMiddleware':{'news_oedigital.middlewares.PersistentCookiesMiddleware':751}
     }
 
