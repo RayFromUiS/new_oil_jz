@@ -20,7 +20,7 @@ NEWSPIDER_MODULE = 'news_oedigital.spiders'
 RANDOMIZE_DOWNLOAD_DELAY = True
 SELENIUM_DRIVER_NAME = 'chrome'
 SELENIUM_DRIVER_EXECUTABLE_PATH = which('chromedriver')
-SELENIUM_DRIVER_ARGUMENTS = ['--headless']  # '--headless' if using chrome instead of firefox
+SELENIUM_DRIVER_ARGUMENTS = ['-headless']  # '--headless' if using chrome instead of firefox
 RETRY_TIMES = 10
 # Retry on most error codes since proxies fail for different reasons
 RETRY_HTTP_CODES = [500, 503, 504, 400, 403, 404, 408]
@@ -36,7 +36,9 @@ DOWNLOADER_MIDDLEWARES = {
     # 'scrapy.downloadermiddlewares.httpproxy.HttpProxyMiddleware': None,
     'scrapy_proxies.RandomProxy': 700,
     'scrapy.downloadermiddlewares.httpproxy.HttpProxyMiddleware': 710,
-    # 'scrapy_selenium.SeleniumMiddleware': 300,
+    'scrapy_selenium.SeleniumMiddleware': 750,
+    # 'scrapy.downloadermiddlewares.cookies.CookiesMiddleware': None,
+    # 'scrapy.downloadermiddlewares.cookies.PersistentCookiesMiddleware': 751,
     # 'scrapy_splash.SplashCookiesMiddleware': 650,
     # 'scrapy_splash.SplashMiddleware': 652,
     # 'scrapy.downloadermiddlewares.httpcompression.HttpCompressionMiddleware': 810,
@@ -72,8 +74,7 @@ HTTPCACHE_STORAGE = 'scrapy_splash.SplashAwareFSCacheStorage'
 # CONCURRENT_REQUESTS_PER_IP = 16
 
 # Disable cookies (enabled by default)
-# COOKIES_ENABLED = False
-
+# COOKIES_ENABLED = True
 # Disable Telnet Console (enabled by default)
 # TELNETCONSOLE_ENABLED = False
 
@@ -128,6 +129,8 @@ ITEM_PIPELINES = {
     'news_oedigital.pipelines.RogTechPipeline': 317,
     'news_oedigital.pipelines.NaturalGasPipeline': 318,
     'news_oedigital.pipelines.RigZonePipeline': 319,
+    'news_oedigital.pipelines.OffshoreTechPipeline': 320,
+    'news_oedigital.pipelines.EnergyYearPipeline': 321,
 
 }
 

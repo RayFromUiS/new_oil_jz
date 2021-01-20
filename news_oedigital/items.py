@@ -96,3 +96,11 @@ class NaturalGasItem(NewsOedigitalItem):
 
 class RigZoneItem(NewsOedigitalItem):
     pass
+
+
+class OffshoreTechItem(NewsOedigitalItem):
+    pass
+
+
+class EnergyYearItem(NewsOedigitalItem):
+    pass

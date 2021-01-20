@@ -6,16 +6,17 @@ from datetime import datetime
 from news_oedigital.items import \
     NewsOedigitalItem, WorldOilItem, CnpcNewsItem, HartEnergyItem, OilFieldTechItem, OilAndGasItem, InEnStorageItem, \
     JptLatestItem, EnergyVoiceItem, UpStreamItem, OilPriceItem, GulfOilGasItem, EnergyPediaItem, InenTechItem, \
-    InenNewEnergyItem, DrillContractorItem, RogTechItem, NaturalGasItem, RigZoneItem
+    InenNewEnergyItem, DrillContractorItem, RogTechItem, NaturalGasItem, RigZoneItem, OffshoreTechItem,EnergyYearItem
 from news_oedigital.model import OeNews, db_connect, create_table, WorldOil, CnpcNews, HartEnergy, OilFieldTech, \
     OilAndGas, InEnStorage, JptLatest, EnergyVoice, UpStream, OilPrice, GulfOilGas, EnergyPedia, InenTech, \
-    InenNewEnergy, DrillContractor, RogTech, NaturalGas, RigZone
+    InenNewEnergy, DrillContractor, RogTech, NaturalGas, RigZone, OffshoreTech,EnergyYear
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import and_, or_
 from scrapy_selenium import SeleniumRequest
 from selenium.webdriver.common.by import By
 from selenium.webdriver import PhantomJS
 from selenium.webdriver.support import expected_conditions as EC
+from scrapy.http import HtmlResponse
 import pymongo
 from scrapy_splash import SplashRequest
 
@@ -830,7 +831,7 @@ class UpStreamSpider(scrapy.Spider):
     start_urls = ['https://www.upstreamonline.com']
     custom_settings = {
         'ITEM_PIPELINES': {'news_oedigital.pipelines.UpStreamPipeline': 310},
-        'DOWNLOADER_MIDDLEWARES': {'news_oedigital.middlewares.NewsOedigitalDownloaderMiddleware': 543}
+        # 'DOWNLOADER_MIDDLEWARES': {'news_oedigital.middlewares.NewsOedigitalDownloaderMiddleware': 543}
     }
 
     def __init__(self):
@@ -1581,24 +1582,209 @@ class RigZoneSpider(scrapy.Spider):
             if not result:
                 yield response.follow(url=title_url,
                                       callback=self.parse,
-                                      cb_kwargs={'title':title,
-                                                 'pre_title':pre_title}
+                                      cb_kwargs={'title': title,
+                                                 'pre_title': pre_title}
                                       )
 
-    def parse(self, response,title,pre_title):
+    def parse(self, response, title, pre_title):
         # from scrapy.shell import inspect_response
         # inspect_response(response,self)
         item = RigZoneItem()
         item['url'] = response.url
         item['title'] = title
         item['pub_time'] = response.css('div.articleDate::text').get()
-        item['preview_img_link'] = response.css('div#content').css('div#c_img_wrapper img').get() #main img link
+        item['preview_img_link'] = response.css('div#content').css('div#c_img_wrapper img').get()  # main img link
         item['pre_title'] = pre_title
         item['author'] = response.css('div.articleAuthor a::text').get() \
-                            if response.css('div.articleAuthor a') else \
-                            response.css('div.articleAuthor::text').get().replace('\xa0','').split('by')[-1]
+            if response.css('div.articleAuthor a') else \
+            response.css('div.articleAuthor::text').get().replace('\xa0', '').split('by')[-1]
         item['categories'] = None
         item['content'] = response.css('div.divArticleText').get()
+        item['crawl_time'] = datetime.now().strftime('%m/%d/%Y %H:%M')
+
+        yield item
+
+
+class OffshoreTechSpider(scrapy.Spider):
+    name = 'offshore_tech'
+    # allowed_domains = 'oilfieldtechnology.com'
+    start_urls = ['https://www.offshore-technology.com/latest-news']
+    custom_settings = {
+        'ITEM_PIPELINES': {'news_oedigital.pipelines.OffshoreTechPipeline': 320},
+        'COOKIES_DEBUG ':True,
+        'COOKIES_ENABLED' :True,
+        # 'CookiesMiddleware':{'news_oedigital.middlewares.PersistentCookiesMiddleware':751}
+    }
+
+    def __init__(self):
+        """
+        Initializes database connection and sessionmaker.
+        Creates deals table.
+        """
+        self.engine = db_connect()
+        Session = sessionmaker(bind=self.engine)
+        self.session = Session()
+        create_table(self.engine)
+
+    def start_requests(self):
+
+        for url in self.start_urls:
+            yield SeleniumRequest(url=url,
+                                  callback=self.parse_more,
+                                  # wait_until=EC.element_to_be_clickable((By.ID, 'ajax-load-more'))
+                                  wait_time=10,
+                                  wait_until=EC.element_to_be_clickable((By.ID, 'ajax-load-more'))
+                                  )
+
+
+    def parse_more(self, response):
+
+        # from scrapy.shell import inspect_response
+        # inspect_response(response, self)
+        articles = response.css('div.grid-x.side-shadow').css('article.c-posts-grid__post')
+        for article in articles:
+            preview_img_link = article.css('figure img').attrib.get('src') \
+                if article.css('figure img') else None
+            title = article.css('div.c-post-content h3.c-post-content__title a::text').get()
+            title_url = article.css('div.c-post-content h3.c-post-content__title a').attrib.get('href')
+            pre_title = article.css('div.c-post-content p.c-post-content__excerpt::text ').get()
+            pub_time = article.css('div.c-post-content span.c-post-content__publish-date::text').get()
+
+            result = self.session.query(OffshoreTech) \
+                .filter(or_(OffshoreTech == title_url, OffshoreTech.title == title)) \
+                .first()
+            if not result:
+                yield scrapy.Request(url=title_url,
+                                      callback=self.parse,
+                                      cb_kwargs={'title': title,
+                                                 'pre_title': pre_title,
+                                                 'pub_time': pub_time,
+                                                 'preview_img_link': preview_img_link
+                                                 }
+                                      )
+
+        # more_articles = response.css('a.rz-sponsors-all-button')
+        # driver = response.request.meta['driver']
+        # driver.maximize_window()
+        # ele = driver.find_element_by_id('ajax-load-more') if driver.find_element_by_id('ajax-load-more') else None
+        # while ele:
+        #     ele.click()
+        #     res = HtmlResponse(url=driver.current_url, body=driver.page_source)
+        #     # print('get the response from clickable action')
+        #     yield SeleniumRequest(url=res.url,
+        #                           callback=self.parse_more,
+        #                           wait_time=10,
+        #                           wait_until=EC.element_to_be_clickable((By.ID, 'ajax-load-more'))
+        #                           )
+
+    def parse(self, response, title, pre_title,preview_img_link,pub_time):
+        # from scrapy.shell import inspect_response
+        # inspect_response(response,self)
+        item = OffshoreTechItem()
+        item['url'] = response.url
+        item['title'] = title
+        item['pub_time'] = pub_time
+        item['preview_img_link'] = preview_img_link
+        item['pre_title'] = pre_title
+        item['author'] = response.css('p.c-post-single__standfirst::text').get()  ## abstract
+        item['categories'] = response.css('article.c-post-single figure.c-post-figure img.c-post-figure__image') \
+                                .extract_first() ## main image
+        item['content'] = response.css('div.c-post-single__content').get() ## main content
+        item['crawl_time'] = datetime.now().strftime('%m/%d/%Y %H:%M')
+
+        yield item
+
+
+class EnergyYearSpider(scrapy.Spider):
+    name = 'energy_year'
+    # allowed_domains = 'oilfieldtechnology.com'
+    start_urls = ['https://theenergyyear.com/news']
+    custom_settings = {
+        'ITEM_PIPELINES': {'news_oedigital.pipelines.EnergyYearPipeline': 321},
+        # 'COOKIES_DEBUG ':True,
+        # 'COOKIES_ENABLED' :True,
+        # 'CookiesMiddleware':{'news_oedigital.middlewares.PersistentCookiesMiddleware':751}
+    }
+
+    def __init__(self):
+        """
+        Initializes database connection and sessionmaker.
+        Creates deals table.
+        """
+        self.engine = db_connect()
+        Session = sessionmaker(bind=self.engine)
+        self.session = Session()
+        create_table(self.engine)
+
+    def start_requests(self):
+
+        for url in self.start_urls:
+            yield scrapy.Request(url=url,
+                                  callback=self.parse_more,
+                                  # wait_until=EC.element_to_be_clickable((By.ID, 'ajax-load-more'))
+                                  # wait_time=10,
+                                  # wait_until=EC.element_to_be_clickable((By.ID, 'ajax-load-more'))
+                                  )
+
+    def parse_more(self, response):
+
+        # from scrapy.shell import inspect_response
+        # inspect_response(response, self)
+
+        articles = response.css('div.row.article-block')
+        new_articles = [article for article in articles if not article.css('div.banner-row')]
+        # print(len(new_articles))
+        for article in new_articles:
+            title =article.css('div.article-detail').css('h1 a::text').get()  \
+                        if article.css('div.article-detail h1') else \
+                            article.css('div.title a::text').get()
+            title_url = article.css('div.article-detail').css('h1 a').attrib.get('href') \
+                            if article.css('div.article-detail h1') else \
+                            article.css('div.title a').attrib.get('href')
+            pub_time =article.css('div.article-detail').css('div.news-date::text').getall()[-1]
+
+            pre_title = article.css('div.article-detail').css('p::text').get()
+            preview_img_link = article.css('div.img img')[0].attrib.get('data-src')
+            result = self.session.query(EnergyYear) \
+                .filter(or_(EnergyYear.url == title_url, EnergyYear.title == title)) \
+                .first()
+            # print(title_url)
+            if not result and title_url :
+                yield scrapy.Request(url=title_url,
+                                     callback=self.parse,
+                                     cb_kwargs={'title': title,
+                                                'pre_title': pre_title,
+                                                'pub_time': pub_time,
+                                                'preview_img_link': preview_img_link
+                                                }
+                                     )
+
+        # more_articles = response.css('a.rz-sponsors-all-button')
+        # driver = response.request.meta['driver']
+        # driver.maximize_window()
+        # ele = driver.find_element_by_id('ajax-load-more') if driver.find_element_by_id('ajax-load-more') else None
+        # while ele:
+        #     ele.click()
+        #     res = HtmlResponse(url=driver.current_url, body=driver.page_source)
+        #     # print('get the response from clickable action')
+        #     yield SeleniumRequest(url=res.url,
+        #                           callback=self.parse_more,
+        #                           wait_time=10,
+        #                           wait_until=EC.element_to_be_clickable((By.ID, 'ajax-load-more'))
+        #                           )
+
+    def parse(self, response, title, pre_title,preview_img_link,pub_time):
+        # from scrapy.shell import inspect_response
+        # inspect_response(response,self)
+        item = EnergyYearItem()
+        item['url'] = response.url
+        item['title'] = title
+        item['pub_time'] = pub_time
+        item['preview_img_link'] = preview_img_link  # main img link
+        item['pre_title'] = pre_title
+        item['author'] = None
+        item['categories'] = None
+        item['content'] = response.css('div.page-interviews').get()
         item['crawl_time'] = datetime.now().strftime('%m/%d/%Y %H:%M')
 
         yield item
