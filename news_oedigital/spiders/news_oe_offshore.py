@@ -6,10 +6,11 @@ from datetime import datetime
 from news_oedigital.items import \
     NewsOedigitalItem, WorldOilItem, CnpcNewsItem, HartEnergyItem, OilFieldTechItem, OilAndGasItem, InEnStorageItem, \
     JptLatestItem, EnergyVoiceItem, UpStreamItem, OilPriceItem, GulfOilGasItem, EnergyPediaItem, InenTechItem, \
-    InenNewEnergyItem, DrillContractorItem, RogTechItem, NaturalGasItem, RigZoneItem, OffshoreTechItem,EnergyYearItem
+    InenNewEnergyItem, DrillContractorItem, RogTechItem, NaturalGasItem, RigZoneItem, OffshoreTechItem,EnergyYearItem, \
+    EnergyChinaItem,ChinaFiveItem
 from news_oedigital.model import OeNews, db_connect, create_table, WorldOil, CnpcNews, HartEnergy, OilFieldTech, \
     OilAndGas, InEnStorage, JptLatest, EnergyVoice, UpStream, OilPrice, GulfOilGas, EnergyPedia, InenTech, \
-    InenNewEnergy, DrillContractor, RogTech, NaturalGas, RigZone, OffshoreTech,EnergyYear
+    InenNewEnergy, DrillContractor, RogTech, NaturalGas, RigZone, OffshoreTech,EnergyYear,EnergyChina,ChinaFive
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import and_, or_
 from scrapy_selenium import SeleniumRequest
@@ -1788,3 +1789,166 @@ class EnergyYearSpider(scrapy.Spider):
         item['crawl_time'] = datetime.now().strftime('%m/%d/%Y %H:%M')
 
         yield item
+
+
+
+class EnergyChinaSpider(scrapy.Spider):
+    name = 'energy_china'
+    # allowed_domains = 'oilfieldtechnology.com'
+    start_urls = ['http://cn.energychinaforum.com/news']
+    custom_settings = {
+        'ITEM_PIPELINES': {'news_oedigital.pipelines.EnergyChinaPipeline': 322},
+        # 'COOKIES_DEBUG ':True,
+        # 'COOKIES_ENABLED' :True,
+        # 'CookiesMiddleware':{'news_oedigital.middlewares.PersistentCookiesMiddleware':751}
+    }
+
+    def __init__(self):
+        """
+        Initializes database connection and sessionmaker.
+        Creates deals table.
+        """
+        self.engine = db_connect()
+        Session = sessionmaker(bind=self.engine)
+        self.session = Session()
+        create_table(self.engine)
+
+    def start_requests(self):
+
+        for url in self.start_urls:
+            yield SeleniumRequest(url=url,
+                                  callback=self.parse_page_links,
+                                  # wait_until=EC.element_to_be_clickable((By.ID, 'ajax-load-more'))
+                                  # wait_until=EC.element_to_be_clickable((By.ID, 'ajax-load-more'))
+                                  )
+
+
+    def parse_page_links(self,response):
+        # from scrapy.shell import inspect_response
+        # inspect_response(response, self)
+
+        articles = response.css('div.column.newslist').css('dl.dl-horizontal')
+        for article in articles:
+
+            title = article.css('h4 a').attrib.get('title')
+            title_url = article.css('h4 a').attrib.get('href')
+            pub_time= article.css('b::text').get()
+            pre_title = article.css('p.title a::text ').get()
+            preview_img_link = article.css('img').attrib.get('src')
+            categories = article.css('div.newsTags a::text').getall()
+
+
+            result = self.session.query(EnergyChina) \
+                .filter(or_(EnergyChina.url == title_url, EnergyChina.title == title)) \
+                .first()
+            # print(title_url)
+            if not result and title_url :
+                yield response.follow(url=title_url,
+                                     callback=self.parse,
+                                     cb_kwargs={'title': title,
+                                                'pre_title': pre_title,
+                                                'pub_time': pub_time,
+                                                'preview_img_link': preview_img_link,
+                                                'categories':categories
+                                                }
+                                     )
+
+        # driver = response.request.meta.get('driver')
+        # element = driver.find_element_by_link_text('下页')
+        # while element:
+        #     element.click()
+        #     res = HtmlResponse(url=driver.current_url, body=driver.page_source)
+        #     yield SeleniumRequest(url=res.url,
+        #                               callback=self.parse_page_links,
+        #                               wait_time=10,
+        #                               # wait_until=EC.element_to_be_clickable((By.ID, 'ajax-load-more'))
+        #                               )
+
+    def parse(self, response, title, pre_title,preview_img_link,pub_time,categories):
+        # from scrapy.shell import inspect_response
+        # inspect_response(response,self)
+        item = EnergyChinaItem()
+        item['url'] = response.url
+        item['title'] = title
+        item['pub_time'] = pub_time
+        item['preview_img_link'] = preview_img_link  # main img link
+        item['pre_title'] = pre_title
+        item['author'] = None
+        item['categories'] = str(categories)
+        item['content'] = response.css('div.mainBody').get()
+        item['crawl_time'] = datetime.now().strftime('%m/%d/%Y %H:%M')
+        #
+        yield item
+        # pass
+
+class ChinaFiveSpider(scrapy.Spider):
+    name = 'china_five'
+    # allowed_domains = 'oilfieldtechnology.com'
+    start_urls = ['https://www.china5e.com/oil-gas/general/']
+    custom_settings = {
+        'ITEM_PIPELINES': {'news_oedigital.pipelines.ChinaFivePipeline': 323},
+        # 'COOKIES_DEBUG ':True,
+        # 'COOKIES_ENABLED' :True,
+        # 'CookiesMiddleware':{'news_oedigital.middlewares.PersistentCookiesMiddleware':751}
+    }
+
+    def __init__(self):
+        """
+        Initializes database connection and sessionmaker.
+        Creates deals table.
+        """
+        self.engine = db_connect()
+        Session = sessionmaker(bind=self.engine)
+        self.session = Session()
+        create_table(self.engine)
+
+    def start_requests(self):
+
+        for url in self.start_urls:
+            yield scrapy.Request(url=url,
+                                  callback=self.parse_page_links,
+                                  # wait_until=EC.element_to_be_clickable((By.ID, 'ajax-load-more'))
+                                  # wait_until=EC.element_to_be_clickable((By.ID, 'ajax-load-more'))
+                                  )
+
+
+    def parse_page_links(self,response):
+        results = []
+        articles = response.css('div#newsBox div.fl').css('li.singleline')
+        for article in articles:
+            pub_time = article.css('span::text')
+            title_url = article.css('a').attrib.get('href')
+            title = article.css('a::text').get()
+            result = self.session.query(EnergyChina) \
+                .filter(or_(EnergyChina.url == title_url, EnergyChina.title == title)) \
+                .first()
+            # print(title_url)
+            if not result and title_url :
+                yield response.follow(url=title_url,
+                                     callback=self.parse,
+                                     cb_kwargs={'title': title,
+                                                'pub_time': pub_time
+                                                }
+                                     )
+        # if len([result for result in results if result is None]) == len(results):
+        next_page = response.css('a.downpage::attr(href)').extract_first()
+        if next_page:
+            yield scrapy.Request(url=next_page,
+                                 callback=self.parse_page_links())
+
+
+    def parse(self, response, title,pub_time):
+        # pass
+        item = ChinaFiveItem()
+        item['url'] = response.url
+        item['title'] = title
+        item['pub_time'] = pub_time
+        item['preview_img_link'] = None  # main img link
+        item['pre_title'] = None
+        item['author'] = response.css('div.showtitinfo::text').get()
+        item['categories'] = str(categories)
+        item['content'] = response.css('div.mainBody').get()
+        item['crawl_time'] = datetime.now().strftime('%m/%d/%Y %H:%M')
+        #
+        yield item
+

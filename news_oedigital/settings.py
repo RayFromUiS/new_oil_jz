@@ -20,7 +20,7 @@ NEWSPIDER_MODULE = 'news_oedigital.spiders'
 RANDOMIZE_DOWNLOAD_DELAY = True
 SELENIUM_DRIVER_NAME = 'chrome'
 SELENIUM_DRIVER_EXECUTABLE_PATH = which('chromedriver')
-SELENIUM_DRIVER_ARGUMENTS = ['-headless']  # '--headless' if using chrome instead of firefox
+SELENIUM_DRIVER_ARGUMENTS = ['--headless']  # '--headless' if using chrome instead of firefox
 RETRY_TIMES = 10
 # Retry on most error codes since proxies fail for different reasons
 RETRY_HTTP_CODES = [500, 503, 504, 400, 403, 404, 408]
@@ -131,6 +131,8 @@ ITEM_PIPELINES = {
     'news_oedigital.pipelines.RigZonePipeline': 319,
     'news_oedigital.pipelines.OffshoreTechPipeline': 320,
     'news_oedigital.pipelines.EnergyYearPipeline': 321,
+    'news_oedigital.pipelines.EnergyChinaPipeline': 322,
+    'news_oedigital.pipelines.ChinaFivePipeline': 322,
 
 }
 

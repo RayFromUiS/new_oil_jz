@@ -104,3 +104,9 @@ class OffshoreTechItem(NewsOedigitalItem):
 
 class EnergyYearItem(NewsOedigitalItem):
     pass
+
+class EnergyChinaItem(NewsOedigitalItem):
+    pass
+
+class ChinaFiveItem(NewsOedigitalItem):
+    pass
