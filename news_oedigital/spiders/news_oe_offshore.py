@@ -1913,10 +1913,12 @@ class ChinaFiveSpider(scrapy.Spider):
 
 
     def parse_page_links(self,response):
+        # from scrapy.shell import inspect_response
+        # inspect_response(response,self)
         results = []
         articles = response.css('div#newsBox div.fl').css('li.singleline')
         for article in articles:
-            pub_time = article.css('span::text')
+            pub_time = article.css('span::text').get()
             title_url = article.css('a').attrib.get('href')
             title = article.css('a::text').get()
             result = self.session.query(EnergyChina) \
@@ -1932,9 +1934,11 @@ class ChinaFiveSpider(scrapy.Spider):
                                      )
         # if len([result for result in results if result is None]) == len(results):
         next_page = response.css('a.downpage::attr(href)').extract_first()
+        # print(next_page)
+
         if next_page:
             yield scrapy.Request(url=next_page,
-                                 callback=self.parse_page_links())
+                                 callback=self.parse_page_links)
 
 
     def parse(self, response, title,pub_time):
@@ -1945,9 +1949,9 @@ class ChinaFiveSpider(scrapy.Spider):
         item['pub_time'] = pub_time
         item['preview_img_link'] = None  # main img link
         item['pre_title'] = None
-        item['author'] = response.css('div.showtitinfo::text').get()
-        item['categories'] = str(categories)
-        item['content'] = response.css('div.mainBody').get()
+        item['author'] = response.css('div.showtitle').css('div.showtitinfo::text').getall()[-1].strip().split('\n')[-1].strip()
+        item['categories'] = None
+        item['content'] = response.css('div#showcontent').get()
         item['crawl_time'] = datetime.now().strftime('%m/%d/%Y %H:%M')
         #
         yield item
