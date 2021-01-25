@@ -39,9 +39,9 @@ DOWNLOADER_MIDDLEWARES = {
     'scrapy_selenium.SeleniumMiddleware': 750,
     # 'scrapy.downloadermiddlewares.cookies.CookiesMiddleware': None,
     # 'scrapy.downloadermiddlewares.cookies.PersistentCookiesMiddleware': 751,
-    # 'scrapy_splash.SplashCookiesMiddleware': 650,
-    # 'scrapy_splash.SplashMiddleware': 652,
-    # 'scrapy.downloadermiddlewares.httpcompression.HttpCompressionMiddleware': 810,
+    'scrapy_splash.SplashCookiesMiddleware': 650,
+    'scrapy_splash.SplashMiddleware': 652,
+    'scrapy.downloadermiddlewares.httpcompression.HttpCompressionMiddleware': 810,
 }
 
 SQL_CONNECT_STRING = 'mysql+pymysql://root:jinzheng1706@139.198.191.224:3308/news_oil'

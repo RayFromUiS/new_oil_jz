@@ -267,17 +267,17 @@ class CnpcNewsSpider(scrapy.Spider):
                 yield scrapy.Request(url=title_url, callback=self.parse)
 
         # if len([result for result in results if result is None]) == len(results):  ## if all the element is
-        driver = response.request.meta['driver']
-        while driver.find_element_by_id(next_id) is not None:
-            driver.find_element_by_id(next_id).click()
-
-            # print('current url is once clicked', driver.current_url)
-            yield SeleniumRequest \
-                (url=driver.current_url,
-                 wait_time=10,
-                 callback=self.parse_page_links,
-                 wait_until=EC.element_to_be_clickable((By.ID, id))
-                 )
+        # driver = response.request.meta['driver']
+        # while driver.find_element_by_id(next_id) is not None:
+        #     driver.find_element_by_id(next_id).click()
+        #
+        #     # print('current url is once clicked', driver.current_url)
+        #     yield SeleniumRequest \
+        #         (url=driver.current_url,
+        #          wait_time=10,
+        #          callback=self.parse_page_links,
+        #          wait_until=EC.element_to_be_clickable((By.ID, id))
+        #          )
         # time.sleep(10)
 
     def parse(self, response):
@@ -1957,5 +1957,92 @@ class ChinaFiveSpider(scrapy.Spider):
         #
         yield item
 
+
+
+class OffshoreEnergySpider(scrapy.Spider):
+    name = 'offshore_energy'
+    # allowed_domains = 'oilfieldtechnology.com'
+    start_urls = ['https://www.offshore-energy.biz/news/']
+    custom_settings = {
+        'ITEM_PIPELINES': {'news_oedigital.pipelines.OffshoreEnergyPipeline': 324}
+    }
+
+    def __init__(self):
+        """
+        Initializes database connection and sessionmaker.
+        Creates deals table.
+        """
+        self.engine = db_connect()
+        Session = sessionmaker(bind=self.engine)
+        self.session = Session()
+        create_table(self.engine)
+
+    def start_requests(self):
+
+        for url in self.start_urls:
+            yield scrapy.Request(url=url,
+                                 callback=self.parse_page_links)
+
+    def parse_page_links(self, response):
+        articles = response.css('div.card-rich ')
+
+        for article in articles:
+            preview_img_link = article.css('a::attr(style)').extract_first().split('(')[-1].split(')')[0]
+            title_url = article.css('div.card-rich__content a').attrib.get('href')
+            title = article.css('div.card-rich__content a::text').get().strip()
+            categories_sel  = article.css('div.card-rich__content li.card-category-list__item::text').get()
+            if categories_sel:
+                categories = str(categories_sel.split('&')) \
+                        if '&' in categories_sel \
+                        else categories_sel
+            result = self.session.query(OffshoreEnergy) \
+                .filter(or_(OffshoreEnergy.url == title_url, OffshoreEnergy.title == title)) \
+                .first()
+            # result = self.db.getCollection("InEnStorage").findOne({"url" :title_url})
+            # print(title_url)
+            if not result:
+                # yield SplashRequest(title_url, self.parse_page_links,
+                #                     cb_kwargs={'preview_img_link': preview_img_link,
+                #                                'title': title,
+                #                                'categories': categories
+                #                                },
+                #                     # endpoint='render.json',
+                #                     args = {'timeout':600,'images':0,'render_all': 1,'wait':300}
+                #                     )
+                yield scrapy.Request(url=title_url,
+                                     callback=self.parse,
+                                     cb_kwargs={'preview_img_link': preview_img_link,
+                                                'title': title,
+                                                'categories': categories
+                                                }
+                                     )
+        page_number = int(response.css('a.last').attrib.get('href').split('page')[-1].split('/')[1])
+        print(page_number)
+
+        # time.sleep(3600)
+        for page in range(2,page_number+1):
+            yield scrapy.Request(url='https://www.offshore-energy.biz/news/page/'+str(page),
+                                 callback=self.parse_page_links)
+
+    def parse(self, response, preview_img_link, title, categories):
+        # pass
+        # from scrapy.shell import inspect_response
+        # inspect_response(response,self)
+
+        item = OffshoreEnergyItem()
+        item['url'] = response.url
+        item['title'] = title
+        item['pub_time'] =  response.css('article#main-content'). \
+                      css('div.article-meta__info::text').get().strip().split('by')[0].strip()
+        item['preview_img_link'] = preview_img_link
+        item['pre_title'] = response.css('article#main-content').css('div.wp-content p strong::text').extract_first()
+        item['author'] = response.css('article#main-content').\
+                            css('div.article-meta__info span.article-meta__author::text').get().strip()
+
+        item['categories'] = categories
+        item['content'] = response.css('article#main-content').css('div.wp-content').get()
+        item['crawl_time'] = datetime.now().strftime('%m/%d/%Y %H:%M')
+        #
+        yield item
 
 
