@@ -132,7 +132,8 @@ ITEM_PIPELINES = {
     'news_oedigital.pipelines.OffshoreTechPipeline': 320,
     'news_oedigital.pipelines.EnergyYearPipeline': 321,
     'news_oedigital.pipelines.EnergyChinaPipeline': 322,
-    'news_oedigital.pipelines.ChinaFivePipeline': 322,
+    'news_oedigital.pipelines.ChinaFivePipeline': 323,
+    'news_oedigital.pipelines.OffshoreEnergyPipeline': 324,
 
 }
 

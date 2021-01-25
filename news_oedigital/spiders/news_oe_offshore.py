@@ -7,10 +7,11 @@ from news_oedigital.items import \
     NewsOedigitalItem, WorldOilItem, CnpcNewsItem, HartEnergyItem, OilFieldTechItem, OilAndGasItem, InEnStorageItem, \
     JptLatestItem, EnergyVoiceItem, UpStreamItem, OilPriceItem, GulfOilGasItem, EnergyPediaItem, InenTechItem, \
     InenNewEnergyItem, DrillContractorItem, RogTechItem, NaturalGasItem, RigZoneItem, OffshoreTechItem,EnergyYearItem, \
-    EnergyChinaItem,ChinaFiveItem
+    EnergyChinaItem,ChinaFiveItem,OffshoreEnergyItem
 from news_oedigital.model import OeNews, db_connect, create_table, WorldOil, CnpcNews, HartEnergy, OilFieldTech, \
     OilAndGas, InEnStorage, JptLatest, EnergyVoice, UpStream, OilPrice, GulfOilGas, EnergyPedia, InenTech, \
-    InenNewEnergy, DrillContractor, RogTech, NaturalGas, RigZone, OffshoreTech,EnergyYear,EnergyChina,ChinaFive
+    InenNewEnergy, DrillContractor, RogTech, NaturalGas, RigZone, OffshoreTech,EnergyYear,EnergyChina,ChinaFive, \
+    OffshoreEnergy
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import and_, or_
 from scrapy_selenium import SeleniumRequest
@@ -1921,8 +1922,8 @@ class ChinaFiveSpider(scrapy.Spider):
             pub_time = article.css('span::text').get()
             title_url = article.css('a').attrib.get('href')
             title = article.css('a::text').get()
-            result = self.session.query(EnergyChina) \
-                .filter(or_(EnergyChina.url == title_url, EnergyChina.title == title)) \
+            result = self.session.query(ChinaFive) \
+                .filter(or_(ChinaFive.url == title_url, ChinaFive.title == title)) \
                 .first()
             # print(title_url)
             if not result and title_url :
@@ -1956,3 +1957,76 @@ class ChinaFiveSpider(scrapy.Spider):
         #
         yield item
 
+
+
+class NaturalGasSpider(scrapy.Spider):
+    # name = 'natural_gas'
+    # # allowed_domains = 'oilfieldtechnology.com'
+    # start_urls = ['https://www.naturalgasintel.com/topics/e&p']
+    # custom_settings = {
+    #     'ITEM_PIPELINES': {'news_oedigital.pipelines.NaturalGasPipeline': 318}
+    # }
+
+    def __init__(self):
+        """
+        Initializes database connection and sessionmaker.
+        Creates deals table.
+        """
+        # self.engine = db_connect()
+        # Session = sessionmaker(bind=self.engine)
+        # self.session = Session()
+        # create_table(self.engine)
+        pass
+
+    def start_requests(self):
+        #
+        # for url in self.start_urls:
+        #     yield scrapy.Request(url=url,
+        #                          callback=self.parse_page_links)
+        pass
+    def parse_page_links(self, response):
+        pass
+        # articles = response.css('div.py-6')
+        # for article in articles:
+        #     preview_img_link = article.css('a img').attrib.get('src')
+        #     categories = article.css('p.c-section-category a::text ').get()
+        #     title_url = article.css('h3.h4 a').attrib.get('href')
+        #     title = article.css('h3.h4 a::text').get().strip()
+        #     pub_time = article.css('div.mt-2::text').get()
+        #     pre_title = article.css('div.c-content-body p::text').get()
+        #
+        #     result = self.session.query() \
+        #         .filter(or_(NaturalGas.url == title_url, NaturalGas.title == title)) \
+        #         .first()
+        #     # result = self.db.getCollection("InEnStorage").findOne({"url" :title_url})
+        #     # print(title_url)
+        #     if not result:
+        #         yield scrapy.Request(url=title_url,
+        #                              callback=self.parse,
+        #                              cb_kwargs={'preview_img_link': preview_img_link,
+        #                                         'title': title,
+        #                                         'pub_time': pub_time,
+        #                                         'pre_title': pre_title,
+        #                                         'categories': categories
+        #                                         }
+        #                              )
+        # next_page = response.css('div.c-pagination').css('a.next').attrib.get('href')
+        # if next_page:
+        #     yield scrapy.Request(url=next_page,
+        #                          callback=self.parse_page_links)
+
+    def parse(self, response, preview_img_link, pre_title, title, pub_time, categories):
+        # pass
+        #
+        # item = NaturalGasItem()
+        # item['url'] = response.url
+        # item['title'] = title
+        # item['pub_time'] = pub_time
+        # item['preview_img_link'] = preview_img_link
+        # item['pre_title'] = pre_title
+        # item['author'] = response.css('span.c-story-author__name::text').get()
+        # item['categories'] = categories
+        # item['content'] = response.css('div.article-body').get()
+        # item['crawl_time'] = datetime.now().strftime('%m/%d/%Y %H:%M')
+        #
+        # yield item
