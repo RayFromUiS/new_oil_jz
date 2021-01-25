@@ -1817,7 +1817,7 @@ class EnergyChinaSpider(scrapy.Spider):
     def start_requests(self):
 
         for url in self.start_urls:
-            yield SeleniumRequest(url=url,
+            yield scrapy.Request(url=url,
                                   callback=self.parse_page_links,
                                   # wait_until=EC.element_to_be_clickable((By.ID, 'ajax-load-more'))
                                   # wait_until=EC.element_to_be_clickable((By.ID, 'ajax-load-more'))
