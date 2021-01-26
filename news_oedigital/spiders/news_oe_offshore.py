@@ -3,6 +3,7 @@ import re
 import time
 import scrapy
 from datetime import datetime
+from pytz import timezone
 from news_oedigital.items import \
     NewsOedigitalItem, WorldOilItem, CnpcNewsItem, HartEnergyItem, OilFieldTechItem, OilAndGasItem, InEnStorageItem, \
     JptLatestItem, EnergyVoiceItem, UpStreamItem, OilPriceItem, GulfOilGasItem, EnergyPediaItem, InenTechItem, \
@@ -2018,13 +2019,13 @@ class OffshoreEnergySpider(scrapy.Spider):
                                                 'categories': categories
                                                 }
                                      )
-        page_number = int(response.css('a.last').attrib.get('href').split('page')[-1].split('/')[1])
-        print(page_number)
-
-        # time.sleep(3600)
-        for page in range(2,page_number+1):
-            yield scrapy.Request(url='https://www.offshore-energy.biz/news/page/'+str(page),
-                                 callback=self.parse_page_links)
+        # page_number = int(response.css('a.last').attrib.get('href').split('page')[-1].split('/')[1])
+        # print(page_number)
+        #
+        # # time.sleep(3600)
+        # for page in range(2,page_number+1):
+        #     yield scrapy.Request(url='https://www.offshore-energy.biz/news/page/'+str(page),
+        #                          callback=self.parse_page_links)
 
     def parse(self, response, preview_img_link, title, categories):
         # pass
@@ -2072,64 +2073,50 @@ class EinNewsSpider(scrapy.Spider):
                                  callback=self.parse_page_links)
 
     def parse_page_links(self, response):
-        articles = response.css('div.card-rich ')
+        articles = response.css('div.sidebar-pr-block')[0].css('ul li')
 
+        base_url = 'https://oilandgas.einnews.com/news/'
+        # articles = response.css('div.card-rich ')
         for article in articles:
-            preview_img_link = article.css('a::attr(style)').extract_first().split('(')[-1].split(')')[0]
-            title_url = article.css('div.card-rich__content a').attrib.get('href')
-            title = article.css('div.card-rich__content a::text').get().strip()
-            categories_sel  = article.css('div.card-rich__content li.card-category-list__item::text').get()
-            if categories_sel:
-                categories = str(categories_sel.split('&')) \
-                        if '&' in categories_sel \
-                        else categories_sel
-            result = self.session.query(OffshoreEnergy) \
-                .filter(or_(OffshoreEnergy.url == title_url, OffshoreEnergy.title == title)) \
+        #     preview_img_link = article.css('a::attr(style)').extract_first().split('(')[-1].split(')')[0]
+            title_url = article.css('h3 a').attrib.get('href')
+            title = article.css('h3 a::text').get()
+            preview_img_link = article.css('a img').attrib.get('src') if article.css('a img') else None
+            pub_time = article.css('div.pretitle span.date::text').get()
+            pre_title = article.css('p.excerpt::text').get()
+            result = self.session.query(EinNews) \
+                .filter(or_(EinNews.url == title_url, EinNews.title == title)) \
                 .first()
-            # result = self.db.getCollection("InEnStorage").findOne({"url" :title_url})
-            # print(title_url)
+
             if not result:
-                # yield SplashRequest(title_url, self.parse_page_links,
-                #                     cb_kwargs={'preview_img_link': preview_img_link,
-                #                                'title': title,
-                #                                'categories': categories
-                #                                },
-                #                     # endpoint='render.json',
-                #                     args = {'timeout':600,'images':0,'render_all': 1,'wait':300}
-                #                     )
                 yield scrapy.Request(url=title_url,
                                      callback=self.parse,
                                      cb_kwargs={'preview_img_link': preview_img_link,
                                                 'title': title,
-                                                'categories': categories
+                                                'pre_title':pre_title,
+                                                'pub_time':pub_time
                                                 }
                                      )
-        page_number = int(response.css('a.last').attrib.get('href').split('page')[-1].split('/')[1])
-        # print(page_number)
+        next_page = response.css('ul.pagination').css('li')[-1].css('a').attrib.get('href')
+        if next_page:
+            yield response.follow(url=next_page,
+                                  callback= self.parse_page_links)
 
-        # time.sleep(3600)
-        for page in range(2,page_number+1):
-            yield scrapy.Request(url='https://www.offshore-energy.biz/news/page/'+str(page),
-                                 callback=self.parse_page_links)
+    def parse(self, response, preview_img_link, title, pub_time,pre_title):
 
-    def parse(self, response, preview_img_link, title, categories):
         # pass
-        # from scrapy.shell import inspect_response
-        # inspect_response(response,self)
-
-        item = OffshoreEnergyItem()
+        item = EinNewsItem()
         item['url'] = response.url
         item['title'] = title
-        item['pub_time'] =  response.css('article#main-content'). \
-                      css('div.article-meta__info::text').get().strip().split('by')[0].strip()
+        item['pub_time'] =  pub_time
         item['preview_img_link'] = preview_img_link
-        item['pre_title'] = response.css('article#main-content').css('div.wp-content p strong::text').extract_first()
-        item['author'] = response.css('article#main-content').\
-                            css('div.article-meta__info span.article-meta__author::text').get().strip()
-
-        item['categories'] = categories
-        item['content'] = response.css('article#main-content').css('div.wp-content').get()
-        item['crawl_time'] = datetime.now().strftime('%m/%d/%Y %H:%M')
+        item['pre_title'] = pre_title
+        # item['author'] = response.css('article#main-content').\
+        #                     css('div.article-meta__info span.article-meta__author::text').get().strip()
         #
-        yield item
+        # item['categories'] = categories
+        # item['content'] = response.css('article#main-content').css('div.wp-content').get()
+        # item['crawl_time'] = datetime.now().strftime('%m/%d/%Y %H:%M')
+        # #
+        # yield item
 
