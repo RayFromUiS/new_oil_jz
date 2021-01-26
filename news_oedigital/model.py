@@ -351,7 +351,7 @@ class OffshoreEnergy(Base):
     url = Column(String(1024))
 
 
-class EinNewes(Base):
+class EinNews(Base):
     __tablename__ = 'ein_news'
     id = Column(Integer, primary_key=True)
     title = Column(String(1024))
