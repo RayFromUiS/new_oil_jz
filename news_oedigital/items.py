@@ -114,3 +114,7 @@ class ChinaFiveItem(NewsOedigitalItem):
 
 class OffshoreEnergyItem(NewsOedigitalItem):
     pass
+
+
+class EinNewsItem(NewsOedigitalItem):
+    pass

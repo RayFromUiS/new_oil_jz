@@ -7,11 +7,11 @@ from news_oedigital.items import \
     NewsOedigitalItem, WorldOilItem, CnpcNewsItem, HartEnergyItem, OilFieldTechItem, OilAndGasItem, InEnStorageItem, \
     JptLatestItem, EnergyVoiceItem, UpStreamItem, OilPriceItem, GulfOilGasItem, EnergyPediaItem, InenTechItem, \
     InenNewEnergyItem, DrillContractorItem, RogTechItem, NaturalGasItem, RigZoneItem, OffshoreTechItem,EnergyYearItem, \
-    EnergyChinaItem,ChinaFiveItem,OffshoreEnergyItem
+    EnergyChinaItem,ChinaFiveItem,OffshoreEnergyItem,EinNewsItem
 from news_oedigital.model import OeNews, db_connect, create_table, WorldOil, CnpcNews, HartEnergy, OilFieldTech, \
     OilAndGas, InEnStorage, JptLatest, EnergyVoice, UpStream, OilPrice, GulfOilGas, EnergyPedia, InenTech, \
     InenNewEnergy, DrillContractor, RogTech, NaturalGas, RigZone, OffshoreTech,EnergyYear,EnergyChina,ChinaFive, \
-    OffshoreEnergy
+    OffshoreEnergy,EinNews
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import and_, or_
 from scrapy_selenium import SeleniumRequest
@@ -1995,6 +1995,8 @@ class OffshoreEnergySpider(scrapy.Spider):
                 categories = str(categories_sel.split('&')) \
                         if '&' in categories_sel \
                         else categories_sel
+            else:
+                categories = None
             result = self.session.query(OffshoreEnergy) \
                 .filter(or_(OffshoreEnergy.url == title_url, OffshoreEnergy.title == title)) \
                 .first()
