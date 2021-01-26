@@ -8,7 +8,8 @@ from news_oedigital.spiders.news_oe_offshore import \
     NewsOeOffshoreSpider,WorldOilSpider,CnpcNewsSpider,HartEnergySpider,OilFieldTechSpider,\
     OilAndGasSpider,InEnStorageSpider,JptLatestSpider,EnergyVoiceSpider,UpStreamSpider,OilPriceSpider,\
     GulfOilGasSpider,InenTechSpider,InenNewEnergySpider,DrillContractorSpider,RogTechSpider,NaturalGasSpider, \
-    RigZoneSpider,OffshoreTechSpider,EnergyYearSpider,EnergyChinaSpider,ChinaFiveSpider,OffshoreEnergySpider
+    RigZoneSpider,OffshoreTechSpider,EnergyYearSpider,EnergyChinaSpider,ChinaFiveSpider,OffshoreEnergySpider, \
+    EnergyPediaSpider
 from scrapy.settings import Settings
 from news_oedigital import settings
 
@@ -35,6 +36,7 @@ def run_scraper():
     process.crawl(OilPriceSpider)
     process.crawl(GulfOilGasSpider)
     process.crawl(InenTechSpider)
+    process.crawl(EnergyPediaSpider)
     process.crawl(InenNewEnergySpider)
     process.crawl(DrillContractorSpider)
     process.crawl(RogTechSpider)

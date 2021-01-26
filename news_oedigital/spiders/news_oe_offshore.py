@@ -426,10 +426,10 @@ class OilFieldTechSpider(scrapy.Spider):
         cate_lis = response.css('ul.list-unstyled')[1].css('li')
         for cate_li in cate_lis:
             cate_url = cate_li.css('a').attrib['href']
-            cate_name = cate_li.css('a::text').get()  # main category name
+            category = cate_li.css('a::text').get()  # main category name
             yield response.follow(url=cate_url,
                                   callback=self.parse_page_links,
-                                  cb_kwargs={'category': cate_name}
+                                  cb_kwargs={'category': category}
                                   )
         # print(cate_lis)
         # from scrapy.shell import inspect_response
@@ -1094,7 +1094,7 @@ class EnergyPediaSpider(scrapy.Spider):
             )
 
     def parse_page_links(self, response):
-        response.css('table.listing tr')
+        # response.css('table.listing tr')
 
         articles = response.css('table.listing tr')
         for article in articles:
