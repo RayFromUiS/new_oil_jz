@@ -1938,13 +1938,13 @@ class ChinaFiveSpider(scrapy.Spider):
                                                 'pub_time': pub_time
                                                 }
                                      )
-        # if len([result for result in results if result is None]) == len(results):
-        next_page = response.css('a.downpage::attr(href)').extract_first()
-        # print(next_page)
+        if len([result for result in results if result is None]) == len(results):
+            next_page = response.css('a.downpage::attr(href)').extract_first()
+            # print(next_page)
 
-        if next_page:
-            yield scrapy.Request(url=next_page,
-                                 callback=self.parse_page_links)
+            if next_page:
+                yield scrapy.Request(url=next_page,
+                                     callback=self.parse_page_links)
 
 
     def parse(self, response, title,pub_time):
