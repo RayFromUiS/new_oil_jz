@@ -1294,14 +1294,14 @@ class InenNewEnergySpider(scrapy.Spider):
                                                 }
                                      )
 
-        # if len([result for result in results if result is None]) == len(results):  ## if all the element is not crawled
+        if len([result for result in results if result is None]) == len(results):  ## if all the element is not crawled
         # if len(response.css('li.previous a::attr(href)')) >= 1:
-        next_page = response.css('div.pages').css('a')[-1] if response.css('div.pages') else None
-        if next_page is not None and next_page.attrib['href'] is not None and re.search('下一页',
-                                                                                        next_page.css(
-                                                                                            'a::text').get()):
-            yield scrapy.Request(url=next_page.attrib.get('href'),
-                                 callback=self.parse_page_links)
+            next_page = response.css('div.pages').css('a')[-1] if response.css('div.pages') else None
+            if next_page is not None and next_page.attrib['href'] is not None and re.search('下一页',
+                                                                                            next_page.css(
+                                                                                                'a::text').get()):
+                yield scrapy.Request(url=next_page.attrib.get('href'),
+                                     callback=self.parse_page_links)
 
     def parse(self, response, preview_img_link):
         # from scrapy.shell import inspect_response
