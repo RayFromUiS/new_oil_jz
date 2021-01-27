@@ -1450,6 +1450,7 @@ class RogTechSpider(scrapy.Spider):
                                                 }
                                      )
 
+
     def parse(self, response, title, preview_img_link, pub_time):
 
         item = RogTechItem()
@@ -1492,6 +1493,7 @@ class NaturalGasSpider(scrapy.Spider):
 
     def parse_page_links(self, response):
         articles = response.css('div.py-6')
+        results = []
         for article in articles:
             preview_img_link = article.css('a img').attrib.get('src')
             categories = article.css('p.c-section-category a::text ').get()
@@ -1505,6 +1507,7 @@ class NaturalGasSpider(scrapy.Spider):
                 .first()
             # result = self.db.getCollection("InEnStorage").findOne({"url" :title_url})
             # print(title_url)
+            results.append(result)
             if not result:
                 yield scrapy.Request(url=title_url,
                                      callback=self.parse,
@@ -1515,10 +1518,11 @@ class NaturalGasSpider(scrapy.Spider):
                                                 'categories': categories
                                                 }
                                      )
-        next_page = response.css('div.c-pagination').css('a.next').attrib.get('href')
-        if next_page:
-            yield scrapy.Request(url=next_page,
-                                 callback=self.parse_page_links)
+        if len([result for result in results if result is None]) == len(results):
+            next_page = response.css('div.c-pagination').css('a.next').attrib.get('href')
+            if next_page:
+                yield scrapy.Request(url=next_page,
+                                     callback=self.parse_page_links)
 
     def parse(self, response, preview_img_link, pre_title, title, pub_time, categories):
         # pass
