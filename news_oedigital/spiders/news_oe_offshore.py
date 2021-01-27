@@ -970,12 +970,12 @@ class OilPriceSpider(scrapy.Spider):
                                          'preview_img_link': preview_img_link
                                      })
         # time.sleep(7200)  ## give it a long sleep
-        # if len([result for result in results if result is None]) == len(results):
+        if len([result for result in results if result is None]) == len(results):
         # page_number = int(response.css('div.pagination span.num_pages').get().replace('/')
-        next_page = response.css('div.pagination a.next').attrib.get('href')
-        #
-        if next_page:
-            yield scrapy.Request(url=next_page, callback=self.parse_page_links)
+            next_page = response.css('div.pagination a.next').attrib.get('href')
+            #
+            if next_page:
+                yield scrapy.Request(url=next_page, callback=self.parse_page_links)
 
     def parse(self, response, title, pub_time, author, pre_title, preview_img_link):
         item = OilPriceItem()
