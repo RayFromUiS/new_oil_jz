@@ -588,11 +588,11 @@ class ChinaFivePipeline:
                                    categories=item.get('categories'))
 
         try:
-            if item.get('content'):
-                spider.session.add(new_item)
-                spider.session.commit()
-            else:
-                raise DropItem(f"Missing content in {item}")
+            # if item.get('content'):
+            spider.session.add(new_item)
+            spider.session.commit()
+            # else:
+            #     raise DropItem(f"Missing content in {item}")
         except:
             spider.session.rollback()
             raise
