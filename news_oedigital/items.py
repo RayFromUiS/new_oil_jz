@@ -118,3 +118,10 @@ class OffshoreEnergyItem(NewsOedigitalItem):
 
 class EinNewsItem(NewsOedigitalItem):
     pass
+
+
+class JwnEnergyItem(NewsOedigitalItem):
+    pass
+
+class IranOilGasItem(NewsOedigitalItem):
+    pass

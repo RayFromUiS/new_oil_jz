@@ -8,11 +8,11 @@ from news_oedigital.items import \
     NewsOedigitalItem, WorldOilItem, CnpcNewsItem, HartEnergyItem, OilFieldTechItem, OilAndGasItem, InEnStorageItem, \
     JptLatestItem, EnergyVoiceItem, UpStreamItem, OilPriceItem, GulfOilGasItem, EnergyPediaItem, InenTechItem, \
     InenNewEnergyItem, DrillContractorItem, RogTechItem, NaturalGasItem, RigZoneItem, OffshoreTechItem,EnergyYearItem, \
-    EnergyChinaItem,ChinaFiveItem,OffshoreEnergyItem,EinNewsItem
+    EnergyChinaItem,ChinaFiveItem,OffshoreEnergyItem,EinNewsItem,JwnEnergyItem,IranOilGasItem
 from news_oedigital.model import OeNews, db_connect, create_table, WorldOil, CnpcNews, HartEnergy, OilFieldTech, \
     OilAndGas, InEnStorage, JptLatest, EnergyVoice, UpStream, OilPrice, GulfOilGas, EnergyPedia, InenTech, \
     InenNewEnergy, DrillContractor, RogTech, NaturalGas, RigZone, OffshoreTech,EnergyYear,EnergyChina,ChinaFive, \
-    OffshoreEnergy, EinNews
+    OffshoreEnergy, EinNews,JwnEnergy,IranOilGas
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import and_, or_
 from scrapy_selenium import SeleniumRequest
@@ -2108,19 +2108,163 @@ class EinNewsSpider(scrapy.Spider):
 
     def parse(self, response, preview_img_link, title, pub_time,pre_title):
 
-        # pass
-        item = EinNewsItem()
-        item['url'] = response.url
-        item['title'] = title
-        item['pub_time'] =  pub_time
-        item['preview_img_link'] = preview_img_link
-        item['pre_title'] = pre_title
+        pass
+        # item = EinNewsItem()
+        # item['url'] = response.url
+        # item['title'] = title
+        # item['pub_time'] =  pub_time
+        # item['preview_img_link'] = preview_img_link
+        # item['pre_title'] = pre_title
         # item['author'] = response.css('article#main-content').\
         #                     css('div.article-meta__info span.article-meta__author::text').get().strip()
         #
         # item['categories'] = categories
         # item['content'] = response.css('article#main-content').css('div.wp-content').get()
         # item['crawl_time'] = datetime.now().strftime('%m/%d/%Y %H:%M')
-        # #
+        # # #
         # yield item
 
+
+
+class JwnEnergySpider(scrapy.Spider):
+    name = 'jwn_energy'
+    # allowed_domains = 'oilfieldtechnology.com'
+    start_urls = ['https://www.jwnenergy.com']
+    custom_settings = {
+        'ITEM_PIPELINES': {'news_oedigital.pipelines.JwnEnergyPipeline': 326}
+    }
+
+    def __init__(self):
+        """
+        Initializes database connection and sessionmaker.
+        Creates deals table.
+        """
+        self.engine = db_connect()
+        Session = sessionmaker(bind=self.engine)
+        self.session = Session()
+        create_table(self.engine)
+
+    def start_requests(self):
+
+        for url in self.start_urls:
+            yield scrapy.Request(url=url,
+                                 callback=self.parse_page_links)
+
+    def parse_page_links(self, response):
+        # articles = []
+        abs_url = 'https://www.jwnenergy.com'
+        pict_articles = response.css('div.news-item')
+        normal_articles = response.css('div.news-item-content>a.news-item-title')
+
+        for article in pict_articles:
+            preview_img_link = article.css('a img').attrib.get('src')
+
+            title_url = article.css('a.news-item-title').attrib.get('href')
+            title = article.css('a.news-item-title::text').get()
+            result = self.session.query(JwnEnergy) \
+                .filter(or_(JwnEnergy.url == abs_url+title_url, JwnEnergy.title == title)) \
+                .first()
+            if not result:
+                yield response.follow(url=title_url,
+                                     callback=self.parse,
+                                     cb_kwargs={'preview_img_link': preview_img_link,
+                                                'title': title,
+                                                }
+                                     )
+        for article in normal_articles:
+            title = article.css('a::text').get()
+            title_url = article.css('a').attrib.get('href')
+            result = self.session.query(JwnEnergy) \
+                .filter(or_(JwnEnergy.url == abs_url + title_url, JwnEnergy.title == title)) \
+                .first()
+            if not result:
+                yield response.follow(url=title_url,
+                                      callback=self.parse,
+                                      cb_kwargs={
+                                                 'title': title,
+                                                 'preview_img_link':None
+                                                 }
+                                      )
+
+
+    def parse(self, response, title,preview_img_link):
+        # pass
+        # from scrapy.shell import inspect_response
+        # inspect_response(response,self)
+
+        item = JwnEnergyItem()
+        item['url'] = response.url
+        item['title'] = title
+        item['pub_time'] = response.css('header.article-header>aside>div.article-meta-date time::text').get()
+        item['preview_img_link'] = preview_img_link
+        item['pre_title'] = None
+        item['author'] = response.css('header.article-header>aside>div.article-meta-authors span::text').get()
+        item['categories'] = None
+        item['content'] = response.css('div[itemprop="articleBody"]').get()
+        item['crawl_time'] = datetime.now().strftime('%m/%d/%Y %H:%M')
+        #
+        yield item
+
+class IranOilGasSpider(scrapy.Spider):
+    name = 'iran_oil_gas'
+    # allowed_domains = 'oilfieldtechnology.com'
+    start_urls = []
+    for (year,month,page) in zip(range(2020,2022),range(1, 13),range(1,8)):
+        start_urls.append('http://www.iranoilgas.com/news/archive?year={}&month={}&p={}'.format(year,month,page))
+    custom_settings = {
+        'ITEM_PIPELINES': {'news_oedigital.pipelines.IranOilGasPipeline': 327}
+    }
+
+    def __init__(self):
+        """
+        Initializes database connection and sessionmaker.
+        Creates deals table.
+        """
+        self.engine = db_connect()
+        Session = sessionmaker(bind=self.engine)
+        self.session = Session()
+        create_table(self.engine)
+
+    def start_requests(self):
+
+        for url in self.start_urls:
+            yield scrapy.Request(url=url,
+                                 callback=self.parse_page_links)
+
+    def parse_page_links(self, response):
+        # articles = []
+        base_url = 'http://www.iranoilgas.com/news/'
+        articles= response.css('div#datalist div')
+        for article in articles:
+            preview_img_link = article.css('img').attrib.get('src')
+            title_url = article.css('a').attrib.get('href')
+            title = article.css('a::text').get()
+            pub_time = article.css('span::text').getall()[1]
+            pre_title = article.css('span::text').getall()[-1]
+            result = self.session.query(IranOilGas) \
+                .filter(or_(IranOilGas.url == base_url + title_url, IranOilGas.title == title)) \
+                .first()
+            if not result:
+                yield response.follow(url=title_url,
+                                     callback=self.parse,
+                                     cb_kwargs={'preview_img_link': preview_img_link,
+                                                'title': title,
+                                                'pub_time':pub_time,
+                                                'pre_title':pre_title
+                                                }
+                                     )
+
+    def parse(self, response, title,preview_img_link,pre_title,pub_time):
+
+        item = IranOilGasItem()
+        item['url'] = response.url
+        item['title'] = title
+        item['pub_time'] = pub_time
+        item['preview_img_link'] = preview_img_link
+        item['pre_title'] = pre_title
+        item['author'] = response.css('header.article-header>aside>div.article-meta-authors span::text').get()
+        item['categories'] = None
+        item['content'] = response.css('div[itemprop="articleBody"]').get()
+        item['crawl_time'] = datetime.now().strftime('%m/%d/%Y %H:%M')
+        #
+        yield item

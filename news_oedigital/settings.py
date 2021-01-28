@@ -135,6 +135,8 @@ ITEM_PIPELINES = {
     'news_oedigital.pipelines.ChinaFivePipeline': 323,
     'news_oedigital.pipelines.OffshoreEnergyPipeline': 324,
     'news_oedigital.pipelines.EinNewsPipeline': 325,
+    'news_oedigital.pipelines.JwnEnergyPipeline': 326,
+    'news_oedigital.pipelines.IranOilGasPipeline': 327,
 
 }
 
