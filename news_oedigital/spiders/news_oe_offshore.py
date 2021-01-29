@@ -2079,50 +2079,61 @@ class EinNewsSpider(scrapy.Spider):
     def parse_page_links(self, response):
         articles = response.css('div.sidebar-pr-block')[0].css('ul li')
 
-        base_url = 'https://oilandgas.einnews.com/news/'
+        base_url = 'https://oilandgas.einnews.com'
         # articles = response.css('div.card-rich ')
         for article in articles:
         #     preview_img_link = article.css('a::attr(style)').extract_first().split('(')[-1].split(')')[0]
             title_url = article.css('h3 a').attrib.get('href')
             title = article.css('h3 a::text').get()
             preview_img_link = article.css('a img').attrib.get('src') if article.css('a img') else None
-            pub_time = article.css('div.pretitle span.date::text').get()
+            # pub_time = article.css('div.pretitle span.date::text').get()
             pre_title = article.css('p.excerpt::text').get()
             result = self.session.query(EinNews) \
                 .filter(or_(EinNews.url == title_url, EinNews.title == title)) \
                 .first()
 
             if not result:
-                yield scrapy.Request(url=title_url,
-                                     callback=self.parse,
-                                     cb_kwargs={'preview_img_link': preview_img_link,
-                                                'title': title,
-                                                'pre_title':pre_title,
-                                                'pub_time':pub_time
-                                                }
-                                     )
+                # yield response.follow(url=title_url,
+                #                      callback=self.parse,
+                #                      cb_kwargs={'preview_img_link': preview_img_link,
+                #                                 'title': title,
+                #                                 'pre_title':pre_title,
+                #                                 # 'pub_time':pub_time
+                #                                 }
+                #                      )
+                yield SplashRequest(base_url+title_url,
+                                    self.parse,
+                                    endpoint='render.json',
+                                    args={'timeout': 600, 'images': 0, 'render_all': 1, 'wait': 300},
+                                    cb_kwargs={'preview_img_link': preview_img_link,
+                                               'title': title,
+                                               # 'pub_time': pub_time,
+                                               'pre_title': pre_title
+                                               }
+                                    )
         next_page = response.css('ul.pagination').css('li')[-1].css('a').attrib.get('href')
         if next_page:
             yield response.follow(url=next_page,
                                   callback= self.parse_page_links)
 
-    def parse(self, response, preview_img_link, title, pub_time,pre_title):
+    def parse(self, response, preview_img_link, title, pre_title):
+        from scrapy.shell import inspect_response
+        inspect_response(response,self)
+        # pass
+        item = EinNewsItem()
+        item['url'] = response.url
+        item['title'] = title
+        item['pub_time'] = response.css('main#article-stream-0').css('time::text').extract_first()
+        item['preview_img_link'] = preview_img_link
+        item['pre_title'] = pre_title
+        item['author'] = response.css('main#article-stream-0').css('a.contrib-link--name::text').extract_first()
+        item['categories'] = None
+        if 'www.forbes.com' in response.url.split('/'):
+            item['content'] = response.css('div.article-body-container>div.article-body.fs-article').extract_first()
 
-        pass
-        # item = EinNewsItem()
-        # item['url'] = response.url
-        # item['title'] = title
-        # item['pub_time'] =  pub_time
-        # item['preview_img_link'] = preview_img_link
-        # item['pre_title'] = pre_title
-        # item['author'] = response.css('article#main-content').\
-        #                     css('div.article-meta__info span.article-meta__author::text').get().strip()
-        #
-        # item['categories'] = categories
-        # item['content'] = response.css('article#main-content').css('div.wp-content').get()
-        # item['crawl_time'] = datetime.now().strftime('%m/%d/%Y %H:%M')
-        # # #
-        # yield item
+        item['crawl_time'] = datetime.now().strftime('%m/%d/%Y %H:%M')
+        # #
+        yield item
 
 
 
@@ -2231,6 +2242,8 @@ class IranOilGasSpider(scrapy.Spider):
             yield scrapy.Request(url=url,
                                  callback=self.parse_page_links)
 
+
+
     def parse_page_links(self, response):
         # articles = []
         base_url = 'http://www.iranoilgas.com/news/'
@@ -2253,6 +2266,16 @@ class IranOilGasSpider(scrapy.Spider):
                                                 'pre_title':pre_title
                                                 }
                                      )
+                # yield SplashRequest(title_url,
+                #                     self.parse,
+                #                     endpoint='render.json',
+                #                     args = {'timeout':600,'images':0,'render_all': 1,'wait':300},
+                #                     cb_kwargs = {'preview_img_link': preview_img_link,
+                #                                  'title': title,
+                #                                  'pub_time': pub_time,
+                #                                  'pre_title': pre_title
+                #                                  }
+                #                     )
 
     def parse(self, response, title,preview_img_link,pre_title,pub_time):
 
@@ -2262,9 +2285,14 @@ class IranOilGasSpider(scrapy.Spider):
         item['pub_time'] = pub_time
         item['preview_img_link'] = preview_img_link
         item['pre_title'] = pre_title
-        item['author'] = response.css('header.article-header>aside>div.article-meta-authors span::text').get()
+        item['author'] =None
         item['categories'] = None
-        item['content'] = response.css('div[itemprop="articleBody"]').get()
+        ids = response.css('p::attr(id)').getall()
+        for id_ in ids:
+            if re.search(r'MembersOnly',id_):
+                item['content'] = None
+            else:
+                item['content'] = response.css('div#newsbody').get()
         item['crawl_time'] = datetime.now().strftime('%m/%d/%Y %H:%M')
         #
         yield item
