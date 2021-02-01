@@ -230,14 +230,14 @@ class CnpcNewsSpider(scrapy.Spider):
     def start_requests(self):
 
         for url in self.start_urls:
-            yield scrapy \
-                .Request(url=url, callback=self.parse_sub_cate)
+            yield scrapy.Request(url=url,
+                         callback=self.parse_sub_cate)
 
     # extract all the sub category url
     def parse_sub_cate(self, response):
         main_ele = 'div.mysubnav'
         sub_ele = 'li a'
-        # id = 'downpage'
+        id = 'downpage'
         sub_divs = response.css(main_ele)
         for sub_div in sub_divs:
             li_links = sub_div.css(sub_ele)  ## all the selector of sub div
@@ -247,11 +247,15 @@ class CnpcNewsSpider(scrapy.Spider):
                 if re.match(r'\/', sub_cate_link):
                     yield SeleniumRequest(  ## to return a response with driver object
                         url=response.urljoin(sub_cate_link),
-                        callback=self.parse_page_links
+                        callback=self.parse_page_links,
+                        wait_time = 10,
+                        wait_until=EC.element_to_be_clickable((By.ID, id))
                     )
 
     ## grap all the url of each sub category
     def parse_page_links(self, response):
+        driver = response.request.meta['driver']
+        driver.get(response.url)
         next_id = 'downpage'
         # from scrapy.shell import inspect_response
         # inspect_response(response, self)
@@ -259,7 +263,7 @@ class CnpcNewsSpider(scrapy.Spider):
         articles = response.css('li.ejli a')
         for article in articles:
             title = article.css('a::text').get()
-            title_url = article.css('a').attrib['href']
+            title_url = article.css('a').attrib.get('href')
             result = self.session.query(CnpcNews) \
                 .filter(or_(CnpcNews.url == title_url, CnpcNews.title == title)) \
                 .first()
@@ -268,29 +272,35 @@ class CnpcNewsSpider(scrapy.Spider):
                 yield scrapy.Request(url=title_url, callback=self.parse)
 
         # if len([result for result in results if result is None]) == len(results):  ## if all the element is
-        # driver = response.request.meta['driver']
-        # while driver.find_element_by_id(next_id) is not None:
-        #     driver.find_element_by_id(next_id).click()
-        #
-        #     # print('current url is once clicked', driver.current_url)
-        #     yield SeleniumRequest \
-        #         (url=driver.current_url,
-        #          wait_time=10,
-        #          callback=self.parse_page_links,
-        #          wait_until=EC.element_to_be_clickable((By.ID, id))
-        #          )
-        # time.sleep(10)
+
+
+        if  driver.find_element_by_id(next_id) :
+            driver.find_element_by_id(next_id).click()
+            yield SeleniumRequest \
+                (url=driver.current_url,
+                 wait_time=10,
+                 callback=self.parse_page_links,
+                 wait_until=EC.element_to_be_clickable((By.ID, id))
+                 )
+
+        time.sleep(10)
 
     def parse(self, response):
-        # from scrapy.shell import inquitself)
+        # from scrapy.shell import inspect_response
+        # inspect_response(response,self)
         item = CnpcNewsItem()
         item['url'] = response.url
-        item['categories'] = response.css('div.sj-nav span.as06 a::text')[-1].get()
-        item['pre_title'] = response.css('div.sj-title h4::text').get()
-        item['title'] = response.css('div.sj-title h2 a::text').get()
+        item['categories'] = response.css('div.sj-nav span.as06 a::text')[-1].get() \
+                            if response.css('div.sj-nav span.as06 a') else None
+
+        item['pre_title'] = response.css('div.sj-title h4::text').get() \
+                            if response.css('div.sj-title h4') else None
+        item['title'] = response.css('div.sj-title h2 a::text').get() \
+                        if response.css('div.sj-title h2 a') else None
         # news_item['sub_title'] = response.css('div.sj-title h6 a::text').get()
         # item['sub_title'] = response.css('div.sj-title h6::text').get()
-        item['author'] = response.css('div.sj-n a::text').get()
+        item['author'] = response.css('div.sj-n a::text').get() \
+                            if  response.css('div.sj-n a') else None
         item['pub_time'] = '-'.join(response.url.split('/')[-4:-1])
         item['content'] = response.css('div.sj-main').get()
         # news_item['content_other'] = response.css('div.sj-main p::text').getall()
@@ -2101,16 +2111,23 @@ class EinNewsSpider(scrapy.Spider):
                 #                                 # 'pub_time':pub_time
                 #                                 }
                 #                      )
-                yield SplashRequest(base_url+title_url,
-                                    self.parse,
-                                    endpoint='render.json',
-                                    args={'timeout': 600, 'images': 0, 'render_all': 1, 'wait': 300},
-                                    cb_kwargs={'preview_img_link': preview_img_link,
-                                               'title': title,
-                                               # 'pub_time': pub_time,
-                                               'pre_title': pre_title
-                                               }
-                                    )
+                #
+                yield SeleniumRequest(url=base_url+title_url,wait_time=10,
+                                                cb_kwargs={'preview_img_link': preview_img_link,
+                                                'title': title,
+                                                'pre_title':pre_title,
+                                                # 'pub_time':pub_time
+                                                })
+                # yield SplashRequest(base_url+title_url,
+                #                     self.parse,
+                #                     endpoint='render.json',
+                #                     args={'timeout': 600, 'images': 0, 'render_all': 1, 'wait': 300},
+                #                     cb_kwargs={'preview_img_link': preview_img_link,
+                #                                'title': title,
+                #                                # 'pub_time': pub_time,
+                #                                'pre_title': pre_title
+                #                                }
+                #                     )
         next_page = response.css('ul.pagination').css('li')[-1].css('a').attrib.get('href')
         if next_page:
             yield response.follow(url=next_page,

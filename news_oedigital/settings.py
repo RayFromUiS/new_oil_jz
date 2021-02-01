@@ -16,7 +16,7 @@ BOT_NAME = 'news_oedigital'
 SPIDER_MODULES = ['news_oedigital.spiders']
 NEWSPIDER_MODULE = 'news_oedigital.spiders'
 
-# DOWNLOAD_DELAY = 20
+DOWNLOAD_DELAY = 1
 RANDOMIZE_DOWNLOAD_DELAY = True
 SELENIUM_DRIVER_NAME = 'chrome'
 SELENIUM_DRIVER_EXECUTABLE_PATH = which('chromedriver')
