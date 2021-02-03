@@ -19,6 +19,9 @@ from scrapy_selenium import SeleniumRequest
 from selenium.webdriver.common.by import By
 from selenium.webdriver import PhantomJS
 from selenium.webdriver.support import expected_conditions as EC
+from scrapy.selector import Selector
+from selenium.webdriver import ActionChains
+from selenium.webdriver.support.ui import WebDriverWait
 from scrapy.http import HtmlResponse
 import pymongo
 from scrapy_splash import SplashRequest
@@ -1628,6 +1631,7 @@ class OffshoreTechSpider(scrapy.Spider):
     start_urls = ['https://www.offshore-technology.com/latest-news']
     custom_settings = {
         'ITEM_PIPELINES': {'news_oedigital.pipelines.OffshoreTechPipeline': 320},
+        'DOWNLOAD_DELAY' :10
         # 'COOKIES_DEBUG ':True,
         # 'COOKIES_ENABLED' :True,
         # 'CookiesMiddleware':{'news_oedigital.middlewares.PersistentCookiesMiddleware':751}
@@ -1649,50 +1653,58 @@ class OffshoreTechSpider(scrapy.Spider):
             yield SeleniumRequest(url=url,
                                   callback=self.parse_more,
                                   # wait_until=EC.element_to_be_clickable((By.ID, 'ajax-load-more'))
-                                  wait_time=10,
+                                  wait_time=100,
                                   wait_until=EC.element_to_be_clickable((By.ID, 'ajax-load-more'))
-                                  )
+                                # wait_until   = EC.visibility_of_element_located((By.ID, 'ajax-load_more'))
+            )
 
 
     def parse_more(self, response):
+        sels = []
+        driver = response.request.meta['driver']
+        element = driver.find_element_by_id('ajax-load-more') if driver.find_element_by_id('ajax-load-more') else None
+        button_element = element.find_element_by_tag_name('button')
+        request_time =1
+        while button_element:
+            driver.implicitly_wait(10)
+            # element.screenshot('load.png')
+            driver.execute_script("arguments[0].click();", button_element)
+            # button_element = element.find_element_by_tag_name('button')
+            button_element.screenshot('load_button.png')
+            # button_element.click()
+            driver.implicitly_wait(200)
+            # WebDriverWait(driver,100).until(EC.element_to_be_clickable((By.ID, 'ajax-load-more')))
+            sel = Selector(text=driver.page_source)
+            articles = sel.css('div.grid-x.side-shadow').css('article.c-posts-grid__post')[-20:]
 
-        # from scrapy.shell import inspect_response
-        # inspect_response(response, self)
-        articles = response.css('div.grid-x.side-shadow').css('article.c-posts-grid__post')
-        for article in articles:
-            preview_img_link = article.css('figure img').attrib.get('src') \
-                if article.css('figure img') else None
-            title = article.css('div.c-post-content h3.c-post-content__title a::text').get()
-            title_url = article.css('div.c-post-content h3.c-post-content__title a').attrib.get('href')
-            pre_title = article.css('div.c-post-content p.c-post-content__excerpt::text ').get()
-            pub_time = article.css('div.c-post-content span.c-post-content__publish-date::text').get()
+            sels.append(articles)
+            request_time +=1
+            if request_time>100:
+                break
+        for articles in sels:
+        # sel = Selector(text=driver.page_source)
+        #     articles = sel.css('div.grid-x.side-shadow').css('article.c-posts-grid__post')
+            for article in articles:
+                preview_img_link = article.css('figure img').attrib.get('src') \
+                    if article.css('figure img') else None
+                title = article.css('div.c-post-content h3.c-post-content__title a::text').get()
+                title_url = article.css('div.c-post-content h3.c-post-content__title a').attrib.get('href')
+                pre_title = article.css('div.c-post-content p.c-post-content__excerpt::text ').get()
+                pub_time = article.css('div.c-post-content span.c-post-content__publish-date::text').get()
 
-            result = self.session.query(OffshoreTech) \
-                .filter(or_(OffshoreTech == title_url, OffshoreTech.title == title)) \
-                .first()
-            if not result:
-                yield scrapy.Request(url=title_url,
-                                      callback=self.parse,
-                                      cb_kwargs={'title': title,
-                                                 'pre_title': pre_title,
-                                                 'pub_time': pub_time,
-                                                 'preview_img_link': preview_img_link
-                                                 }
-                                      )
+                result = self.session.query(OffshoreTech) \
+                    .filter(or_(OffshoreTech == title_url, OffshoreTech.title == title)) \
+                    .first()
+                if not result:
+                    yield scrapy.Request(url=title_url,
+                                         callback=self.parse,
+                                         cb_kwargs={'title': title,
+                                                    'pre_title': pre_title,
+                                                    'pub_time': pub_time,
+                                                    'preview_img_link': preview_img_link
+                                                    }
+                                             )
 
-        # more_articles = response.css('a.rz-sponsors-all-button')
-        # driver = response.request.meta['driver']
-        # driver.maximize_window()
-        # ele = driver.find_element_by_id('ajax-load-more') if driver.find_element_by_id('ajax-load-more') else None
-        # while ele:
-        #     ele.click()
-        #     res = HtmlResponse(url=driver.current_url, body=driver.page_source)
-        #     # print('get the response from clickable action')
-        #     yield SeleniumRequest(url=res.url,
-        #                           callback=self.parse_more,
-        #                           wait_time=10,
-        #                           wait_until=EC.element_to_be_clickable((By.ID, 'ajax-load-more'))
-        #                           )
 
     def parse(self, response, title, pre_title,preview_img_link,pub_time):
         # from scrapy.shell import inspect_response
@@ -1736,10 +1748,10 @@ class EnergyYearSpider(scrapy.Spider):
     def start_requests(self):
 
         for url in self.start_urls:
-            yield scrapy.Request(url=url,
+            yield SeleniumRequest(url=url,
                                   callback=self.parse_more,
                                   # wait_until=EC.element_to_be_clickable((By.ID, 'ajax-load-more'))
-                                  # wait_time=10,
+                                  wait_time=10,
                                   # wait_until=EC.element_to_be_clickable((By.ID, 'ajax-load-more'))
                                   )
 
@@ -1747,21 +1759,46 @@ class EnergyYearSpider(scrapy.Spider):
 
         # from scrapy.shell import inspect_response
         # inspect_response(response, self)
+        sels = set()
+        driver = response.request.meta['driver']
+        element = driver.find_element_by_id('ajax-load-more') if driver.find_element_by_id('ajax-load-more') else None
+        button_element = element.find_element_by_tag_name('button')
+        request_time = 1
+        while button_element:
+            driver.implicitly_wait(10)
+            # element.screenshot('load.png')
+            driver.execute_script("arguments[0].click();", button_element)
+            # button_element = element.find_element_by_tag_name('button')
+            button_element.screenshot('load_button.png')
+            # button_element.click()
+            driver.implicitly_wait(200)
+            # WebDriverWait(driver,100).until(EC.element_to_be_clickable((By.ID, 'ajax-load-more')))
+            sel = Selector(text=driver.page_source)
+            articles = sel.css('div.row.article-block')[-11:]
+            # new_articles = [article for article in articles if not article.css('div.banner-row')]
+            for article in articles:
+                sels.add(article)
+            request_time += 1
+            if request_time > 2000:
+                break
 
-        articles = response.css('div.row.article-block')
-        new_articles = [article for article in articles if not article.css('div.banner-row')]
+        # articles = response.css('div.row.article-block')
+        # new_articles = [article for article in articles if not article.css('div.banner-row')]
         # print(len(new_articles))
-        for article in new_articles:
+        for article in sels:
+            # for article in articles:
             title =article.css('div.article-detail').css('h1 a::text').get()  \
                         if article.css('div.article-detail h1') else \
                             article.css('div.title a::text').get()
             title_url = article.css('div.article-detail').css('h1 a').attrib.get('href') \
                             if article.css('div.article-detail h1') else \
                             article.css('div.title a').attrib.get('href')
-            pub_time =article.css('div.article-detail').css('div.news-date::text').getall()[-1]
+            pub_time =article.css('div.article-detail').css('div.news-date::text').getall()[-1] \
+                        if article.css('div.article-detail').css('div.news-date') else None
 
             pre_title = article.css('div.article-detail').css('p::text').get()
-            preview_img_link = article.css('div.img img')[0].attrib.get('data-src')
+            preview_img_link = article.css('div.img img')[0].attrib.get('data-src') \
+                        if article.css('div.img img') else None
             result = self.session.query(EnergyYear) \
                 .filter(or_(EnergyYear.url == title_url, EnergyYear.title == title)) \
                 .first()
@@ -1776,19 +1813,7 @@ class EnergyYearSpider(scrapy.Spider):
                                                 }
                                      )
 
-        # more_articles = response.css('a.rz-sponsors-all-button')
-        # driver = response.request.meta['driver']
-        # driver.maximize_window()
-        # ele = driver.find_element_by_id('ajax-load-more') if driver.find_element_by_id('ajax-load-more') else None
-        # while ele:
-        #     ele.click()
-        #     res = HtmlResponse(url=driver.current_url, body=driver.page_source)
-        #     # print('get the response from clickable action')
-        #     yield SeleniumRequest(url=res.url,
-        #                           callback=self.parse_more,
-        #                           wait_time=10,
-        #                           wait_until=EC.element_to_be_clickable((By.ID, 'ajax-load-more'))
-        #                           )
+
 
     def parse(self, response, title, pre_title,preview_img_link,pub_time):
         # from scrapy.shell import inspect_response
