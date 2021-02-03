@@ -1663,50 +1663,50 @@ class OffshoreTechSpider(scrapy.Spider):
 
 
     def parse_more(self, response):
-        sels = []
-        driver = response.request.meta['driver']
-        element = driver.find_element_by_id('ajax-load-more') if driver.find_element_by_id('ajax-load-more') else None
-        button_element = element.find_element_by_tag_name('button')
-        request_time =1
-        while button_element:
-            driver.implicitly_wait(10)
-            # element.screenshot('load.png')
-            driver.execute_script("arguments[0].click();", button_element)
-            # button_element = element.find_element_by_tag_name('button')
-            button_element.screenshot('load_button.png')
-            # button_element.click()
-            driver.implicitly_wait(200)
-            # WebDriverWait(driver,100).until(EC.element_to_be_clickable((By.ID, 'ajax-load-more')))
-            sel = Selector(text=driver.page_source)
-            articles = sel.css('div.grid-x.side-shadow').css('article.c-posts-grid__post')[-20:]
-
-            sels.append(articles)
-            request_time +=1
-            if request_time>100:
-                break
-        for articles in sels:
+        # sels = []
+        # driver = response.request.meta['driver']
+        # element = driver.find_element_by_id('ajax-load-more') if driver.find_element_by_id('ajax-load-more') else None
+        # button_element = element.find_element_by_tag_name('button')
+        # request_time =1
+        # while button_element:
+        #     driver.implicitly_wait(10)
+        #     # element.screenshot('load.png')
+        #     driver.execute_script("arguments[0].click();", button_element)
+        #     # button_element = element.find_element_by_tag_name('button')
+        #     button_element.screenshot('load_button.png')
+        #     # button_element.click()
+        #     driver.implicitly_wait(200)
+        #     # WebDriverWait(driver,100).until(EC.element_to_be_clickable((By.ID, 'ajax-load-more')))
+        #     sel = Selector(text=driver.page_source)
+        #     articles = sel.css('div.grid-x.side-shadow').css('article.c-posts-grid__post')[-20:]
+        #
+        #     sels.append(articles)
+        #     request_time +=1
+        #     if request_time>500:
+        #         break
+        # for articles in sels:
         # sel = Selector(text=driver.page_source)
-        #     articles = sel.css('div.grid-x.side-shadow').css('article.c-posts-grid__post')
-            for article in articles:
-                preview_img_link = article.css('figure img').attrib.get('src') \
-                    if article.css('figure img') else None
-                title = article.css('div.c-post-content h3.c-post-content__title a::text').get()
-                title_url = article.css('div.c-post-content h3.c-post-content__title a').attrib.get('href')
-                pre_title = article.css('div.c-post-content p.c-post-content__excerpt::text ').get()
-                pub_time = article.css('div.c-post-content span.c-post-content__publish-date::text').get()
+        articles = response.css('div.grid-x.side-shadow').css('article.c-posts-grid__post')
+        for article in articles:
+            preview_img_link = article.css('figure img').attrib.get('src') \
+                if article.css('figure img') else None
+            title = article.css('div.c-post-content h3.c-post-content__title a::text').get()
+            title_url = article.css('div.c-post-content h3.c-post-content__title a').attrib.get('href')
+            pre_title = article.css('div.c-post-content p.c-post-content__excerpt::text ').get()
+            pub_time = article.css('div.c-post-content span.c-post-content__publish-date::text').get()
 
-                result = self.session.query(OffshoreTech) \
-                    .filter(or_(OffshoreTech == title_url, OffshoreTech.title == title)) \
-                    .first()
-                if not result:
-                    yield scrapy.Request(url=title_url,
-                                         callback=self.parse,
-                                         cb_kwargs={'title': title,
-                                                    'pre_title': pre_title,
-                                                    'pub_time': pub_time,
-                                                    'preview_img_link': preview_img_link
-                                                    }
-                                             )
+            result = self.session.query(OffshoreTech) \
+                .filter(or_(OffshoreTech == title_url, OffshoreTech.title == title)) \
+                .first()
+            if not result:
+                yield scrapy.Request(url=title_url,
+                                     callback=self.parse,
+                                     cb_kwargs={'title': title,
+                                                'pre_title': pre_title,
+                                                'pub_time': pub_time,
+                                                'preview_img_link': preview_img_link
+                                                }
+                                         )
 
 
     def parse(self, response, title, pre_title,preview_img_link,pub_time):
@@ -1762,34 +1762,34 @@ class EnergyYearSpider(scrapy.Spider):
 
         # from scrapy.shell import inspect_response
         # inspect_response(response, self)
-        sels = set()
-        driver = response.request.meta['driver']
-        element = driver.find_element_by_id('ajax-load-more') if driver.find_element_by_id('ajax-load-more') else None
-        button_element = element.find_element_by_tag_name('button')
-        request_time = 1
-        while button_element:
-            driver.implicitly_wait(10)
-            # element.screenshot('load.png')
-            driver.execute_script("arguments[0].click();", button_element)
-            # button_element = element.find_element_by_tag_name('button')
-            button_element.screenshot('load_button.png')
-            # button_element.click()
-            driver.implicitly_wait(200)
-            # WebDriverWait(driver,100).until(EC.element_to_be_clickable((By.ID, 'ajax-load-more')))
-            sel = Selector(text=driver.page_source)
-            articles = sel.css('div.row.article-block')[-11:]
-            # new_articles = [article for article in articles if not article.css('div.banner-row')]
-            for article in articles:
-                sels.add(article)
-            request_time += 1
-            if request_time > 2000:
-                break
+        # sels = set()
+        # driver = response.request.meta['driver']
+        # element = driver.find_element_by_id('ajax-load-more') if driver.find_element_by_id('ajax-load-more') else None
+        # button_element = element.find_element_by_tag_name('button')
+        # request_time = 1
+        # while button_element:
+        #     driver.implicitly_wait(10)
+        #     # element.screenshot('load.png')
+        #     driver.execute_script("arguments[0].click();", button_element)
+        #     # button_element = element.find_element_by_tag_name('button')
+        #     button_element.screenshot('load_button.png')
+        #     # button_element.click()
+        #     driver.implicitly_wait(200)
+        #     # WebDriverWait(driver,100).until(EC.element_to_be_clickable((By.ID, 'ajax-load-more')))
+        #     sel = Selector(text=driver.page_source)
+        #     articles = sel.css('div.row.article-block')[-11:]
+        #     # new_articles = [article for article in articles if not article.css('div.banner-row')]
+        #     for article in articles:
+        #         sels.add(article)
+        #     request_time += 1
+        #     if request_time > 1000:
+        #         break
 
-        # articles = response.css('div.row.article-block')
-        # new_articles = [article for article in articles if not article.css('div.banner-row')]
+        articles = response.css('div.row.article-block')
+        new_articles = [article for article in articles if not article.css('div.banner-row')]
         # print(len(new_articles))
-        for article in sels:
-            # for article in articles:
+        # for article in sels:
+        for article in new_articles:
             title =article.css('div.article-detail').css('h1 a::text').get()  \
                         if article.css('div.article-detail h1') else \
                             article.css('div.title a::text').get()

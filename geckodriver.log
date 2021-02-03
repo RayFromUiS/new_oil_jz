@@ -1,0 +1,117 @@
+1612342542790	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-headless" "-foreground" "-no-remote" "-profile" "/var/folders/qp/62byk9gs7738gg2bzjf8p3br0000gn/T/rust_mozprofileKW4uZ2"
+*** You are running in headless mode.
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new Error("", "(unknown module)"))
+1612342545909	Marionette	INFO	Listening on port 50375
+1612342545985	Marionette	WARN	TLS certificate errors will be ignored for this session
+1612342545996	Marionette	ERROR	[19] No reply from Marionette:Register
+1612342758731	Marionette	INFO	Stopped listening on port 50375
+
+###!!! [Parent][RunMessage] Error: Channel closing: too late to send/recv, messages will be lost
+
+1612342939297	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-headless" "-foreground" "-no-remote" "-profile" "/var/folders/qp/62byk9gs7738gg2bzjf8p3br0000gn/T/rust_mozprofileBSoh02"
+*** You are running in headless mode.
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new Error("", "(unknown module)"))
+1612342941557	Marionette	INFO	Listening on port 50533
+1612342941641	Marionette	WARN	TLS certificate errors will be ignored for this session
+1612342941652	Marionette	ERROR	[19] No reply from Marionette:Register
+console.error: Region.jsm: "Error fetching region" (new Error("TIMEOUT", "resource://gre/modules/Region.jsm", 775))
+console.error: Region.jsm: "Failed to fetch region" (new Error("TIMEOUT", "resource://gre/modules/Region.jsm", 422))
+JavaScript error: https://cdn.permutive.com/e82dc6a7-79a5-49b7-b1ed-a89a37f2fe8b-web.js, line 1: Error: TypeError: Network request timed out
+JavaScript error: https://cdn.permutive.com/e82dc6a7-79a5-49b7-b1ed-a89a37f2fe8b-web.js, line 1: Error: TypeError: Network request timed out
+JavaScript error: , line 0: uncaught exception: undefined
+JavaScript error: https://cdn.permutive.com/e82dc6a7-79a5-49b7-b1ed-a89a37f2fe8b-web.js, line 1: Error: TypeError: Network request timed out
+JavaScript error: , line 0: uncaught exception: undefined
+JavaScript error: https://cdn.permutive.com/e82dc6a7-79a5-49b7-b1ed-a89a37f2fe8b-web.js, line 1: Error: TypeError: Network request timed out
+JavaScript error: https://cdn.permutive.com/e82dc6a7-79a5-49b7-b1ed-a89a37f2fe8b-web.js, line 1: Error: TypeError: Network request timed out
+JavaScript error: https://cdn.permutive.com/e82dc6a7-79a5-49b7-b1ed-a89a37f2fe8b-web.js, line 1: Error: TypeError: Network request timed out
+JavaScript error: https://cdn.permutive.com/e82dc6a7-79a5-49b7-b1ed-a89a37f2fe8b-web.js, line 1: Error: TypeError: Network request timed out
+JavaScript error: https://cdn.permutive.com/e82dc6a7-79a5-49b7-b1ed-a89a37f2fe8b-web.js, line 1: Error: TypeError: Network request timed out
+JavaScript error: https://cdn.permutive.com/e82dc6a7-79a5-49b7-b1ed-a89a37f2fe8b-web.js, line 1: Error: TypeError: Network request timed out
+JavaScript error: https://cdn.permutive.com/e82dc6a7-79a5-49b7-b1ed-a89a37f2fe8b-web.js, line 1: Error: TypeError: Network request timed out
+console.error: Region.jsm: "Error fetching region" (new Error("TIMEOUT", "resource://gre/modules/Region.jsm", 775))
+console.error: Region.jsm: "Failed to fetch region" (new Error("TIMEOUT", "resource://gre/modules/Region.jsm", 422))
+1612352921981	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-headless" "-foreground" "-no-remote" "-profile" "/var/folders/qp/62byk9gs7738gg2bzjf8p3br0000gn/T/rust_mozprofile00uxJu"
+*** You are running in headless mode.
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new Error("", "(unknown module)"))
+1612352924447	Marionette	INFO	Listening on port 51241
+1612352924551	Marionette	WARN	TLS certificate errors will be ignored for this session
+1612352924562	Marionette	ERROR	[19] No reply from Marionette:Register
+JavaScript error: https://cdn.permutive.com/e82dc6a7-79a5-49b7-b1ed-a89a37f2fe8b-web.js, line 1: Error: TypeError: Network request timed out
+JavaScript error: https://cdn.permutive.com/e82dc6a7-79a5-49b7-b1ed-a89a37f2fe8b-web.js, line 1: Error: TypeError: Network request timed out
+JavaScript error: https://cdn.permutive.com/e82dc6a7-79a5-49b7-b1ed-a89a37f2fe8b-web.js, line 1: Error: TypeError: Network request timed out
+JavaScript error: https://cdn.permutive.com/e82dc6a7-79a5-49b7-b1ed-a89a37f2fe8b-web.js, line 1: Error: TypeError: Network request timed out
+JavaScript error: , line 0: uncaught exception: undefined
+JavaScript error: https://cdn.permutive.com/e82dc6a7-79a5-49b7-b1ed-a89a37f2fe8b-web.js, line 1: Error: TypeError: Network request timed out
+JavaScript error: , line 0: uncaught exception: undefined
+JavaScript error: https://cdn.permutive.com/e82dc6a7-79a5-49b7-b1ed-a89a37f2fe8b-web.js, line 1: Error: TypeError: Network request timed out
+JavaScript error: https://cdn.permutive.com/e82dc6a7-79a5-49b7-b1ed-a89a37f2fe8b-web.js, line 1: Error: TypeError: Network request timed out
+JavaScript error: https://cdn.permutive.com/e82dc6a7-79a5-49b7-b1ed-a89a37f2fe8b-web.js, line 1: Error: TypeError: Network request timed out
+JavaScript error: https://cdn.permutive.com/e82dc6a7-79a5-49b7-b1ed-a89a37f2fe8b-web.js, line 1: Error: TypeError: Network request timed out
+JavaScript error: https://cdn.permutive.com/e82dc6a7-79a5-49b7-b1ed-a89a37f2fe8b-web.js, line 1: Error: TypeError: Network request timed out
+Exiting due to channel error.
+Exiting due to channel error.
+Exiting due to channel error.
+1612352984053	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-headless" "-foreground" "-no-remote" "-profile" "/var/folders/qp/62byk9gs7738gg2bzjf8p3br0000gn/T/rust_mozprofile9lqEh0"
+*** You are running in headless mode.
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new Error("", "(unknown module)"))
+1612352986346	Marionette	INFO	Listening on port 51410
+1612352986417	Marionette	WARN	TLS certificate errors will be ignored for this session
+1612352986427	Marionette	ERROR	[19] No reply from Marionette:Register
+Exiting due to channel error.
+Exiting due to channel error.
+Exiting due to channel error.
+1612354238642	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-headless" "-foreground" "-no-remote" "-profile" "/var/folders/qp/62byk9gs7738gg2bzjf8p3br0000gn/T/rust_mozprofileHa2EfR"
+*** You are running in headless mode.
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new Error("", "(unknown module)"))
+1612354241045	Marionette	INFO	Listening on port 52093
+1612354241101	Marionette	WARN	TLS certificate errors will be ignored for this session
+1612354241111	Marionette	ERROR	[19] No reply from Marionette:Register
+JavaScript error: https://cdn.permutive.com/e82dc6a7-79a5-49b7-b1ed-a89a37f2fe8b-web.js, line 1: Error: TypeError: Network request timed out
+JavaScript error: https://cdn.permutive.com/e82dc6a7-79a5-49b7-b1ed-a89a37f2fe8b-web.js, line 1: Error: TypeError: Network request timed out
+JavaScript error: https://cdn.permutive.com/e82dc6a7-79a5-49b7-b1ed-a89a37f2fe8b-web.js, line 1: Error: TypeError: Network request timed out
+JavaScript error: https://cdn.permutive.com/e82dc6a7-79a5-49b7-b1ed-a89a37f2fe8b-web.js, line 1: Error: TypeError: Network request timed out
+JavaScript error: , line 0: uncaught exception: undefined
+JavaScript error: https://cdn.permutive.com/e82dc6a7-79a5-49b7-b1ed-a89a37f2fe8b-web.js, line 1: Error: TypeError: Network request timed out
+JavaScript error: , line 0: uncaught exception: undefined
+JavaScript error: https://cdn.permutive.com/e82dc6a7-79a5-49b7-b1ed-a89a37f2fe8b-web.js, line 1: Error: TypeError: Network request timed out
+JavaScript error: https://cdn.permutive.com/e82dc6a7-79a5-49b7-b1ed-a89a37f2fe8b-web.js, line 1: Error: TypeError: Network request timed out
+JavaScript error: https://cdn.permutive.com/e82dc6a7-79a5-49b7-b1ed-a89a37f2fe8b-web.js, line 1: Error: TypeError: Network request timed out
+JavaScript error: https://cdn.permutive.com/e82dc6a7-79a5-49b7-b1ed-a89a37f2fe8b-web.js, line 1: Error: TypeError: Network request timed out
+JavaScript error: https://cdn.permutive.com/e82dc6a7-79a5-49b7-b1ed-a89a37f2fe8b-web.js, line 1: Error: TypeError: Network request timed out
+1612357992543	Marionette	INFO	Stopped listening on port 52093
+1612359401300	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-headless" "-foreground" "-no-remote" "-profile" "/var/folders/qp/62byk9gs7738gg2bzjf8p3br0000gn/T/rust_mozprofilesDYk2Z"
+*** You are running in headless mode.
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new Error("", "(unknown module)"))
+1612359403770	Marionette	INFO	Listening on port 53534
+1612359403872	Marionette	WARN	TLS certificate errors will be ignored for this session
+1612359403882	Marionette	ERROR	[19] No reply from Marionette:Register
+JavaScript error: https://theenergyyear.com/news/, line 29: ReferenceError: wp is not defined
+JavaScript error: https://theenergyyear.com/news/ line 1063 > injectedScript, line 2: TypeError: produits is undefined
+1612359686804	Marionette	INFO	Stopped listening on port 53534
+JavaScript error: resource://gre/modules/Sqlite.jsm, line 1031: Error: Sqlite.jsm has been shutdown. Cannot open connection to: /var/folders/qp/62byk9gs7738gg2bzjf8p3br0000gn/T/rust_mozprofilesDYk2Z/protections.sqlite
+1612360059562	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-headless" "-foreground" "-no-remote" "-profile" "/var/folders/qp/62byk9gs7738gg2bzjf8p3br0000gn/T/rust_mozprofilea48AvQ"
+*** You are running in headless mode.
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new Error("", "(unknown module)"))
+1612360061743	Marionette	INFO	Listening on port 53788
+1612360061822	Marionette	WARN	TLS certificate errors will be ignored for this session
+1612360061832	Marionette	ERROR	[19] No reply from Marionette:Register
+JavaScript error: https://theenergyyear.com/news/, line 29: ReferenceError: wp is not defined
+JavaScript error: https://theenergyyear.com/news/ line 1063 > injectedScript, line 2: TypeError: produits is undefined
+1612361329035	Marionette	INFO	Stopped listening on port 53788
+JavaScript error: resource://gre/modules/Sqlite.jsm, line 1031: Error: Sqlite.jsm has been shutdown. Cannot open connection to: /var/folders/qp/62byk9gs7738gg2bzjf8p3br0000gn/T/rust_mozprofilea48AvQ/protections.sqlite
+1612361598697	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-headless" "-foreground" "-no-remote" "-profile" "/var/folders/qp/62byk9gs7738gg2bzjf8p3br0000gn/T/rust_mozprofile7Albbc"
+*** You are running in headless mode.
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new Error("", "(unknown module)"))
+1612361601232	Marionette	INFO	Listening on port 54252
+1612361601259	Marionette	WARN	TLS certificate errors will be ignored for this session
+1612361601272	Marionette	ERROR	[19] No reply from Marionette:Register
+JavaScript error: https://theenergyyear.com/news/, line 29: ReferenceError: wp is not defined
+JavaScript error: https://theenergyyear.com/news/ line 1063 > injectedScript, line 2: TypeError: produits is undefined
+1612361720338	Marionette	INFO	Stopped listening on port 54252
+1612362193290	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-headless" "-foreground" "-no-remote" "-profile" "/var/folders/qp/62byk9gs7738gg2bzjf8p3br0000gn/T/rust_mozprofile5U4ow6"
+*** You are running in headless mode.
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new Error("", "(unknown module)"))
+1612362195746	Marionette	INFO	Listening on port 54500
+1612362195858	Marionette	WARN	TLS certificate errors will be ignored for this session
+1612362195867	Marionette	ERROR	[19] No reply from Marionette:Register
+1612362243557	Marionette	INFO	Stopped listening on port 54500
