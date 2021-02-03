@@ -252,13 +252,14 @@ class CnpcNewsSpider(scrapy.Spider):
                         url=response.urljoin(sub_cate_link),
                         callback=self.parse_page_links,
                         wait_time = 10,
-                        wait_until=EC.element_to_be_clickable((By.ID, id))
+                        # wait_until=EC.element_to_be_clickable((By.ID, id))
                     )
 
     ## grap all the url of each sub category
     def parse_page_links(self, response):
         driver = response.request.meta['driver']
         driver.get(response.url)
+        driver.implicitly_wait(10)
         next_id = 'downpage'
         # from scrapy.shell import inspect_response
         # inspect_response(response, self)
@@ -279,11 +280,13 @@ class CnpcNewsSpider(scrapy.Spider):
 
         if  driver.find_element_by_id(next_id) :
             driver.find_element_by_id(next_id).click()
+            driver.implicitly_wait(20
+                                   )
             yield SeleniumRequest \
                 (url=driver.current_url,
                  wait_time=10,
                  callback=self.parse_page_links,
-                 wait_until=EC.element_to_be_clickable((By.ID, id))
+                 # wait_until=EC.element_to_be_clickable((By.ID, id))
                  )
 
         time.sleep(10)
@@ -2058,13 +2061,13 @@ class OffshoreEnergySpider(scrapy.Spider):
                                                 'categories': categories
                                                 }
                                      )
-        # page_number = int(response.css('a.last').attrib.get('href').split('page')[-1].split('/')[1])
+        page_number = int(response.css('a.last').attrib.get('href').split('page')[-1].split('/')[1])
         # print(page_number)
         #
         # # time.sleep(3600)
-        # for page in range(2,page_number+1):
-        #     yield scrapy.Request(url='https://www.offshore-energy.biz/news/page/'+str(page),
-        #                          callback=self.parse_page_links)
+        for page in range(2,page_number+1):
+            yield scrapy.Request(url='https://www.offshore-energy.biz/news/page/'+str(page),
+                                 callback=self.parse_page_links)
 
     def parse(self, response, preview_img_link, title, categories):
         # pass
@@ -2113,7 +2116,7 @@ class EinNewsSpider(scrapy.Spider):
 
     def parse_page_links(self, response):
         articles = response.css('div.sidebar-pr-block')[0].css('ul li')
-
+        results = []
         base_url = 'https://oilandgas.einnews.com'
         # articles = response.css('div.card-rich ')
         for article in articles:
@@ -2126,37 +2129,21 @@ class EinNewsSpider(scrapy.Spider):
             result = self.session.query(EinNews) \
                 .filter(or_(EinNews.url == title_url, EinNews.title == title)) \
                 .first()
-
+            results.append(result)
             if not result:
-                # yield response.follow(url=title_url,
-                #                      callback=self.parse,
-                #                      cb_kwargs={'preview_img_link': preview_img_link,
-                #                                 'title': title,
-                #                                 'pre_title':pre_title,
-                #                                 # 'pub_time':pub_time
-                #                                 }
-                #                      )
-                #
+
                 yield SeleniumRequest(url=base_url+title_url,wait_time=10,
                                                 cb_kwargs={'preview_img_link': preview_img_link,
                                                 'title': title,
                                                 'pre_title':pre_title,
                                                 # 'pub_time':pub_time
                                                 })
-                # yield SplashRequest(base_url+title_url,
-                #                     self.parse,
-                #                     endpoint='render.json',
-                #                     args={'timeout': 600, 'images': 0, 'render_all': 1, 'wait': 300},
-                #                     cb_kwargs={'preview_img_link': preview_img_link,
-                #                                'title': title,
-                #                                # 'pub_time': pub_time,
-                #                                'pre_title': pre_title
-                #                                }
-                #                     )
-        next_page = response.css('ul.pagination').css('li')[-1].css('a').attrib.get('href')
-        if next_page:
-            yield response.follow(url=next_page,
-                                  callback= self.parse_page_links)
+
+        if len([result for result in results if result is None]) == len(results):
+            next_page = response.css('ul.pagination').css('li')[-1].css('a').attrib.get('href')
+            if next_page:
+                yield response.follow(url=next_page,
+                                      callback= self.parse_page_links)
 
     def parse(self, response, preview_img_link, title, pre_title):
         from scrapy.shell import inspect_response
