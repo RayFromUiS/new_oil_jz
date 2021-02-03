@@ -44,7 +44,7 @@ DOWNLOADER_MIDDLEWARES = {
     'scrapy.downloadermiddlewares.httpcompression.HttpCompressionMiddleware': 810,
 }
 
-SQL_CONNECT_STRING = 'mysql+pymysql://root:password@localhost:3308/news_oil'
+SQL_CONNECT_STRING = 'mysql+pymysql://root:jinzheng1706@139.198.191.224:3308/news_oil'
 SQL_DB_NAME = 'news_oil'
 MONGO_URI= 'mongodb://root:password@localhost:27017/'
 
