@@ -2082,7 +2082,9 @@ class OffshoreEnergySpider(scrapy.Spider):
         item['preview_img_link'] = preview_img_link
         item['pre_title'] = response.css('article#main-content').css('div.wp-content p strong::text').extract_first()
         item['author'] = response.css('article#main-content').\
-                            css('div.article-meta__info span.article-meta__author::text').get().strip()
+                            css('div.article-meta__info span.article-meta__author::text').get().strip() \
+                            if response.css('article#main-content').css('div.article-meta__info span.article-meta__author') \
+                            else None
 
         item['categories'] = categories
         item['content'] = response.css('article#main-content').css('div.wp-content').get()
