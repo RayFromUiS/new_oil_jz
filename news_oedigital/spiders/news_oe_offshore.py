@@ -2251,8 +2251,10 @@ class IranOilGasSpider(scrapy.Spider):
     name = 'iran_oil_gas'
     # allowed_domains = 'oilfieldtechnology.com'
     start_urls = []
-    for (year,month,page) in zip(range(2020,2022),range(1, 13),range(1,8)):
-        start_urls.append('http://www.iranoilgas.com/news/archive?year={}&month={}&p={}'.format(year,month,page))
+    for year in range(2010,2021):
+        for month in range(1,13):
+            for page in range(1,8):
+                start_urls.append('http://www.iranoilgas.com/news/archive?year={}&month={}&p={}'.format(year,month,page))
     custom_settings = {
         'ITEM_PIPELINES': {'news_oedigital.pipelines.IranOilGasPipeline': 327}
     }
