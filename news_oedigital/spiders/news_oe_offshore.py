@@ -181,12 +181,12 @@ class WorldOilSpider(scrapy.Spider):
                                                  'category': categories,
                                                  'preview_img_link': preview_img_link})
         # if preview_img_link is not None:
-        if len([result for result in results if result is None]) == len(results):  ## if all the element is not crawled
+        # if len([result for result in results if result is None]) == len(results):  ## if all the element is not crawled
             # skip the preview image links,since it's not been found generally
-            if response.css('a#ContentPlaceHolderDefault_mainContent_btnNext'):
-                next_page = response.css('a#ContentPlaceHolderDefault_mainContent_btnNext').attrib['href']
-                yield response.follow(url=next_page, callback=self.parse_page_links,
-                                      cb_kwargs={'categories': categories})
+        if response.css('a#ContentPlaceHolderDefault_mainContent_btnNext'):
+            next_page = response.css('a#ContentPlaceHolderDefault_mainContent_btnNext').attrib.get('href')
+            yield response.follow(url=next_page, callback=self.parse_page_links,
+                                  cb_kwargs={'categories': categories})
 
     def parse(self, response, title, pub_time, abstract, category, preview_img_link):
         # from scrapy.shell import inspect_response
@@ -386,12 +386,13 @@ class HartEnergySpider(scrapy.Spider):
         if len([result for result in results if result is None]) == len(results):  ## if all the element is not crawled
             next_page_indicator = response.css('ul.js-pager__items a').attrib.get('rel')
             if next_page_indicator == 'next':
-                next_page = response.css('ul.js-pager__items a').attrib['href']
+                next_page = response.css('ul.js-pager__items a').attrib.get('href')
                 yield response.follow(url=next_page, callback=self.parse_page_links)
 
     def parse(self, response, title, title_url, pub_time, abstracts, categories, preview_img_link):
         # from scrapy.shell import inspect_response
-        # inspect_response(response, self)
+        # inspect_response(resp
+        # onse, self)
         item = HartEnergyItem()
         item['url'] = response.url
         item['categories'] = str(categories)
@@ -399,7 +400,8 @@ class HartEnergySpider(scrapy.Spider):
         item['pre_title'] = abstracts
         item['title'] = title
         item['author'] = response.css('div.field_first_name::text').get().strip() + ' ' + \
-                         response.css('div.field_last_name::text').get().strip()
+                         response.css('div.field_last_name::text').get().strip() if response.css('div.field_first_name::text') \
+                            else None
         # news_item['sub_title'] = response.css('div.sj-title h6 a::text').get()
         # item['sub_title'] = response.css('div.sj-title h6::text').get()
         # item['dep'] = response.css('div.sj-n a::text').get()
@@ -708,7 +710,7 @@ class InEnStorageSpider(scrapy.Spider):
 class JptLatestSpider(scrapy.Spider):
     name = 'jpt_latest'
     # allowed_domains = 'oilfieldtechnology.com'
-    start_urls = ['https://pubs.spe.org/en/jpt/latest-news/']
+    start_urls = ['https://jpt.spe.org/latest-news']
     custom_settings = {
         'ITEM_PIPELINES': {'news_oedigital.pipelines.JptLatestPipeline': 308},
     }
@@ -733,42 +735,123 @@ class JptLatestSpider(scrapy.Spider):
 
     def parse_page_links(self, response):
         # preview_img_link = None
-        base_url = 'https://pubs.spe.org'
-        articles = response.css('article.tile.story')
+        results=[]
+        articles = response.css('ul.ListE-items li.ListE-items-item')
         for article in articles:
-            preview_img_link = 'https://pubs.spe.org' + article.css('div.story-wrap'). \
-                css('div.img-wrap').attrib['style'].split('(')[-1].split(')')[0]
-            title = article.css('div.story-wrap').css('h3::text').get().strip()
-            pub_time = article.css('div.story-wrap').css('span.pub-date::text').get().strip()
-            title_url = article.css('a::attr(href)').get()
-            pre_title = article.css('div.story-wrap').css('p::text').get().strip()
+            preview_img_link = article.css('div.PromoB-content').\
+                        css('div.PromoB-media').css('img').attrib.get('data-src')
+            categories = str(article.css('div.PromoB-content').\
+                        css('div.PromoB-category').css('a::text').get().split('/')) \
+                        if re.search('/',article.css('div.PromoB-content').\
+                        css('div.PromoB-category').css('a::text').get())     \
+                        else article.css('div.PromoB-content').\
+                        css('div.PromoB-category').css('a::text').get()
+            title = article.css('div.PromoB-content').css('div.PromoB-title').css('a::text').get()
+            # pre_title = article.css('div.PromoB-content').css('div.PromoB-description::text').get()
+            pub_time = article.css('div.PromoB-content').css('div.PromoB-footer div::text').get().split('• ')[0].strip()
+            author = article.css('div.PromoB-content').css('div.PromoB-footer div::text').get().split('• ')[1].strip()
+            title_url = article.css('div.PromoB-content').css('div.PromoB-title a').attrib.get('href')
             result = self.session.query(JptLatest) \
-                .filter(or_(JptLatest.url == base_url + title_url, JptLatest.title == title)) \
+                .filter(or_(JptLatest.url == title_url, JptLatest.title == title)) \
                 .first()
+            results.append(result)
             if not result:
-                yield response.follow(url=title_url, callback=self.parse,
+                yield scrapy.Request(url=title_url, callback=self.parse,
                                       cb_kwargs={'preview_img_link': preview_img_link,
                                                  'pub_time': pub_time,
+                                                 'author':author,
                                                  'title': title,
-                                                 'pre_title': pre_title
+                                                 'categories':categories,
+                                                 # 'pre_title': pre_title
                                                  }
                                       )
+        if len([result for result in results if result is None]) == len(results):  ## if all the element is not crawled
+            # if len(response.css('li.previous a::attr(href)')) >= 1:
+            next_page = response.css('div.ListE-nextPage a').attrib.get('href')
+            if next_page:
+                yield response.follow(url=next_page,
+                                     callback=self.parse_page_links)
 
-    def parse(self, response, preview_img_link, pub_time, title, pre_title):
+    def parse(self, response, preview_img_link, pub_time, title,author,categories):
         item = JptLatestItem()
         item['url'] = response.url
         item['preview_img_link'] = preview_img_link
         item['pub_time'] = pub_time
         # item['title'] = response.css('div.articleTitleBox h2::text').get()
         item['title'] = title
-        item['categories'] = response.css('span.topicItem a::text').get()
-        item['content'] = response.css('div.articleBodyText').get()
-        item['author'] = None
-        item['pre_title'] = pre_title
+        item['categories'] = categories
+        item['content'] = response.css('div.RichTextArticleBody-body').get()
+        item['author'] = author
+        item['pre_title'] = response.css('div.ArticlePage-lead').css('img').get()
         item['crawl_time'] = datetime.now().strftime('%m/%d/%Y %H:%M')
 
         yield item
 
+
+#
+# class JptLatestSpider(scrapy.Spider):
+#     name = 'jpt_latest'
+#     # allowed_domains = 'oilfieldtechnology.com'
+#     start_urls = ['https://pubs.spe.org/en/jpt/latest-news/']
+#     custom_settings = {
+#         'ITEM_PIPELINES': {'news_oedigital.pipelines.JptLatestPipeline': 308},
+#     }
+#
+#     def __init__(self):
+#         """
+#         Initializes database connection and sessionmaker.
+#         Creates deals table.
+#         """
+#         self.engine = db_connect()
+#         Session = sessionmaker(bind=self.engine)
+#         self.session = Session()
+#         create_table(self.engine)
+#
+#     def start_requests(self):
+#
+#         for url in self.start_urls:
+#             yield scrapy.Request(
+#                 url=url,
+#                 callback=self.parse_page_links
+#             )
+#
+#     def parse_page_links(self, response):
+#         # preview_img_link = None
+#         base_url = 'https://pubs.spe.org'
+#         articles = response.css('article.tile.story')
+#         for article in articles:
+#             preview_img_link = 'https://pubs.spe.org' + article.css('div.story-wrap'). \
+#                 css('div.img-wrap').attrib['style'].split('(')[-1].split(')')[0]
+#             title = article.css('div.story-wrap').css('h3::text').get().strip()
+#             pub_time = article.css('div.story-wrap').css('span.pub-date::text').get().strip()
+#             title_url = article.css('a::attr(href)').get()
+#             pre_title = article.css('div.story-wrap').css('p::text').get().strip()
+#             result = self.session.query(JptLatest) \
+#                 .filter(or_(JptLatest.url == base_url + title_url, JptLatest.title == title)) \
+#                 .first()
+#             if not result:
+#                 yield response.follow(url=title_url, callback=self.parse,
+#                                       cb_kwargs={'preview_img_link': preview_img_link,
+#                                                  'pub_time': pub_time,
+#                                                  'title': title,
+#                                                  'pre_title': pre_title
+#                                                  }
+#                                       )
+#
+#     def parse(self, response, preview_img_link, pub_time, title, pre_title):
+#         item = JptLatestItem()
+#         item['url'] = response.url
+#         item['preview_img_link'] = preview_img_link
+#         item['pub_time'] = pub_time
+#         # item['title'] = response.css('div.articleTitleBox h2::text').get()
+#         item['title'] = title
+#         item['categories'] = response.css('span.topicItem a::text').get()
+#         item['content'] = response.css('div.articleBodyText').get()
+#         item['author'] = None
+#         item['pre_title'] = pre_title
+#         item['crawl_time'] = datetime.now().strftime('%m/%d/%Y %H:%M')
+#
+#         yield item
 
 class EnergyVoiceSpider(scrapy.Spider):
     name = 'energy_voice'
@@ -1134,7 +1217,7 @@ class EnergyPediaSpider(scrapy.Spider):
                                                  'pub_time': pub_time}
                                       )
         # for next_page in response.css('div#pagedrecordset a::text'):
-
+        # if len([result for result in results if result is None]) == len(results):
         next_pages = response.css('div#pagedrecordset a::text').getall()
         if 'Next' in next_pages:
             next_page_index = next_pages.index('Next')
