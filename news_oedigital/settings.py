@@ -137,7 +137,7 @@ ITEM_PIPELINES = {
     'news_oedigital.pipelines.EinNewsPipeline': 325,
     'news_oedigital.pipelines.JwnEnergyPipeline': 326,
     'news_oedigital.pipelines.IranOilGasPipeline': 327,
-
+    'news_oedigital.pipelines.NengYuanPipeline': 328,
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)

@@ -125,3 +125,7 @@ class JwnEnergyItem(NewsOedigitalItem):
 
 class IranOilGasItem(NewsOedigitalItem):
     pass
+
+
+class NengYuanItem(NewsOedigitalItem):
+    pass

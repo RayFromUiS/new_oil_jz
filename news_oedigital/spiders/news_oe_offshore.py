@@ -8,11 +8,11 @@ from news_oedigital.items import \
     NewsOedigitalItem, WorldOilItem, CnpcNewsItem, HartEnergyItem, OilFieldTechItem, OilAndGasItem, InEnStorageItem, \
     JptLatestItem, EnergyVoiceItem, UpStreamItem, OilPriceItem, GulfOilGasItem, EnergyPediaItem, InenTechItem, \
     InenNewEnergyItem, DrillContractorItem, RogTechItem, NaturalGasItem, RigZoneItem, OffshoreTechItem,EnergyYearItem, \
-    EnergyChinaItem,ChinaFiveItem,OffshoreEnergyItem,EinNewsItem,JwnEnergyItem,IranOilGasItem
+    EnergyChinaItem,ChinaFiveItem,OffshoreEnergyItem,EinNewsItem,JwnEnergyItem,IranOilGasItem,NengYuanItem
 from news_oedigital.model import OeNews, db_connect, create_table, WorldOil, CnpcNews, HartEnergy, OilFieldTech, \
     OilAndGas, InEnStorage, JptLatest, EnergyVoice, UpStream, OilPrice, GulfOilGas, EnergyPedia, InenTech, \
     InenNewEnergy, DrillContractor, RogTech, NaturalGas, RigZone, OffshoreTech,EnergyYear,EnergyChina,ChinaFive, \
-    OffshoreEnergy, EinNews,JwnEnergy,IranOilGas
+    OffshoreEnergy, EinNews,JwnEnergy,IranOilGas,NengYuan
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import and_, or_
 from scrapy_selenium import SeleniumRequest
@@ -2411,4 +2411,143 @@ class IranOilGasSpider(scrapy.Spider):
                 item['content'] = response.css('div#newsbody').get()
         item['crawl_time'] = datetime.now().strftime('%m/%d/%Y %H:%M')
         #
+        yield item
+
+
+
+class NengyuanSpider(scrapy.Spider):
+    name = 'nengyuan'
+    # allowed_domains = 'oilfieldtechnology.com'
+    start_urls = ['http://www.china-nengyuan.com/news/news_list_3.html']
+    custom_settings = {
+        'ITEM_PIPELINES': {'news_oedigital.pipelines.NengYuanPipeline': 328}
+    }
+
+    def __init__(self):
+        """
+        Initializes database connection and sessionmaker.
+        Creates deals table.
+        """
+        self.engine = db_connect()
+        Session = sessionmaker(bind=self.engine)
+        self.session = Session()
+        create_table(self.engine)
+
+    def start_requests(self):
+
+        for url in self.start_urls:
+            yield scrapy.Request(url=url,
+                                 callback=self.parse_page_links)
+
+    def parse_page_links(self, response):
+        articles = response.css('tr.member_tr_row')
+
+        results = []
+        base_url = 'http://www.china-nengyuan.com/'
+        # articles = response.css('div.card-rich ')
+        for article in articles:
+        #     preview_img_link = article.css('a::attr(style)').extract_first().split('(')[-1].split(')')[0]
+            title_url = article.css('a').attrib.get('href')
+            title = article.css('a').attrib.get('title')
+            pub_time = article.css('td.fgray::text')[-1].get()
+            result = self.session.query(NengYuan) \
+                .filter(or_(NengYuan.url == base_url+title_url, NengYuan.title == title)) \
+                .first()
+            results.append(result)
+            if not result:
+                yield response.follow(url=title_url,callback=self.parse,
+                                      cb_kwargs={'title':title,
+                                                 'pub_time':pub_time})
+
+        # if len([result for result in results if result is None]) == len(results):
+        next_page = response.xpath("//a[contains(text(), '下一页')]")[0].attrib.get('href')
+        if next_page:
+            yield response.follow(url=next_page,
+                                  callback= self.parse_page_links)
+
+    def parse(self, response, title, pub_time):
+        # from scrapy.shell import inspect_response
+        # inspect_response(response,self)
+        # pass
+        item = NengYuanItem()
+        item['url'] = response.url
+        item['title'] = title
+        item['pub_time'] = pub_time
+        item['preview_img_link'] = None
+        item['pre_title'] = None
+        item['author'] = response.css('main#article-stream-0').css('a.contrib-link--name::text').extract_first()
+        item['categories']=str([category.css('a::text').get()
+                                for category in  response.xpath("//div[contains(text(), '标签')]").css('strong ')])
+        item['content'] = response.css('td.f14.news_link').get()
+        item['crawl_time'] = datetime.now().strftime('%m/%d/%Y %H:%M')
+        # #
+        yield item
+
+
+class WoodMacSpider(scrapy.Spider):
+    name = 'wood_mac'
+    # allowed_domains = 'oilfieldtechnology.com'
+    start_urls = ['https://www.woodmac.com']
+    custom_settings = {
+        'ITEM_PIPELINES': {'news_oedigital.pipelines.WoodMacPipeline': 329}
+    }
+
+    def __init__(self):
+        """
+        Initializes database connection and sessionmaker.
+        Creates deals table.
+        """
+        self.engine = db_connect()
+        Session = sessionmaker(bind=self.engine)
+        self.session = Session()
+        create_table(self.engine)
+
+    def start_requests(self):
+
+        for url in self.start_urls:
+            yield SeleniumRequest(url=url,
+                                 callback=self.parse_page_links)
+
+    def parse_page_links(self, response):
+        articles = response.css('tr.member_tr_row')
+
+        results = []
+        base_url = 'http://www.china-nengyuan.com/'
+        # articles = response.css('div.card-rich ')
+        for article in articles:
+        #     preview_img_link = article.css('a::attr(style)').extract_first().split('(')[-1].split(')')[0]
+            title_url = article.css('a').attrib.get('href')
+            title = article.css('a').attrib.get('title')
+            pub_time = article.css('td.fgray::text')[-1].get()
+            result = self.session.query(NengYuan) \
+                .filter(or_(NengYuan.url == base_url+title_url, NengYuan.title == title)) \
+                .first()
+            results.append(result)
+            if not result:
+                yield response.follow(url=title_url,callback=self.parse,
+                                      cb_kwargs={'title':title,
+                                                 'pub_time':pub_time})
+
+        # if len([result for result in results if result is None]) == len(results):
+        next_page = response.xpath("//a[contains(text(), '下一页')]")[0].attrib.get('href')
+        if next_page:
+            yield response.follow(url=next_page,
+                                  callback= self.parse_page_links)
+
+    def parse(self, response, title, pub_time):
+        # from scrapy.shell import inspect_response
+        # inspect_response(response,self)
+        # pass
+        item = NengYuanItem()
+        item['url'] = response.url
+        item['title'] = title
+        item['pub_time'] = pub_time
+        item['preview_img_link'] = None
+        item['pre_title'] = None
+        item['author'] = response.css('main#article-stream-0').css('a.contrib-link--name::text').extract_first()
+        item['categories']=str([category.css('a::text').get()
+                                for category in  response.xpath("//div[contains(text(), '标签')]").css('strong ')])
+        item['content'] = response.css('td.f14.news_link').get()
+        item['crawl_time'] = datetime.now().strftime('%m/%d/%Y %H:%M')
+        # #
         yield item
