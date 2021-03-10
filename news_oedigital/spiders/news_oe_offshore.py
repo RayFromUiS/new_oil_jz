@@ -8,11 +8,12 @@ from news_oedigital.items import \
     NewsOedigitalItem, WorldOilItem, CnpcNewsItem, HartEnergyItem, OilFieldTechItem, OilAndGasItem, InEnStorageItem, \
     JptLatestItem, EnergyVoiceItem, UpStreamItem, OilPriceItem, GulfOilGasItem, EnergyPediaItem, InenTechItem, \
     InenNewEnergyItem, DrillContractorItem, RogTechItem, NaturalGasItem, RigZoneItem, OffshoreTechItem,EnergyYearItem, \
-    EnergyChinaItem,ChinaFiveItem,OffshoreEnergyItem,EinNewsItem,JwnEnergyItem,IranOilGasItem,NengYuanItem
+    EnergyChinaItem,ChinaFiveItem,OffshoreEnergyItem,EinNewsItem,JwnEnergyItem,IranOilGasItem,NengYuanItem,WoodMacItem,\
+    RystadEnergyItem
 from news_oedigital.model import OeNews, db_connect, create_table, WorldOil, CnpcNews, HartEnergy, OilFieldTech, \
     OilAndGas, InEnStorage, JptLatest, EnergyVoice, UpStream, OilPrice, GulfOilGas, EnergyPedia, InenTech, \
     InenNewEnergy, DrillContractor, RogTech, NaturalGas, RigZone, OffshoreTech,EnergyYear,EnergyChina,ChinaFive, \
-    OffshoreEnergy, EinNews,JwnEnergy,IranOilGas,NengYuan
+    OffshoreEnergy, EinNews,JwnEnergy,IranOilGas,NengYuan,WoodMac,RystadEnergy
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import and_, or_
 from scrapy_selenium import SeleniumRequest
@@ -2487,7 +2488,7 @@ class NengyuanSpider(scrapy.Spider):
 class WoodMacSpider(scrapy.Spider):
     name = 'wood_mac'
     # allowed_domains = 'oilfieldtechnology.com'
-    start_urls = ['https://www.woodmac.com']
+    start_urls = ['https://www.woodmac.com/search/?q=&sort=DateDesc+&ssf=Comment&ssf=News+Release&&cf=c2735']
     custom_settings = {
         'ITEM_PIPELINES': {'news_oedigital.pipelines.WoodMacPipeline': 329}
     }
@@ -2509,45 +2510,173 @@ class WoodMacSpider(scrapy.Spider):
                                  callback=self.parse_page_links)
 
     def parse_page_links(self, response):
-        articles = response.css('tr.member_tr_row')
-
+        articles = response.css('div>ul').css('li.push--bottom')
         results = []
-        base_url = 'http://www.china-nengyuan.com/'
+        # base_url = 'http://www.china-nengyuan.com/'
         # articles = response.css('div.card-rich ')
         for article in articles:
         #     preview_img_link = article.css('a::attr(style)').extract_first().split('(')[-1].split(')')[0]
             title_url = article.css('a').attrib.get('href')
-            title = article.css('a').attrib.get('title')
-            pub_time = article.css('td.fgray::text')[-1].get()
-            result = self.session.query(NengYuan) \
-                .filter(or_(NengYuan.url == base_url+title_url, NengYuan.title == title)) \
+            title = article.css('a').css('h3::text').get()
+            pub_time = article.css('a').css('li::text').get().strip()
+            pre_title = article.css('a').css('p::text').get().strip()
+            result = self.session.query(WoodMac) \
+                .filter(or_(WoodMac.url == title_url, WoodMac.title == title)) \
+                .first()
+            results.append(result)
+            if not result:
+                yield scrapy.Request(url=title_url,callback=self.parse,
+                                      cb_kwargs={'title':title,
+                                                 'pub_time':pub_time,
+                                                 'pre_title':pre_title})
+
+        # if len([result for result in results if result is None]) == len(results):
+        next_page = response.css('nav.paging>a').attrib.get('href')
+        if next_page:
+            yield response.follow(url=next_page,
+                                  callback= self.parse_page_links)
+
+    def parse(self, response, title, pub_time,pre_title):
+        # from scrapy.shell import inspect_response
+        # inspect_response(response,self)
+        # pass
+        item = WoodMacItem()
+        item['url'] = response.url
+        item['title'] = title
+        item['pub_time'] = pub_time
+        item['preview_img_link'] = None
+        item['pre_title'] = pre_title
+        item['author'] = None
+        item['categories']= None
+        item['content'] = response.css('div.editor')[-1].get()
+        item['crawl_time'] = datetime.now().strftime('%m/%d/%Y %H:%M')
+        # #
+        yield item
+
+
+class RystadEnergySpider(scrapy.Spider):
+    name = 'rystad_energy'
+    # allowed_domains = 'oilfieldtechnology.com'
+    start_urls = ['https://www.rystadenergy.com/newsevents/news/press-releases/']
+    custom_settings = {
+        'ITEM_PIPELINES': {'news_oedigital.pipelines.RystadEnergyPipeline': 330}
+    }
+
+    def __init__(self):
+        """
+        Initializes database connection and sessionmaker.
+        Creates deals table.
+        """
+        self.engine = db_connect()
+        Session = sessionmaker(bind=self.engine)
+        self.session = Session()
+        create_table(self.engine)
+
+    def start_requests(self):
+
+        for url in self.start_urls:
+            yield SeleniumRequest(url=url,
+                                 callback=self.parse_page_links)
+
+    def parse_page_links(self, response):
+        articles = response.css('div.news-events-list__item')
+        results = []
+        # base_url = 'http://www.china-nengyuan.com/'
+        # articles = response.css('div.card-rich ')re
+        for article in articles:
+        #     preview_img_link = article.css('a::attr(style)').extract_first().split('(')[-1].split(')')[0]
+            title_url =  article.css('a').attrib.get('href')
+            title = article.css('h5::text').get().strip() if article.css('h5::text').get() else None
+            pub_time = article.css('time').attrib.get('datetime')
+            categories = article.css('small span::text').get()
+            result = self.session.query(RystadEnergy) \
+                .filter(or_(RystadEnergy.url == title_url, RystadEnergy.title == title)) \
                 .first()
             results.append(result)
             if not result:
                 yield response.follow(url=title_url,callback=self.parse,
                                       cb_kwargs={'title':title,
-                                                 'pub_time':pub_time})
+                                                 'pub_time':pub_time,
+                                                 'categories':categories})
 
-        # if len([result for result in results if result is None]) == len(results):
-        next_page = response.xpath("//a[contains(text(), '下一页')]")[0].attrib.get('href')
-        if next_page:
-            yield response.follow(url=next_page,
-                                  callback= self.parse_page_links)
 
-    def parse(self, response, title, pub_time):
+    def parse(self, response, title, pub_time,categories):
         # from scrapy.shell import inspect_response
         # inspect_response(response,self)
         # pass
-        item = NengYuanItem()
+        item = RystadEnergyItem()
         item['url'] = response.url
         item['title'] = title
         item['pub_time'] = pub_time
         item['preview_img_link'] = None
         item['pre_title'] = None
-        item['author'] = response.css('main#article-stream-0').css('a.contrib-link--name::text').extract_first()
-        item['categories']=str([category.css('a::text').get()
-                                for category in  response.xpath("//div[contains(text(), '标签')]").css('strong ')])
-        item['content'] = response.css('td.f14.news_link').get()
+        item['author'] = None
+        item['categories']= categories
+        item['content'] = response.css('div.text-break').get()
+        item['crawl_time'] = datetime.now().strftime('%m/%d/%Y %H:%M')
+        # #
+        yield item
+
+
+
+class WestwoodEnergySpider(scrapy.Spider):
+    name = 'westwood_energy'
+    # allowed_domains = 'oilfieldtechnology.com'
+    start_urls = ['https://www.westwoodenergy.com/news']
+    custom_settings = {
+        'ITEM_PIPELINES': {'news_oedigital.pipelines.WestwoodEnergyPipeline': 331}
+    }
+
+    def __init__(self):
+        """
+        Initializes database connection and sessionmaker.
+        Creates deals table.
+        """
+        self.engine = db_connect()
+        Session = sessionmaker(bind=self.engine)
+        self.session = Session()
+        create_table(self.engine)
+
+    def start_requests(self):
+
+        for url in self.start_urls:
+            yield SeleniumRequest(url=url,
+                                 callback=self.parse_page_links)
+
+    def parse_page_links(self, response):
+        articles =response.css('div.nectar-post-grid-item')
+        results = []
+        # base_url = 'http://www.china-nengyuan.com/'
+        # articles = response.css('div.card-rich ')re
+        for article in articles:
+        #     preview_img_link = article.css('a::attr(style)').extract_first().split('(')[-1].split(')')[0]
+            title_url = article.css('div.content>a').attrib.get('href')
+            title = article.css('div.item-main h3 a::text').get()
+            preview_img_url = article.css('div.nectar-post-grid-item-bg') \
+                            .attrib.get('style').split('(')[1].split(')')[0]
+            result = self.session.query(RystadEnergy) \
+                .filter(or_(RystadEnergy.url == title_url, RystadEnergy.title == title)) \
+                .first()
+            results.append(result)
+            if not result:
+                yield response.follow(url=title_url,callback=self.parse,
+                                      cb_kwargs={'title':title,
+                                                 'preview_img_link':preview_img_url})
+
+
+    def parse(self, response, title, preview_img_link):
+        # from scrapy.shell import inspect_response
+        # inspect_response(response,self)
+        # pass
+        item = RystadEnergyItem()
+        item['url'] = response.url
+        item['title'] = title
+        item['pub_time'] = pub_time
+        item['preview_img_link'] = None
+        item['pre_title'] = None
+        item['author'] = None
+        item['categories']= categories
+        item['content'] = response.css('div.text-break').get()
         item['crawl_time'] = datetime.now().strftime('%m/%d/%Y %H:%M')
         # #
         yield item

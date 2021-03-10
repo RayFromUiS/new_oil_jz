@@ -11,7 +11,7 @@ from news_oedigital.model import OeNews, WorldOil, CnpcNews, HartEnergy, OilFiel
     EnergyPedia, \
     InenTech, InenNewEnergy, DrillContractor, RogTech, NaturalGas, RigZone, OffshoreTech, EnergyYear, EnergyChina, \
     ChinaFive, \
-    OffshoreEnergy, EinNews, JwnEnergy, IranOilGas,NengYuan
+    OffshoreEnergy, EinNews, JwnEnergy, IranOilGas,NengYuan,WoodMac,RystadEnergy
 # from news_oedigital.spiders.oe_offshore import NewsOeOffshoreSpider
 
 import pymongo
@@ -710,6 +710,54 @@ class IranOilGasPipeline:
 class NengYuanPipeline:
     def process_item(self, item, spider):
         new_item = NengYuan(title=item.get('title'), author=item.get('author'), pre_title=item.get('pre_title'), \
+                              preview_img_link=item.get('preview_img_link'), pub_time=item.get('pub_time'), \
+                              content=item.get('content'), crawl_time=item.get('crawl_time'), url=item.get('url'), \
+                              categories=item.get('categories'))
+
+        try:
+            # if item.get('content'):
+            spider.session.add(new_item)
+            spider.session.commit()
+            # else:
+            #     raise DropItem(f"Missing content in {item}")
+        except:
+            spider.session.rollback()
+            raise
+        return item
+
+    def close_spider(self, spider):
+        spider.session.close()
+
+    def close_spider(self, spider):
+        spider.session.close()
+
+class WoodMacPipeline:
+    def process_item(self, item, spider):
+        new_item = WoodMac(title=item.get('title'), author=item.get('author'), pre_title=item.get('pre_title'), \
+                              preview_img_link=item.get('preview_img_link'), pub_time=item.get('pub_time'), \
+                              content=item.get('content'), crawl_time=item.get('crawl_time'), url=item.get('url'), \
+                              categories=item.get('categories'))
+
+        try:
+            # if item.get('content'):
+            spider.session.add(new_item)
+            spider.session.commit()
+            # else:
+            #     raise DropItem(f"Missing content in {item}")
+        except:
+            spider.session.rollback()
+            raise
+        return item
+
+    def close_spider(self, spider):
+        spider.session.close()
+
+    def close_spider(self, spider):
+        spider.session.close()
+
+class RystadEnergyPipeline:
+    def process_item(self, item, spider):
+        new_item = RystadEnergy(title=item.get('title'), author=item.get('author'), pre_title=item.get('pre_title'), \
                               preview_img_link=item.get('preview_img_link'), pub_time=item.get('pub_time'), \
                               content=item.get('content'), crawl_time=item.get('crawl_time'), url=item.get('url'), \
                               categories=item.get('categories'))

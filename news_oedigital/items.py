@@ -129,3 +129,9 @@ class IranOilGasItem(NewsOedigitalItem):
 
 class NengYuanItem(NewsOedigitalItem):
     pass
+
+class WoodMacItem(NewsOedigitalItem):
+    pass
+
+class RystadEnergyItem(NewsOedigitalItem):
+    pass
