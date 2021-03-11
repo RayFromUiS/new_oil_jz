@@ -9,11 +9,11 @@ from news_oedigital.items import \
     JptLatestItem, EnergyVoiceItem, UpStreamItem, OilPriceItem, GulfOilGasItem, EnergyPediaItem, InenTechItem, \
     InenNewEnergyItem, DrillContractorItem, RogTechItem, NaturalGasItem, RigZoneItem, OffshoreTechItem,EnergyYearItem, \
     EnergyChinaItem,ChinaFiveItem,OffshoreEnergyItem,EinNewsItem,JwnEnergyItem,IranOilGasItem,NengYuanItem,WoodMacItem,\
-    RystadEnergyItem
+    RystadEnergyItem,WestwoodEnergyItem
 from news_oedigital.model import OeNews, db_connect, create_table, WorldOil, CnpcNews, HartEnergy, OilFieldTech, \
     OilAndGas, InEnStorage, JptLatest, EnergyVoice, UpStream, OilPrice, GulfOilGas, EnergyPedia, InenTech, \
     InenNewEnergy, DrillContractor, RogTech, NaturalGas, RigZone, OffshoreTech,EnergyYear,EnergyChina,ChinaFive, \
-    OffshoreEnergy, EinNews,JwnEnergy,IranOilGas,NengYuan,WoodMac,RystadEnergy
+    OffshoreEnergy, EinNews,JwnEnergy,IranOilGas,NengYuan,WoodMac,RystadEnergy,WestwoodEnergy
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import and_, or_
 from scrapy_selenium import SeleniumRequest
@@ -2654,8 +2654,8 @@ class WestwoodEnergySpider(scrapy.Spider):
             title = article.css('div.item-main h3 a::text').get()
             preview_img_url = article.css('div.nectar-post-grid-item-bg') \
                             .attrib.get('style').split('(')[1].split(')')[0]
-            result = self.session.query(RystadEnergy) \
-                .filter(or_(RystadEnergy.url == title_url, RystadEnergy.title == title)) \
+            result = self.session.query(WestwoodEnergy) \
+                .filter(or_(WestwoodEnergy.url == title_url, WestwoodEnergy.title == title)) \
                 .first()
             results.append(result)
             if not result:
@@ -2668,15 +2668,19 @@ class WestwoodEnergySpider(scrapy.Spider):
         # from scrapy.shell import inspect_response
         # inspect_response(response,self)
         # pass
-        item = RystadEnergyItem()
+        item = WestwoodEnergyItem()
         item['url'] = response.url
         item['title'] = title
-        item['pub_time'] = pub_time
-        item['preview_img_link'] = None
+        item['pub_time'] = response.css('span.meta-date.date.published::text').get()
+        item['preview_img_link'] = preview_img_link
         item['pre_title'] = None
         item['author'] = None
-        item['categories']= categories
-        item['content'] = response.css('div.text-break').get()
+        item['categories']= None
+        if response.xpath("//article[contains(@id,'post')]"):
+            item['content'] =  response.xpath("//article[contains(@id,'post')]").\
+                                    css('div.wpb_text_column.wpb_content_element').get()
+        elif response.xpath("//div[contains(@id,'ajax-content-wrap')]"):
+            item['content'] = response.xpath("//div[contains(@id,'ajax-content-wrap')]").css('div.post-content').get()
         item['crawl_time'] = datetime.now().strftime('%m/%d/%Y %H:%M')
         # #
         yield item

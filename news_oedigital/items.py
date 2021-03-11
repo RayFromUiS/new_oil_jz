@@ -135,3 +135,6 @@ class WoodMacItem(NewsOedigitalItem):
 
 class RystadEnergyItem(NewsOedigitalItem):
     pass
+
+class WestwoodEnergyItem(NewsOedigitalItem):
+    pass
