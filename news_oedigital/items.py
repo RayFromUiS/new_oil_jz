@@ -138,3 +138,7 @@ class RystadEnergyItem(NewsOedigitalItem):
 
 class WestwoodEnergyItem(NewsOedigitalItem):
     pass
+
+
+class IeaNewsItem(NewsOedigitalItem):
+    pass

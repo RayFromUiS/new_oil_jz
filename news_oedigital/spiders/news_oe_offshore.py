@@ -9,11 +9,11 @@ from news_oedigital.items import \
     JptLatestItem, EnergyVoiceItem, UpStreamItem, OilPriceItem, GulfOilGasItem, EnergyPediaItem, InenTechItem, \
     InenNewEnergyItem, DrillContractorItem, RogTechItem, NaturalGasItem, RigZoneItem, OffshoreTechItem,EnergyYearItem, \
     EnergyChinaItem,ChinaFiveItem,OffshoreEnergyItem,EinNewsItem,JwnEnergyItem,IranOilGasItem,NengYuanItem,WoodMacItem,\
-    RystadEnergyItem,WestwoodEnergyItem
+    RystadEnergyItem,WestwoodEnergyItem,IeaNewsItem
 from news_oedigital.model import OeNews, db_connect, create_table, WorldOil, CnpcNews, HartEnergy, OilFieldTech, \
     OilAndGas, InEnStorage, JptLatest, EnergyVoice, UpStream, OilPrice, GulfOilGas, EnergyPedia, InenTech, \
     InenNewEnergy, DrillContractor, RogTech, NaturalGas, RigZone, OffshoreTech,EnergyYear,EnergyChina,ChinaFive, \
-    OffshoreEnergy, EinNews,JwnEnergy,IranOilGas,NengYuan,WoodMac,RystadEnergy,WestwoodEnergy
+    OffshoreEnergy, EinNews,JwnEnergy,IranOilGas,NengYuan,WoodMac,RystadEnergy,WestwoodEnergy,IeaNews
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import and_, or_
 from scrapy_selenium import SeleniumRequest
@@ -2681,6 +2681,73 @@ class WestwoodEnergySpider(scrapy.Spider):
                                     css('div.wpb_text_column.wpb_content_element').get()
         elif response.xpath("//div[contains(@id,'ajax-content-wrap')]"):
             item['content'] = response.xpath("//div[contains(@id,'ajax-content-wrap')]").css('div.post-content').get()
+        item['crawl_time'] = datetime.now().strftime('%m/%d/%Y %H:%M')
+        # #
+        yield item
+
+
+class IeaNewsSpider(scrapy.Spider):
+    name = 'iea_news'
+    # allowed_domains = 'oilfieldtechnology.com'
+    start_urls = ['https://www.iea.org/news']
+    custom_settings = {
+        'ITEM_PIPELINES': {'news_oedigital.pipelines.IeaNewsPipeline': 332}
+    }
+
+    def __init__(self):
+        """
+        Initializes database connection and sessionmaker.
+        Creates deals table.
+        """
+        self.engine = db_connect()
+        Session = sessionmaker(bind=self.engine)
+        self.session = Session()
+        create_table(self.engine)
+
+    def start_requests(self):
+
+        for url in self.start_urls:
+            yield SeleniumRequest(url=url,
+                                 callback=self.parse_page_links)
+
+    def parse_page_links(self, response):
+        articles = response.css('article.m-news-listing')
+        results = []
+        # base_url = 'http://www.china-nengyuan.com/'
+        # articles = response.css('div.card-rich ')re
+        for article in articles:
+        #     preview_img_link = article.css('a::attr(style)').extract_first().split('(')[-1].split(')')[0]
+            title_url = article.css('a').attrib.get('href')
+            title = article.css('h5>span::text').get()
+            pub_time =  article.css('div::text').get().strip().split('—')[-1].strip()
+
+            result = self.session.query(IeaNews) \
+                .filter(or_(IeaNews.url == title_url, IeaNews.title == title)) \
+                .first()
+            results.append(result)
+            if not result:
+                yield response.follow(url=title_url,callback=self.parse,
+                                      cb_kwargs={'title':title,
+                                                 'pub_time':pub_time})
+        next_page = response.css('a.m-pagination__btn.m-pagination__btn--next').attrib.get('href')
+        if next_page:
+            yield scrapy.Request(url=next_page,
+                                 callback=self.parse_page_links)
+
+
+    def parse(self, response, title, pub_time):
+        # from scrapy.shell import inspect_response
+        # inspect_response(response,self)
+        # pass
+        item = IeaNewsItem()
+        item['url'] = response.url
+        item['title'] = title
+        item['pub_time'] = response.css('span.meta-date.date.published::text').get()
+        item['preview_img_link'] = None
+        item['pre_title'] = None
+        item['author'] = None
+        item['categories']= None
+        item['content'] = response.css('div.m-block.m-block--text').get()
         item['crawl_time'] = datetime.now().strftime('%m/%d/%Y %H:%M')
         # #
         yield item

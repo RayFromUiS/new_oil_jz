@@ -278,3 +278,41 @@ console.warn: SearchSettings: "get: No settings file exists, new profile?" (new 
 1615427342336	Marionette	WARN	TLS certificate errors will be ignored for this session
 1615427342347	Marionette	ERROR	[19] No reply from Marionette:Register
 1615427383948	Marionette	INFO	Stopped listening on port 50059
+console.log: WebExtensions: reset-default-search: No addons in our list are installed.
+1615463691397	addons.xpi	ERROR	System addon update list error Error: Failed downloading XML, status: 0, reason: timeout
+1615511461176	addons.xpi	ERROR	System addon update list error Error: Failed downloading XML, status: 0, reason: timeout
+1615517084432	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-headless" "-foreground" "-no-remote" "-profile" "/var/folders/qp/62byk9gs7738gg2bzjf8p3br0000gn/T/rust_mozprofiledHgqAP"
+*** You are running in headless mode.
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new Error("", "(unknown module)"))
+1615517086711	Marionette	INFO	Listening on port 49579
+1615517086835	Marionette	WARN	TLS certificate errors will be ignored for this session
+1615517086845	Marionette	ERROR	[19] No reply from Marionette:Register
+console.log: WebExtensions: reset-default-search: No addons in our list are installed.
+1615518073107	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-headless" "-foreground" "-no-remote" "-profile" "/var/folders/qp/62byk9gs7738gg2bzjf8p3br0000gn/T/rust_mozprofileSLZf3p"
+*** You are running in headless mode.
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new Error("", "(unknown module)"))
+1615518075377	Marionette	INFO	Listening on port 49898
+1615518075412	Marionette	WARN	TLS certificate errors will be ignored for this session
+1615518075425	Marionette	ERROR	[19] No reply from Marionette:Register
+console.log: WebExtensions: reset-default-search: No addons in our list are installed.
+1615519362380	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-headless" "-foreground" "-no-remote" "-profile" "/var/folders/qp/62byk9gs7738gg2bzjf8p3br0000gn/T/rust_mozprofile7H4RZd"
+*** You are running in headless mode.
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new Error("", "(unknown module)"))
+1615519364957	Marionette	INFO	Listening on port 50168
+1615519365066	Marionette	WARN	TLS certificate errors will be ignored for this session
+1615519365080	Marionette	ERROR	[19] No reply from Marionette:Register
+1615519384962	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-headless" "-foreground" "-no-remote" "-profile" "/var/folders/qp/62byk9gs7738gg2bzjf8p3br0000gn/T/rust_mozprofilet1fWqG"
+*** You are running in headless mode.
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new Error("", "(unknown module)"))
+1615519387228	Marionette	INFO	Listening on port 50244
+1615519387345	Marionette	WARN	TLS certificate errors will be ignored for this session
+1615519387355	Marionette	ERROR	[19] No reply from Marionette:Register
+1615519396187	Marionette	INFO	Stopped listening on port 50244
+1615519444101	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-headless" "-foreground" "-no-remote" "-profile" "/var/folders/qp/62byk9gs7738gg2bzjf8p3br0000gn/T/rust_mozprofile4o0RJL"
+*** You are running in headless mode.
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new Error("", "(unknown module)"))
+1615519446390	Marionette	INFO	Listening on port 50361
+1615519446489	Marionette	WARN	TLS certificate errors will be ignored for this session
+1615519446502	Marionette	ERROR	[19] No reply from Marionette:Register
+1615519764593	Marionette	INFO	Stopped listening on port 50361
+console.log: WebExtensions: reset-default-search: No addons in our list are installed.
