@@ -2729,10 +2729,12 @@ class IeaNewsSpider(scrapy.Spider):
                 yield response.follow(url=title_url,callback=self.parse,
                                       cb_kwargs={'title':title,
                                                  'pub_time':pub_time})
-        next_page = response.css('a.m-pagination__btn.m-pagination__btn--next').attrib.get('href')
-        if next_page:
-            yield scrapy.Request(url=next_page,
-                                 callback=self.parse_page_links)
+
+        if len([result for result in results if result is None]) == len(results):
+            next_page = response.css('a.m-pagination__btn.m-pagination__btn--next').attrib.get('href')
+            if next_page:
+                yield scrapy.Request(url=next_page,
+                                     callback=self.parse_page_links)
 
 
     def parse(self, response, title, pub_time):
@@ -2742,7 +2744,7 @@ class IeaNewsSpider(scrapy.Spider):
         item = IeaNewsItem()
         item['url'] = response.url
         item['title'] = title
-        item['pub_time'] = response.css('span.meta-date.date.published::text').get()
+        item['pub_time'] = pub_time
         item['preview_img_link'] = None
         item['pre_title'] = None
         item['author'] = None
