@@ -181,7 +181,9 @@ class OilAndGasPipeline:
         except:
             spider.session.rollback()
             raise
-        return item
+        finally:
+            spider.session.close()
+            return item
 
     def close_spider(self, spider):
         spider.session.close()
@@ -203,6 +205,8 @@ class InEnEnergyPipeline:
         except:
             spider.session.rollback()
             raise
+        finally:
+            spider.session.close()
         return item
 
 

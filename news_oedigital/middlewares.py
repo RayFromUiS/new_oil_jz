@@ -3,22 +3,23 @@
 # See documentation in:
 # https://docs.scrapy.org/en/latest/topics/spider-middleware.html
 
-from scrapy import signals
 
 # useful for handling different item types with a single interface
-from itemadapter import is_item, ItemAdapter
-from __future__ import absolute_import
 
+from __future__ import absolute_import
+from itemadapter import is_item, ItemAdapter
+from scrapy import signals
 import os
 import os.path
 import logging
 import pickle
-
+from scrapy.exceptions import IgnoreRequest
 from scrapy.http.cookies import CookieJar
 
 from scrapy.downloadermiddlewares.cookies import CookiesMiddleware
-
-import settings
+from scrapy.http import HtmlResponse
+from news_oedigital import settings
+import re
 
 class NewsOedigitalSpiderMiddleware:
     # Not all methods need to be defined. If a method is not defined,
@@ -44,6 +45,7 @@ class NewsOedigitalSpiderMiddleware:
         # it has processed the response.
 
         # Must return an iterable of Request, or item objects.
+
         for i in result:
             yield i
 
@@ -96,11 +98,13 @@ class NewsOedigitalDownloaderMiddleware:
     def process_response(self, request, response, spider):
         # Called with the response returned from the downloader.
 
+        if response.status == 404 or response==403:
+            raise IgnoreRequest('skip the request',response.url)
         # Must either;
         # - return a Response object
         # - return a Request object
         # - or raise IgnoreRequest
-        return response
+        # return response
 
     def process_exception(self, request, exception, spider):
         # Called when a download handler or a process_request()
@@ -110,6 +114,7 @@ class NewsOedigitalDownloaderMiddleware:
         # - return None: continue processing this exception
         # - return a Response object: stops process_exception() chain
         # - return a Request object: stops process_exception() chain
+
         pass
 
     def spider_opened(self, spider):

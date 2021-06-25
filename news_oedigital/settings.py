@@ -21,9 +21,9 @@ RANDOMIZE_DOWNLOAD_DELAY = True
 SELENIUM_DRIVER_NAME = 'firefox'
 SELENIUM_DRIVER_EXECUTABLE_PATH = which('geckodriver')
 SELENIUM_DRIVER_ARGUMENTS = ['-headless']  # '--headless' if using chrome instead of firefox
-RETRY_TIMES = 10
+RETRY_TIMES = 3
 # Retry on most error codes since proxies fail for different reasons
-RETRY_HTTP_CODES = [500, 503, 504, 400, 403, 404, 408]
+RETRY_HTTP_CODES = [500, 503, 504, 400,  408] #403,404
 PROXY_LIST = 'news_oedigital/spiders/proxies'
 PROXY_MODE = 0  # different proxy for each request
 RANDOM_UA_PER_PROXY = True
@@ -39,9 +39,12 @@ DOWNLOADER_MIDDLEWARES = {
     'scrapy_selenium.SeleniumMiddleware': 750,
     # 'scrapy.downloadermiddlewares.cookies.CookiesMiddleware': None,
     # 'scrapy.downloadermiddlewares.cookies.PersistentCookiesMiddleware': 751,
-    'scrapy_splash.SplashCookiesMiddleware': 650,
-    'scrapy_splash.SplashMiddleware': 652,
+    'scrapy.downloadermiddlewares.cookies.CookiesMiddleware': None,
+    'scrapy_cookies.downloadermiddlewares.cookies.CookiesMiddleware': 711,
+    # 'scrapy_splash.SplashCookiesMiddleware': 650,
+    # 'scrapy_splash.SplashMiddleware': 652,
     'scrapy.downloadermiddlewares.httpcompression.HttpCompressionMiddleware': 810,
+    # 'news_oedigital.middlewares.NewsOedigitalDownloaderMiddleware':751,
 }
 
 SQL_CONNECT_STRING = 'mysql+pymysql://root:jinzheng1706@139.198.191.224:3308/news_oil'
@@ -51,13 +54,22 @@ MONGO_URI= 'mongodb://root:password@localhost:27017/'
 MONGO_DATABASE='petroleum_news'
 SPLASH_URL = 'http://127.0.0.1:8050/'
 
-SPIDER_MIDDLEWARES = {
-    'scrapy_splash.SplashDeduplicateArgsMiddleware': 100,
-}
-DUPEFILTER_CLASS = 'scrapy_splash.SplashAwareDupeFilter'
-HTTPCACHE_STORAGE = 'scrapy_splash.SplashAwareFSCacheStorage'
+# SPIDER_MIDDLEWARES = {
+#     'scrapy_splash.SplashDeduplicateArgsMiddleware': 100,
+# }
+# DUPEFILTER_CLASS = 'scrapy_splash.SplashAwareDupeFilter'
+# HTTPCACHE_STORAGE = 'scrapy_splash.SplashAwareFSCacheStorage'
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 # USER_AGENT = 'news_oedigital (+http://www.yourdomain.com)'
+
+COOKIES_ENABLED = True
+COOKIES_PERSISTENCE = True
+COOKIES_PERSISTENCE_DIR = 'cookies'
+COOKIES_STORAGE = 'scrapy_cookies.storage.in_memory.InMemoryStorage'
+DOWNLOADER_MIDDLEWARES.update({
+    'scrapy.downloadermiddlewares.cookies.CookiesMiddleware': None,
+    'scrapy_cookies.downloadermiddlewares.cookies.CookiesMiddleware': 711,
+})
 
 # Obey robots.txt rules
 # ROBOTSTXT_OBEY = True
@@ -108,6 +120,7 @@ HTTPCACHE_STORAGE = 'scrapy_splash.SplashAwareFSCacheStorage'
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
+    'scrapy.pipelines.images.ImagesPipeline': 1,
     'news_oedigital.pipelines.NewsOedigitalPipeline': 300,
     'news_oedigital.pipelines.WorldOilPipeline': 301,
     'news_oedigital.pipelines.CnpcNewsPipeline': 302,

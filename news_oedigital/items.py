@@ -142,3 +142,5 @@ class WestwoodEnergyItem(NewsOedigitalItem):
 
 class IeaNewsItem(NewsOedigitalItem):
     pass
+
+
