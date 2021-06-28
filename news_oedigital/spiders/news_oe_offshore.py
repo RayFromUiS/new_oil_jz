@@ -10,11 +10,12 @@ from news_oedigital.items import \
     InenNewEnergyItem, DrillContractorItem, RogTechItem, NaturalGasItem, RigZoneItem, OffshoreTechItem, EnergyYearItem, \
     EnergyChinaItem, ChinaFiveItem, OffshoreEnergyItem, EinNewsItem, JwnEnergyItem, IranOilGasItem, NengYuanItem, \
     WoodMacItem, \
-    RystadEnergyItem, WestwoodEnergyItem, IeaNewsItem
+    RystadEnergyItem, WestwoodEnergyItem, IeaNewsItem,EvWindItem
 from news_oedigital.model import OeNews, db_connect, create_table, WorldOil, CnpcNews, HartEnergy, OilFieldTech, \
     OilAndGas, InEnStorage, JptLatest, EnergyVoice, UpStream, OilPrice, GulfOilGas, EnergyPedia, InenTech, \
     InenNewEnergy, DrillContractor, RogTech, NaturalGas, RigZone, OffshoreTech, EnergyYear, EnergyChina, ChinaFive, \
-    OffshoreEnergy, EinNews, JwnEnergy, IranOilGas, NengYuan, WoodMac, RystadEnergy, WestwoodEnergy, IeaNews
+    OffshoreEnergy, EinNews, JwnEnergy, IranOilGas, NengYuan, WoodMac, RystadEnergy, WestwoodEnergy, IeaNews,\
+    EvWind
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import and_, or_
 from scrapy_selenium import SeleniumRequest
@@ -2859,4 +2860,75 @@ class CnpcNewsSpiderUpdated(scrapy.Spider):
         item['crawl_time'] = datetime.now().strftime('%m/%d/%Y %H:%M')
         # from scrapy.shell import inspect_response
         # inspect_response(response, self)
+        yield item
+
+
+class EvWindSpider(scrapy.Spider):
+    name = 'ev_wind'
+    # allowed_domains = 'oilfieldtechnology.com'
+    start_urls = ['https://www.evwind.es/']
+    custom_settings = {
+        'ITEM_PIPELINES': {'news_oedigital.pipelines.EvWindPipeline': 333}
+    }
+
+    def __init__(self):
+        """
+        Initializes database connection and sessionmaker.
+        Creates deals table.
+        """
+        self.engine = db_connect()
+        Session = sessionmaker(bind=self.engine)
+        self.session = Session()
+        create_table(self.engine)
+
+    def start_requests(self):
+
+        for url in self.start_urls:
+            yield SeleniumRequest(url=url,
+                                  callback=self.parse_page_links)
+
+    def parse_page_links(self, response):
+        articles = response.css('div#content').css('article')
+        results = []
+        # base_url = 'http://www.china-nengyuan.com/'
+        # articles = response.css('div.card-rich ')re
+        for article in articles:
+            #     preview_img_link = article.css('a::attr(style)').extract_first().split('(')[-1].split(')')[0]
+            title_url = article.css('h1.entry-title a').attrib.get('href')
+            title = article.css('h1.entry-title a::text').get()
+            pub_time = article.css('span.entry-date time::text').get()
+            author = article.css('span.author.vcard a::text').get()
+            preview_img_link = article.css('a.post-thumbnail noscript img').attrib.get('src')
+            result = self.session.query(EvWind) \
+                .filter(or_(EvWind.url == title_url, EvWind.title == title)) \
+                .first()
+            results.append(result)
+            if not result:
+                yield response.follow(url=title_url, callback=self.parse,
+                                      cb_kwargs={'title': title,
+                                                 'author':author,
+                                                 'preview_img_link':preview_img_link,
+                                                 'pub_time': pub_time})
+
+        # if len([result for result in results if result is None]) == len(results):
+        next_page = response.css('a.next').attrib.get('href')
+        if next_page:
+            yield scrapy.Request(url=next_page,
+                                 callback=self.parse_page_links)
+
+    def parse(self, response, title, pub_time,author,preview_img_link):
+        # from scrapy.shell import inspect_response
+        # inspect_response(response,self)
+        # pass
+        item = EvWindItem()
+        item['url'] = response.url
+        item['title'] = title
+        item['pub_time'] = pub_time
+        item['preview_img_link'] = preview_img_link
+        item['pre_title'] = None
+        item['author'] = author
+        item['categories'] = str(response.css('span.tag-links a::text').getall())
+        item['content'] =  response.xpath('//article[contains(@id,"post")]').get()
+        item['crawl_time'] = datetime.now().strftime('%m/%d/%Y %H:%M')
+        # #
         yield item

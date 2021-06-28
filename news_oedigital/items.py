@@ -144,3 +144,5 @@ class IeaNewsItem(NewsOedigitalItem):
     pass
 
 
+class EvWindItem(NewsOedigitalItem):
+    pass
