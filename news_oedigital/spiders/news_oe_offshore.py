@@ -9,13 +9,13 @@ from news_oedigital.items import \
     JptLatestItem, EnergyVoiceItem, UpStreamItem, OilPriceItem, GulfOilGasItem, EnergyPediaItem, InenTechItem, \
     InenNewEnergyItem, DrillContractorItem, RogTechItem, NaturalGasItem, RigZoneItem, OffshoreTechItem, EnergyYearItem, \
     EnergyChinaItem, ChinaFiveItem, OffshoreEnergyItem, EinNewsItem, JwnEnergyItem, IranOilGasItem, NengYuanItem, \
-    WoodMacItem, \
+    WoodMacItem,OffshoreWindItem, \
     RystadEnergyItem, WestwoodEnergyItem, IeaNewsItem,EvWindItem
 from news_oedigital.model import OeNews, db_connect, create_table, WorldOil, CnpcNews, HartEnergy, OilFieldTech, \
     OilAndGas, InEnStorage, JptLatest, EnergyVoice, UpStream, OilPrice, GulfOilGas, EnergyPedia, InenTech, \
     InenNewEnergy, DrillContractor, RogTech, NaturalGas, RigZone, OffshoreTech, EnergyYear, EnergyChina, ChinaFive, \
     OffshoreEnergy, EinNews, JwnEnergy, IranOilGas, NengYuan, WoodMac, RystadEnergy, WestwoodEnergy, IeaNews,\
-    EvWind
+    EvWind,OffshoreWind
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import and_, or_
 from scrapy_selenium import SeleniumRequest
@@ -2929,6 +2929,86 @@ class EvWindSpider(scrapy.Spider):
         item['author'] = author
         item['categories'] = str(response.css('span.tag-links a::text').getall())
         item['content'] =  response.xpath('//article[contains(@id,"post")]').get()
+        item['crawl_time'] = datetime.now().strftime('%m/%d/%Y %H:%M')
+        # #
+        yield item
+
+class OffshoreWindSpider(scrapy.Spider):
+    name = 'offshore_wind'
+    # allowed_domains = 'oilfieldtechnology.com'
+    start_urls = ['https://www.offshorewind.biz']
+    custom_settings = {
+        'ITEM_PIPELINES': {'news_oedigital.pipelines.OffshoreWindPipeline': 334}
+    }
+
+    def __init__(self):
+        """
+        Initializes database connection and sessionmaker.
+        Creates deals table.
+        """
+        self.engine = db_connect()
+        Session = sessionmaker(bind=self.engine)
+        self.session = Session()
+        create_table(self.engine)
+
+    def start_requests(self):
+
+        for url in self.start_urls:
+            yield SeleniumRequest(url=url,
+                                  callback=self.parse_page_links)
+
+    def parse_page_links(self, response):
+        # from scrapy.shell import inspect_response
+        # inspect_response(response,self)
+        news_latest = response.xpath('//li[contains(@class,"col--order")]')
+        news_latest = [new_latest for new_latest in news_latest if not re.search('ad-',new_latest.attrib.get('class'))]
+        other_news = response.xpath('//li[@class="striped-column-list__item"]')
+        for new_latest in news_latest:
+            preview_img_link = new_latest.css('span.card-rich__image').attrib.get('style').split('(')[-1].split(')')[0]
+            # pub_time = new_latest.css('div.card-rich__time-ago::text').getall()
+            pub_time ="".join(new_latest.css('div.card-rich__time-ago::text').getall()).strip().split('\n')[0]
+            title = new_latest.css('h3.card-rich__title a::text').get().strip()
+            title_url = new_latest.css('h3.card-rich__title a').attrib.get('href')
+
+            result = self.session.query(OffshoreWind) \
+                .filter(or_(OffshoreWind.url == title_url, OffshoreWind.title == title)) \
+                .first()
+            if not result:
+                yield response.follow(url=title_url, callback=self.parse,
+                                      cb_kwargs={'title': title,
+                                                 'preview_img_link':preview_img_link,
+                                                 'pub_time': pub_time})
+
+        for other_new in other_news:
+            other_title_url = other_new.css('div.news-title a').attrib.get('href')
+            other_title = other_new.css('div.news-title div.news-title__title::text').get().strip()
+            other_pub_time = other_new.css('div.news-title__meta::text').get().strip()
+            other_preview_img_link = other_new.css('div.news-title__image img').attrib.get('src') \
+                                if other_new.css('div.news-title__image img') else None
+            result = self.session.query(OffshoreWind) \
+                .filter(or_(OffshoreWind.url == other_title_url, OffshoreWind.title == other_title)) \
+                .first()
+
+            if not result:
+                yield response.follow(url=other_title_url, callback=self.parse,
+                                      cb_kwargs={'title': other_title,
+                                                 'preview_img_link':other_preview_img_link,
+                                                 'pub_time': other_pub_time})
+
+    def parse(self, response, title, pub_time,preview_img_link):
+        # from scrapy.shell import inspect_response
+        # inspect_response(response,self)
+        # pass
+        item = EvWindItem()
+        item['url'] = response.url
+        item['title'] = title
+        item['pub_time'] = response.css('div.hero-content__meta-info::text').get().strip().split('by')[0].strip()
+        item['preview_img_link'] = preview_img_link
+        item['pre_title'] = response.css('div.hero__image').attrib.get('data-src') ##main image
+        item['author'] = response.css('div.hero-content__meta-info span::text').get().strip()
+        tags = response.css('li.tag-list__item a::text').getall()
+        item['categories'] = str( [tag.strip() for tag in tags if re.search('\w',tag)])
+        item['content'] =  response.css('div.article__body').get()
         item['crawl_time'] = datetime.now().strftime('%m/%d/%Y %H:%M')
         # #
         yield item

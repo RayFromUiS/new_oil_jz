@@ -146,3 +146,6 @@ class IeaNewsItem(NewsOedigitalItem):
 
 class EvWindItem(NewsOedigitalItem):
     pass
+
+class OffshoreWindItem(NewsOedigitalItem):
+    pass
