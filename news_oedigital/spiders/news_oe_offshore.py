@@ -2,6 +2,7 @@ import os
 import re
 import time
 import scrapy
+import json
 from datetime import datetime
 from pytz import timezone
 from news_oedigital.items import \
@@ -10,12 +11,12 @@ from news_oedigital.items import \
     InenNewEnergyItem, DrillContractorItem, RogTechItem, NaturalGasItem, RigZoneItem, OffshoreTechItem, EnergyYearItem, \
     EnergyChinaItem, ChinaFiveItem, OffshoreEnergyItem, EinNewsItem, JwnEnergyItem, IranOilGasItem, NengYuanItem, \
     WoodMacItem,OffshoreWindItem, \
-    RystadEnergyItem, WestwoodEnergyItem, IeaNewsItem,EvWindItem
+    RystadEnergyItem, WestwoodEnergyItem, IeaNewsItem,EvWindItem,OffshoreWindItem,EnergyTrendItem
 from news_oedigital.model import OeNews, db_connect, create_table, WorldOil, CnpcNews, HartEnergy, OilFieldTech, \
     OilAndGas, InEnStorage, JptLatest, EnergyVoice, UpStream, OilPrice, GulfOilGas, EnergyPedia, InenTech, \
     InenNewEnergy, DrillContractor, RogTech, NaturalGas, RigZone, OffshoreTech, EnergyYear, EnergyChina, ChinaFive, \
     OffshoreEnergy, EinNews, JwnEnergy, IranOilGas, NengYuan, WoodMac, RystadEnergy, WestwoodEnergy, IeaNews,\
-    EvWind,OffshoreWind
+    EvWind,OffshoreWind,EnergyTrend
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import and_, or_
 from scrapy_selenium import SeleniumRequest
@@ -28,6 +29,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from scrapy.http import HtmlResponse
 import pymongo
 from scrapy_splash import SplashRequest
+import urllib
 
 
 class NewsOeOffshoreSpider(scrapy.Spider):
@@ -2999,16 +3001,96 @@ class OffshoreWindSpider(scrapy.Spider):
         # from scrapy.shell import inspect_response
         # inspect_response(response,self)
         # pass
-        item = EvWindItem()
+        item = OffshoreWindItem()
         item['url'] = response.url
         item['title'] = title
         item['pub_time'] = response.css('div.hero-content__meta-info::text').get().strip().split('by')[0].strip()
         item['preview_img_link'] = preview_img_link
-        item['pre_title'] = response.css('div.hero__image').attrib.get('data-src') ##main image
+        item['pre_title'] = response.css('div.hero__image').get()##main image
         item['author'] = response.css('div.hero-content__meta-info span::text').get().strip()
         tags = response.css('li.tag-list__item a::text').getall()
         item['categories'] = str( [tag.strip() for tag in tags if re.search('\w',tag)])
         item['content'] =  response.css('div.article__body').get()
+        item['crawl_time'] = datetime.now().strftime('%m/%d/%Y %H:%M')
+        # #
+        yield item
+
+
+class EnergyTrendSpider(scrapy.Spider):
+    name = 'energy_trend'
+    # allowed_domains = 'oilfieldtechnology.com'
+    start_urls = ['https://m.energytrend.com/']
+    custom_settings = {
+        'ITEM_PIPELINES': {'news_oedigital.pipelines.EnergyTrendPipeline': 335}
+    }
+
+    def __init__(self):
+        """
+        Initializes database connection and sessionmaker.
+        Creates deals table.
+        """
+        self.engine = db_connect()
+        Session = sessionmaker(bind=self.engine)
+        self.session = Session()
+        create_table(self.engine)
+
+    def start_requests(self):
+        for url in self.start_urls:
+            for i in range(2,50,1):
+                sufix_url =  f"news/ajax_page_mb/news-pv/{i}"
+                # params = {":method": "GET",
+                #            ":scheme": "https",
+                #            ":authority": "m.energytrend.com",
+                #            ":path": f"/news/ajax_page_mb/news-pv/{i}"}
+                yield scrapy.Request(url=url+sufix_url,
+                                  callback=self.parse_page_links,
+
+                                 )
+
+    def parse_page_links(self, response):
+        # from scrapy.shell import inspect_response
+        # inspect_response(response,self)
+        # data = json.loads(response.body)
+        articles = response.css('div.cyzx_main')
+        results = []
+        # base_url = 'http://www.china-nengyuan.com/'
+        # articles = response.css('div.card-rich ')re
+        for article in articles:
+            #     preview_img_link = article.css('a::attr(style)').extract_first().split('(')[-1].split(')')[0]
+            title_url = article.css('span.title a').attrib.get('href')
+            # title_url =response.urljoin(title_url)
+            title = article.css('span.title a::text').get()
+            pub_time = article.css('span.sort_right::text').get()
+            result = self.session.query(EnergyTrend) \
+                .filter(or_(EnergyTrend.url == response.urljoin(title_url), EnergyTrend.title == title)) \
+                .first()
+            # results.append(result)
+            if not result:
+                yield response.follow(url=title_url, callback=self.parse,
+                                      cb_kwargs={'title': title,
+                                                 # 'author':author,
+                                                 # 'preview_img_link':preview_img_link,
+                                                 'pub_time': pub_time})
+
+        # if len([result for result in results if result is None]) == len(results):
+        # next_page = response.css('a.next').attrib.get('href')
+        # if next_page:
+        #     yield scrapy.Request(url=next_page,
+        #                          callback=self.parse_page_links)
+
+    def parse(self, response, title, pub_time):
+        # from scrapy.shell import inspect_response
+        # inspect_response(response,self)
+        # pass
+        item = EnergyTrendItem()
+        item['url'] = response.url
+        item['title'] = title
+        item['pub_time'] = pub_time
+        item['preview_img_link'] = None
+        item['pre_title'] = None
+        item['author'] = None
+        item['categories'] = None
+        item['content'] =  response.css('div#content').get()
         item['crawl_time'] = datetime.now().strftime('%m/%d/%Y %H:%M')
         # #
         yield item

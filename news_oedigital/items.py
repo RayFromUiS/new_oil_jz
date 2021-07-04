@@ -149,3 +149,5 @@ class EvWindItem(NewsOedigitalItem):
 
 class OffshoreWindItem(NewsOedigitalItem):
     pass
+class EnergyTrendItem(NewsOedigitalItem):
+    pass
