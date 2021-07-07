@@ -151,3 +151,8 @@ class OffshoreWindItem(NewsOedigitalItem):
     pass
 class EnergyTrendItem(NewsOedigitalItem):
     pass
+class PvMagazineItem(NewsOedigitalItem):
+    pass
+
+class SolarZoomItem(NewsOedigitalItem):
+    pass

@@ -10,13 +10,13 @@ from news_oedigital.items import \
     JptLatestItem, EnergyVoiceItem, UpStreamItem, OilPriceItem, GulfOilGasItem, EnergyPediaItem, InenTechItem, \
     InenNewEnergyItem, DrillContractorItem, RogTechItem, NaturalGasItem, RigZoneItem, OffshoreTechItem, EnergyYearItem, \
     EnergyChinaItem, ChinaFiveItem, OffshoreEnergyItem, EinNewsItem, JwnEnergyItem, IranOilGasItem, NengYuanItem, \
-    WoodMacItem,OffshoreWindItem, \
-    RystadEnergyItem, WestwoodEnergyItem, IeaNewsItem,EvWindItem,OffshoreWindItem,EnergyTrendItem
+    WoodMacItem,OffshoreWindItem,PvMagazineItem, \
+    RystadEnergyItem, WestwoodEnergyItem, IeaNewsItem,EvWindItem,OffshoreWindItem,EnergyTrendItem,SolarZoomItem
 from news_oedigital.model import OeNews, db_connect, create_table, WorldOil, CnpcNews, HartEnergy, OilFieldTech, \
     OilAndGas, InEnStorage, JptLatest, EnergyVoice, UpStream, OilPrice, GulfOilGas, EnergyPedia, InenTech, \
     InenNewEnergy, DrillContractor, RogTech, NaturalGas, RigZone, OffshoreTech, EnergyYear, EnergyChina, ChinaFive, \
     OffshoreEnergy, EinNews, JwnEnergy, IranOilGas, NengYuan, WoodMac, RystadEnergy, WestwoodEnergy, IeaNews,\
-    EvWind,OffshoreWind,EnergyTrend
+    EvWind,OffshoreWind,EnergyTrend,PvMagazine,SolarZoom
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import and_, or_
 from scrapy_selenium import SeleniumRequest
@@ -278,7 +278,7 @@ class CnpcNewsSpider(scrapy.Spider):
                 .first()
             results.append(result)
             if not result:
-                yield scrapy.follow(url=title_url, callback=self.parse)
+                yield response.follow(url=title_url, callback=self.parse)
 
         # if len([result for result in results if result is None]) == len(results):  ## if all the element is
 
@@ -3036,7 +3036,7 @@ class EnergyTrendSpider(scrapy.Spider):
 
     def start_requests(self):
         for url in self.start_urls:
-            for i in range(2,50,1):
+            for i in range(1,50,1):
                 sufix_url =  f"news/ajax_page_mb/news-pv/{i}"
                 # params = {":method": "GET",
                 #            ":scheme": "https",
@@ -3091,6 +3091,158 @@ class EnergyTrendSpider(scrapy.Spider):
         item['author'] = None
         item['categories'] = None
         item['content'] =  response.css('div#content').get()
+        item['crawl_time'] = datetime.now().strftime('%m/%d/%Y %H:%M')
+        # #
+        yield item
+
+class PvMagazineSpider(scrapy.Spider):
+    name = 'pv_magazine'
+    # allowed_domains = 'oilfieldtechnology.com'
+    start_urls = ['https://www.pv-magazine.com/news/']
+    custom_settings = {
+        'ITEM_PIPELINES': {'news_oedigital.pipelines.PvMagazinePipeline': 336}
+    }
+
+    def __init__(self):
+        """
+        Initializes database connection and sessionmaker.
+        Creates deals table.
+        """
+        self.engine = db_connect()
+        Session = sessionmaker(bind=self.engine)
+        self.session = Session()
+        create_table(self.engine)
+
+    def start_requests(self):
+        for url in self.start_urls:
+            yield scrapy.Request(url=url,
+                                     callback=self.parse_page_links,
+
+                                     )
+
+    def parse_page_links(self, response):
+        articles = response.css('div.article-preview')
+        results = []
+        # base_url = 'http://www.china-nengyuan.com/'
+        # articles = response.css('div.card-rich ')re
+        for article in articles:
+            preview_img_link = article.css('div.image-wrap img').attrib.get('src')
+            title_url = article.css('div.text-wrap h2 a').attrib.get('href')
+            # title_url =response.urljoin(title_url)
+            title = article.css('div.text-wrap h2 a::text').get().strip()
+            pub_time = article.css('div.text-wrap time::text').get().strip() \
+                                if article.css('div.text-wrap time::text').get() else None
+            author = article.css('div.text-wrap span a::text').get().strip() \
+                        if  article.css('div.text-wrap span a::text').get() else None
+
+            result = self.session.query(PvMagazine) \
+                .filter(or_(PvMagazine.url == title_url, PvMagazine.title == title)) \
+                .first()
+            # results.append(result)
+            if not result:
+                yield scrapy.Request(url=title_url, callback=self.parse,
+                                      cb_kwargs={'title': title,
+                                                 'author':author,
+                                                 'preview_img_link':preview_img_link,
+                                                 'pub_time': pub_time})
+
+        # if len([result for result in results if result is None]) == len(results):
+        next_page = response.css('a.next').attrib.get('href')
+        if next_page:
+            yield scrapy.Request(url=next_page,
+                                 callback=self.parse_page_links)
+
+    def parse(self, response, title, pub_time,author,preview_img_link):
+        # from scrapy.shell import inspect_response
+        # inspect_response(response,self)
+        # pass
+        item = PvMagazineItem()
+        item['url'] = response.url
+        item['title'] = title
+        item['pub_time'] = pub_time
+        item['preview_img_link'] = preview_img_link
+        item['pre_title'] = response.css('div.entry-image img').attrib.get('src') ## main image
+        item['author'] = author
+        item['categories'] = str(response.css('ul.nav-pills li.nav-item a::text').getall())
+        item['content'] =   response.css('div.entry-content').get()
+        item['crawl_time'] = datetime.now().strftime('%m/%d/%Y %H:%M')
+        # #
+        yield item
+
+
+class SolarZoomSpider(scrapy.Spider):
+    name = 'solar_zoom'
+    # allowed_domains = 'oilfieldtechnology.com'
+    start_urls = ['http://m.solarzoom.com/category/23/tag/31']
+    custom_settings = {
+        'ITEM_PIPELINES': {'news_oedigital.pipelines.SolarZoomPipeline': 337}
+    }
+
+    def __init__(self):
+        """
+        Initializes database connection and sessionmaker.
+        Creates deals table.
+        """
+        self.engine = db_connect()
+        Session = sessionmaker(bind=self.engine)
+        self.session = Session()
+        create_table(self.engine)
+
+    def start_requests(self):
+        # for url in self.start_urls:
+        for i in range(1,50,1):
+            sufix_url =  f"http://m.solarzoom.com/index.php/mcatmore/index2/23/15/{i}/es"
+            yield scrapy.Request(url=sufix_url,
+                                     callback=self.parse_page_links,
+                                    encoding='utf-8'
+
+                                     )
+
+    def parse_page_links(self, response):
+        # from scrapy.shell import inspect_response
+        # inspect_response(response,self)
+        # data = json.loads(response.body)
+        articles = response.css('li')
+        results = []
+        # base_url = 'http://www.china-nengyuan.com/'
+        # articles = response.css('div.card-rich ')re
+        for article in articles:
+            preview_img_link = article.css('li img').get()
+            title_url = article.css('a').attrib.get('href')
+            # title_url =response.urljoin(title_url)
+            title = article.css('a::text').get()
+            pub_time = article.css('div.date::text').get().split(' ')[0]
+            result = self.session.query(SolarZoom) \
+                .filter(or_(SolarZoom.url == response.urljoin(title_url), SolarZoom.title == title)) \
+                .first()
+            # results.append(result)
+            if not result:
+                yield response.follow(url=title_url,
+                                      callback=self.parse,
+                                      cb_kwargs={'title': title,
+                                                 # 'author':author,
+                                                 'preview_img_link':preview_img_link,
+                                                 'pub_time': pub_time})
+
+        # if len([result for result in results if result is None]) == len(results):
+        # next_page = response.css('a.next').attrib.get('href')
+        # if next_page:
+        #     yield scrapy.Request(url=next_page,
+        #                          callback=self.parse_page_links)
+
+    def parse(self, response, title, pub_time,preview_img_link):
+        # from scrapy.shell import inspect_response
+        # inspect_response(response,self)
+        # pass
+        item = SolarZoomItem()
+        item['url'] = response.url
+        item['title'] = title
+        item['pub_time'] = pub_time
+        item['preview_img_link'] = preview_img_link
+        item['pre_title'] = None
+        item['author'] = None
+        item['categories'] = None
+        item['content'] =  response.css('div#news_content').get()
         item['crawl_time'] = datetime.now().strftime('%m/%d/%Y %H:%M')
         # #
         yield item

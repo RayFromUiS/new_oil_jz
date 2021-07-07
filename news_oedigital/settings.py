@@ -158,6 +158,8 @@ ITEM_PIPELINES = {
     'news_oedigital.pipelines.EvWindPipeline': 333,
     'news_oedigital.pipelines.OffshoreWindPipeline': 334,
     'news_oedigital.pipelines.EnergyTrendPipeline': 335,
+    'news_oedigital.pipelines.PvMagazinePipeline': 336,
+    'news_oedigital.pipelines.SolarZoomPipeline': 337,
 
 }
 
