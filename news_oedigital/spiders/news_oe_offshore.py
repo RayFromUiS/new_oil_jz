@@ -553,8 +553,8 @@ class OilAndGasSpider(scrapy.Spider):
                                  )
 
     def parse_page_links(self, response,cate):
-        from scrapy.shell import inspect_response
-        inspect_response(response, self)
+        # from scrapy.shell import inspect_response
+        # inspect_response(response, self)
         results = []
         divs = response.css('div#recent-posts div')
         articles = [div for div in divs if (div.attrib.get('id') \
@@ -596,8 +596,8 @@ class OilAndGasSpider(scrapy.Spider):
                                      callback=self.parse_page_links)
 
     def parse(self, response, abstracts, preview_img_link):
-        from scrapy.shell import inspect_response
-        inspect_response(response, self)
+        # from scrapy.shell import inspect_response
+        # inspect_response(response, self)
         try:
             title = response.css('title::text').get()
             if not re.search('not found',title) and isinstance(title,str):
@@ -2264,8 +2264,8 @@ class EinNewsSpider(scrapy.Spider):
                                       callback=self.parse_page_links)
 
     def parse(self, response, preview_img_link, title, pre_title):
-        from scrapy.shell import inspect_response
-        inspect_response(response, self)
+        # from scrapy.shell import inspect_response
+        # inspect_response(response, self)
         # pass
         item = EinNewsItem()
         item['url'] = response.url
