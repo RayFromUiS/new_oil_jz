@@ -156,3 +156,8 @@ class PvMagazineItem(NewsOedigitalItem):
 
 class SolarZoomItem(NewsOedigitalItem):
     pass
+class FbBjxItem(NewsOedigitalItem):
+    pass
+
+class GfBjxItem(NewsOedigitalItem):
+    pass

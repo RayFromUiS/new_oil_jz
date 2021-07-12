@@ -10,13 +10,13 @@ from news_oedigital.items import \
     JptLatestItem, EnergyVoiceItem, UpStreamItem, OilPriceItem, GulfOilGasItem, EnergyPediaItem, InenTechItem, \
     InenNewEnergyItem, DrillContractorItem, RogTechItem, NaturalGasItem, RigZoneItem, OffshoreTechItem, EnergyYearItem, \
     EnergyChinaItem, ChinaFiveItem, OffshoreEnergyItem, EinNewsItem, JwnEnergyItem, IranOilGasItem, NengYuanItem, \
-    WoodMacItem,OffshoreWindItem,PvMagazineItem, \
+    WoodMacItem,OffshoreWindItem,PvMagazineItem,FbBjxItem, GfBjxItem,\
     RystadEnergyItem, WestwoodEnergyItem, IeaNewsItem,EvWindItem,OffshoreWindItem,EnergyTrendItem,SolarZoomItem
 from news_oedigital.model import OeNews, db_connect, create_table, WorldOil, CnpcNews, HartEnergy, OilFieldTech, \
     OilAndGas, InEnStorage, JptLatest, EnergyVoice, UpStream, OilPrice, GulfOilGas, EnergyPedia, InenTech, \
     InenNewEnergy, DrillContractor, RogTech, NaturalGas, RigZone, OffshoreTech, EnergyYear, EnergyChina, ChinaFive, \
     OffshoreEnergy, EinNews, JwnEnergy, IranOilGas, NengYuan, WoodMac, RystadEnergy, WestwoodEnergy, IeaNews,\
-    EvWind,OffshoreWind,EnergyTrend,PvMagazine,SolarZoom
+    EvWind,OffshoreWind,EnergyTrend,PvMagazine,SolarZoom,FbBjx,GfBjx
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import and_, or_
 from scrapy_selenium import SeleniumRequest
@@ -3245,4 +3245,165 @@ class SolarZoomSpider(scrapy.Spider):
         item['content'] =  response.css('div#news_content').get()
         item['crawl_time'] = datetime.now().strftime('%m/%d/%Y %H:%M')
         # #
+        yield item
+
+
+class FbBjxSpider(scrapy.Spider):
+    name = 'fb_bjx'
+    # allowed_domains = 'oilfieldtechnology.com'
+    start_urls = ['https://fd.bjx.com.cn/NewsList']
+    # start_urls = []
+    custom_settings = {
+        'ITEM_PIPELINES': {'news_oedigital.pipelines.FbBjxPipeline': 338}
+    }
+
+    def __init__(self):
+        """
+        Initializes database connection and sessionmaker.
+        Creates deals table.
+        """
+        self.engine = db_connect()
+        Session = sessionmaker(bind=self.engine)
+        self.session = Session()
+        create_table(self.engine)
+
+    def start_requests(self):
+        for url in self.start_urls:
+            yield scrapy.Request(url=url,
+                                 callback=self.parse_page_links,
+
+                                 )
+
+    def parse_page_links(self, response):
+        # from scrapy.shell import inspect_response
+        # inspect_response(response,self)
+        articles = response.xpath('//ul[@class="list_left_ul"]/li[not (contains(@class,"dashed"))]')
+        for article in articles:
+            # preview_img_link = article.css('div.image-wrap img').attrib.get('src')
+            title_url = article.css('a').attrib.get('href')
+            # title_url =response.urljoin(title_url)
+            title = article.css('a::text').get().strip()
+            pub_time = article.css('span::text').get().strip()
+            result = self.session.query(FbBjx) \
+                .filter(or_(FbBjx.url == title_url, FbBjx.title == title)) \
+                .first()
+            # results.append(result)
+            if not result:
+                yield scrapy.Request(url=title_url,
+                                     callback=self.parse,
+                                     cb_kwargs={'title': title,
+                                                # 'author':author,
+                                                # 'preview_img_link':preview_img_link,
+                                                'pub_time': pub_time})
+
+        # if len([result for result in results if result is None]) == len(results):
+        next_page = response.css('div.page a')[-1].attrib.get('href')
+        if next_page:
+            yield response.follow(url=next_page,
+                                 callback=self.parse_page_links)
+
+    def parse(self, response, title, pub_time):
+        # from scrapy.shell import inspect_response
+        # inspect_response(response,self)
+        # pass
+        item = FbBjxItem()
+        item['url'] = response.url
+        item['title'] = title
+        item['pub_time'] = pub_time
+        item['preview_img_link'] = None
+        item['pre_title'] = None
+        item['author'] = None
+        item['categories'] = str(response.css('div.list_key a::text').getall())
+        if response.css('div.content'):
+            content = response.css('div.content').get()
+        elif response.css('div.newsrand'):
+            content = response.css('div.newsrand').get()
+        elif response.css('div.btemp'):
+            content = response.xpath('//div[contains(@class,"btemp") and not(contains(@class,"tempa"))]').get()
+        else:
+            content = None
+        item['content'] =  content
+        item['crawl_time'] = datetime.now().strftime('%m/%d/%Y %H:%M')
+        # #
+        yield item
+
+
+class GfBjxSpider(scrapy.Spider):
+    name = 'gf_bjx'
+    # allowed_domains = 'oilfieldtechnology.com'
+    start_urls = ['https://guangfu.bjx.com.cn/NewsList.aspx']
+    # start_urls = []
+    custom_settings = {
+        'ITEM_PIPELINES': {'news_oedigital.pipelines.GfBjxPipeline': 339}
+    }
+
+    def __init__(self):
+        """
+        Initializes database connection and sessionmaker.
+        Creates deals table.
+        """
+        self.engine = db_connect()
+        Session = sessionmaker(bind=self.engine)
+        self.session = Session()
+        create_table(self.engine)
+
+    def start_requests(self):
+        for url in self.start_urls:
+            yield scrapy.Request(url=url,
+                                 callback=self.parse_page_links,
+
+                                 )
+
+    def parse_page_links(self, response):
+        # from scrapy.shell import inspect_response
+        # inspect_response(response,self)
+        articles = response.xpath('//ul[@class="list_left_ul"]/li[not (contains(@class,"dashed"))]')
+        for article in articles:
+            # preview_img_link = article.css('div.image-wrap img').attrib.get('src')
+            title_url = article.css('a').attrib.get('href')
+            # title_url =response.urljoin(title_url)
+            title = article.css('a::text').get().strip()
+            pub_time = article.css('span::text').get().strip()
+            result = self.session.query(GfBjx) \
+                .filter(or_(GfBjx.url == title_url, GfBjx.title == title)) \
+                .first()
+            # results.append(result)
+            if not result:
+                yield scrapy.Request(url=title_url,
+                                     callback=self.parse,
+                                     cb_kwargs={'title': title,
+                                                # 'author':author,
+                                                # 'preview_img_link':preview_img_link,
+                                                'pub_time': pub_time})
+
+        # if len([result for result in results if result is None]) == len(results):
+        next_page = response.css('div.page a')[-1].attrib.get('href')
+        if next_page:
+            yield response.follow(url=next_page,
+                                  callback=self.parse_page_links)
+
+    def parse(self, response, title, pub_time):
+        # from scrapy.shell import inspect_response
+        # inspect_response(response,self)
+        # pass
+        item = GfBjxItem()
+        item['url'] = response.url
+        item['title'] = title
+        item['pub_time'] = pub_time
+        item['preview_img_link'] = None
+        item['pre_title'] = None
+        item['author'] = None
+        item['categories'] = str(response.css('div.list_key a::text').getall())
+        if response.css('div.content'):
+            content = response.css('div.content').get()
+        elif response.css('div.newsrand'):
+            content = response.css('div.newsrand').get()
+        elif response.css('div.btemp'):
+            content = response.xpath('//div[contains(@class,"btemp") and not(contains(@class,"tempa"))]').get()
+        else :
+            content = response.xpath('//div[@class="list_detail"]').get()
+        item['content'] =  content
+        item['crawl_time'] = datetime.now().strftime('%m/%d/%Y %H:%M')
+        # #
+
         yield item
