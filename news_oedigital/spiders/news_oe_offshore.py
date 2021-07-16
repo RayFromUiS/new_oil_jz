@@ -4,19 +4,20 @@ import time
 import scrapy
 import json
 from datetime import datetime
+import requests as req
 from pytz import timezone
 from news_oedigital.items import \
     NewsOedigitalItem, WorldOilItem, CnpcNewsItem, HartEnergyItem, OilFieldTechItem, OilAndGasItem, InEnStorageItem, \
     JptLatestItem, EnergyVoiceItem, UpStreamItem, OilPriceItem, GulfOilGasItem, EnergyPediaItem, InenTechItem, \
     InenNewEnergyItem, DrillContractorItem, RogTechItem, NaturalGasItem, RigZoneItem, OffshoreTechItem, EnergyYearItem, \
     EnergyChinaItem, ChinaFiveItem, OffshoreEnergyItem, EinNewsItem, JwnEnergyItem, IranOilGasItem, NengYuanItem, \
-    WoodMacItem,OffshoreWindItem,PvMagazineItem,FbBjxItem, GfBjxItem,\
+    WoodMacItem,OffshoreWindItem,PvMagazineItem,FbBjxItem, GfBjxItem,PetroEconomistItem,HydroProcessItem,ShaiPgxItem,\
     RystadEnergyItem, WestwoodEnergyItem, IeaNewsItem,EvWindItem,OffshoreWindItem,EnergyTrendItem,SolarZoomItem
 from news_oedigital.model import OeNews, db_connect, create_table, WorldOil, CnpcNews, HartEnergy, OilFieldTech, \
     OilAndGas, InEnStorage, JptLatest, EnergyVoice, UpStream, OilPrice, GulfOilGas, EnergyPedia, InenTech, \
     InenNewEnergy, DrillContractor, RogTech, NaturalGas, RigZone, OffshoreTech, EnergyYear, EnergyChina, ChinaFive, \
     OffshoreEnergy, EinNews, JwnEnergy, IranOilGas, NengYuan, WoodMac, RystadEnergy, WestwoodEnergy, IeaNews,\
-    EvWind,OffshoreWind,EnergyTrend,PvMagazine,SolarZoom,FbBjx,GfBjx
+    EvWind,OffshoreWind,EnergyTrend,PvMagazine,SolarZoom,FbBjx,GfBjx,PetroEconomist,HydroProcess,ShaiPgx
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import and_, or_
 from scrapy_selenium import SeleniumRequest
@@ -3161,7 +3162,7 @@ class PvMagazineSpider(scrapy.Spider):
         item['title'] = title
         item['pub_time'] = pub_time
         item['preview_img_link'] = preview_img_link
-        item['pre_title'] = response.css('div.entry-image img').attrib.get('src') ## main image
+        item['pre_title'] = response.css('div.entry-image img').get() ## main image
         item['author'] = author
         item['categories'] = str(response.css('ul.nav-pills li.nav-item a::text').getall())
         item['content'] =   response.css('div.entry-content').get()
@@ -3403,6 +3404,287 @@ class GfBjxSpider(scrapy.Spider):
         else :
             content = response.xpath('//div[@class="list_detail"]').get()
         item['content'] =  content
+        item['crawl_time'] = datetime.now().strftime('%m/%d/%Y %H:%M')
+        # #
+
+        yield item
+
+
+def authentication_failed(response):
+    # TODO: Check the contents of the response and return True if it failed
+    # or False if it succeeded.
+    if response.css('div.article-fade'):
+        return False
+    else:
+        return True
+
+
+class PetroEconomistSpider(scrapy.Spider):
+    name = 'petro_economist'
+    # allowed_domains = 'oilfieldtechnology.com'
+
+    start_urls = ['https://pemedianetwork.com/log-in' ]
+    custom_settings = {
+        'ITEM_PIPELINES': {'news_oedigital.pipelines.PetroEconomistPipeline': 340}
+    }
+
+    def __init__(self):
+        """
+        Initializes database connection and sessionmaker.
+        Creates deals table.
+        """
+        self.engine = db_connect()
+        Session = sessionmaker(bind=self.engine)
+        self.session = Session()
+        create_table(self.engine)
+    # def make_requests_from_url(self, url):
+
+
+    # def start_requests(self):
+    #     # for url in self.start_urls:
+    #     for url in self.start_urls:
+    #         yield scrapy.Request(url=url,
+    #                              callback=self.parse_page_links,
+    #                              )
+
+
+    def parse(self,response):
+        form_key =response.css('input#ContentPlaceHolderDefault_mainContent_mainContent_txtEmail').attrib.get('name')
+        form_pass =response.css('input#ContentPlaceHolderDefault_mainContent_mainContent_txtPassword').attrib.get('name')
+        # print(form_pass)
+        # print(form_key)
+        if form_key and form_pass:
+            formdata = {
+                form_key:
+                    "274899262@qq.com",
+                form_pass:
+                    "Woai5laopo"
+            }
+            res = req.post(url=response.url,data=formdata)
+            if res.status_code==200:
+                yield scrapy.Request(url='https://pemedianetwork.com/petroleum-economist/articles',
+                                     callback=self.parse_page_links,
+                                     headers=res.headers)
+            else:
+                print(res.status_code)
+
+    # def after_login(self):
+    #     res = self.parse
+    #     if authentication_failed(response):
+    #         self.logger.error("Login failed")
+    #         return
+    #     else:
+
+
+    def parse_page_links(self, response):
+        # from scrapy.shell import inspect_response
+        # inspect_response(response,self)
+        # data = json.loads(response.body)
+        articles = response.css('div.article-row')
+        for article in articles:
+            title_url = article.css('div.article-title a').attrib.get('href')
+            # title_url =response.urljoin(title_url)
+            title = article.css('div.article-title a::text').get()
+            pub_time = article.css('div.article-pubdate::text').get().strip()
+            result = self.session.query(PetroEconomist) \
+                .filter(or_(PetroEconomist.url == title_url, PetroEconomist.title == title)) \
+                .first()
+            # results.append(result)
+            if not result:
+                yield response.follow(url=title_url,
+                                      callback=self.parseitem,
+                                      cb_kwargs={'title': title,
+                                                 'pub_time': pub_time})
+
+        # if len([result for result in results if result is None]) == len(results):
+        # next_page = response.css('a.next').attrib.get('href')
+        # if next_page:
+        #     yield scrapy.Request(url=next_page,
+        #                          callback=self.parse_page_links)
+    # def log_in(self,response):
+
+
+    def parseitem(self, response, title, pub_time):
+        from scrapy.shell import inspect_response
+        inspect_response(response,self)
+        # pass
+        item = PetroEconomistItem()
+
+        item['url'] = response.url
+        item['title'] = title
+        item['pub_time'] = pub_time
+        item['preview_img_link'] = preview_img_link
+        item['pre_title'] = None
+        item['author'] = None
+        item['categories'] = None
+        item['content'] =  response.css('div#news_content').get()
+        item['crawl_time'] = datetime.now().strftime('%m/%d/%Y %H:%M')
+        # #
+        yield item
+
+class HydroProcessSpider(scrapy.Spider):
+    name = 'hydro_process'
+    # allowed_domains = 'oilfieldtechnology.com'
+    start_urls = ['https://www.hydrocarbonprocessing.com/news']
+    # start_urls = []
+    custom_settings = {
+        'ITEM_PIPELINES': {'news_oedigital.pipelines.HydroProcessPipeline': 341}
+    }
+
+    def __init__(self):
+        """
+        Initializes database connection and sessionmaker.
+        Creates deals table.
+        """
+        self.engine = db_connect()
+        Session = sessionmaker(bind=self.engine)
+        self.session = Session()
+        create_table(self.engine)
+
+    def start_requests(self):
+        for url in self.start_urls:
+            yield scrapy.Request(url=url,
+                                 callback=self.parse_page_links,
+                                 cb_kwargs={'current_page':1}
+
+                                 )
+
+    def parse_page_links(self, response,current_page):
+        # from scrapy.shell import inspect_response
+        # inspect_response(response,self)
+        articles = response.css('div.news-link')
+        for article in articles:
+            # preview_img_link = article.css('div.image-wrap img').attrib.get('src')
+            title_url = article.css('a').attrib.get('href')
+            # title_url =response.urljoin(title_url)
+            title =  article.css('a::text').get()
+            pub_time = article.css('span.news-date::text').get()
+
+            result = self.session.query(HydroProcess) \
+                .filter(or_(HydroProcess.url == response.urljoin(title_url), HydroProcess.title == title)) \
+                .first()
+            # results.append(result)
+            if not result:
+                yield SeleniumRequest(url=response.urljoin(title_url),
+                                     callback=self.parse,
+                                      wait_time=60,
+                                      wait_until=EC.presence_of_element_located((By.ID, 'left')),
+                                     cb_kwargs={'title': title,
+                                                # 'author':author,
+                                                # 'preview_img_link':preview_img_link,
+                                                'pub_time': pub_time})
+
+        # if len([result for result in results if result is None]) == len(results):
+        # pages =  response.css('li.pager-info span::text').get().split()[1]
+        # current_page = 2
+        ##only take the first 50 pages
+        if current_page<50:
+            current_page +=1
+            suf_url = f'/news?page={current_page}'
+
+            # com_url = respo
+            yield response.follow(url=suf_url,
+                                  callback= self.parse_page_links,
+                                  cb_kwargs={'current_page':current_page})
+
+    def parse(self, response, title, pub_time):
+        # from scrapy.shell import inspect_response
+        # inspect_response(response,self)
+        # pass
+        item = HydroProcessItem()
+        item['url'] = response.url
+        item['title'] = title
+        item['pub_time'] = pub_time
+        item['preview_img_link'] = None
+        item['pre_title'] = None
+        item['author'] = None
+        item['categories'] = None
+        item['content'] =  response.css('div.article-content').get()
+        item['crawl_time'] = datetime.now().strftime('%m/%d/%Y %H:%M')
+        # #
+
+        yield item
+
+
+class ShaiPgxSpider(scrapy.Spider):
+    name = 'shai_pgx'
+    # allowed_domains = 'oilfieldtechnology.com'
+    start_urls = ['https://www.shpgx.com/html/xyzx/']
+    # start_urls = []
+    custom_settings = {
+        'ITEM_PIPELINES': {'news_oedigital.pipelines.ShaiPgxPipeline': 342}
+    }
+
+    def __init__(self):
+        """
+        Initializes database connection and sessionmaker.
+        Creates deals table.
+        """
+        self.engine = db_connect()
+        Session = sessionmaker(bind=self.engine)
+        self.session = Session()
+        create_table(self.engine)
+
+    def start_requests(self):
+        for url in self.start_urls:
+            yield SeleniumRequest(url=url,
+                                 callback=self.parse_page_links,
+                                  wait_time=30,
+                                  cb_kwargs={'current_page':1}
+
+                                 )
+
+    def parse_page_links(self, response,current_page):
+        # from scrapy.shell import inspect_response
+        # inspect_response(response,self)
+        articles = response.css('div.centent_right_chart div.centent_right_list')
+        for article in articles:
+            # preview_img_link = article.css('div.image-wrap img').attrib.get('src')
+            title_url = article.css('a').attrib.get('href')
+            # title_url =response.urljoin(title_url)
+            title =  article.css('a').attrib.get('title')
+            pub_time =  article.css('span::text').get()
+
+            result = self.session.query(ShaiPgx) \
+                .filter(or_(ShaiPgx.url == response.urljoin(title_url), ShaiPgx.title == title)) \
+                .first()
+            # results.append(result)
+            if not result:
+                yield response.follow(url=title_url,
+                                      callback=self.parse,
+                                      # wait_time=60,
+                                      # wait_until=EC.presence_of_element_located((By.ID, 'left')),
+                                      cb_kwargs={'title': title,
+                                                 # 'author':author,
+                                                 # 'preview_img_link':preview_img_link,
+                                                 'pub_time': pub_time})
+
+        # if len([result for result in results if result is None]) == len(results):
+        # pages =  response.css('li.pager-info span::text').get().split()[1]
+        # current_page = 2
+        ##only take the first 50 pages
+        if current_page<50:
+            current_page +=1
+            suf_url = f'https://www.shpgx.com/html/xyzx/index_{current_page}.html'
+
+            # com_url = respo
+            yield scrapy.Request(url=suf_url,
+                                  callback= self.parse_page_links,
+                                 cb_kwargs={'current_page':current_page})
+
+    def parse(self, response, title, pub_time):
+        # from scrapy.shell import inspect_response
+        # inspect_response(response,self)
+        # pass
+        item = ShaiPgxItem()
+        item['url'] = response.url
+        item['title'] = title
+        item['pub_time'] = pub_time
+        item['preview_img_link'] = None
+        item['pre_title'] = None
+        item['author'] = None
+        item['categories'] = None
+        item['content'] =  response.css('div.center_content').get()
         item['crawl_time'] = datetime.now().strftime('%m/%d/%Y %H:%M')
         # #
 

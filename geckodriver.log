@@ -46948,3 +46948,476 @@ JavaScript error: , line 0: uncaught exception: null
 JavaScript error: , line 0: uncaught exception: null
 JavaScript error: , line 0: uncaught exception: null
 JavaScript error: , line 0: uncaught exception: null
+1626221488956	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-headless" "-foreground" "-no-remote" "-profile" "/var/folders/qp/62byk9gs7738gg2bzjf8p3br0000gn/T/rust_mozprofile75CM8q"
+*** You are running in headless mode.
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new Error("", "(unknown module)"))
+1626221491686	Marionette	INFO	Listening on port 65500
+1626221491752	Marionette	WARN	TLS certificate errors will be ignored for this session
+1626221491763	Marionette	ERROR	[19] No reply from Marionette:Register
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new Error("", "(unknown module)"))
+console.log: WebExtensions: reset-default-search: starting.
+console.log: WebExtensions: reset-default-search: No addons in our list are installed.
+1626222852281	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-headless" "-foreground" "-no-remote" "-profile" "/var/folders/qp/62byk9gs7738gg2bzjf8p3br0000gn/T/rust_mozprofilepFXe0W"
+*** You are running in headless mode.
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new Error("", "(unknown module)"))
+1626222854519	Marionette	INFO	Listening on port 49952
+1626222854632	Marionette	WARN	TLS certificate errors will be ignored for this session
+1626222854642	Marionette	ERROR	[19] No reply from Marionette:Register
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new Error("", "(unknown module)"))
+console.log: WebExtensions: reset-default-search: starting.
+console.log: WebExtensions: reset-default-search: No addons in our list are installed.
+1626226733057	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-headless" "-foreground" "-no-remote" "-profile" "/var/folders/qp/62byk9gs7738gg2bzjf8p3br0000gn/T/rust_mozprofilep7RIiO"
+*** You are running in headless mode.
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new Error("", "(unknown module)"))
+1626226735411	Marionette	INFO	Listening on port 51971
+1626226735443	Marionette	WARN	TLS certificate errors will be ignored for this session
+1626226735455	Marionette	ERROR	[19] No reply from Marionette:Register
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new Error("", "(unknown module)"))
+1626226737502	Marionette	INFO	Stopped listening on port 51971
+JavaScript error: resource://activity-stream/lib/ASRouter.jsm, line 987: NS_ERROR_ILLEGAL_VALUE: Component returned failure code: 0x80070057 (NS_ERROR_ILLEGAL_VALUE) [nsIObserverService.removeObserver]
+1626226904872	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-headless" "-foreground" "-no-remote" "-profile" "/var/folders/qp/62byk9gs7738gg2bzjf8p3br0000gn/T/rust_mozprofileWHyFAE"
+*** You are running in headless mode.
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new Error("", "(unknown module)"))
+1626226907290	Marionette	INFO	Listening on port 52072
+1626226907361	Marionette	WARN	TLS certificate errors will be ignored for this session
+1626226907402	Marionette	ERROR	[19] No reply from Marionette:Register
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new Error("", "(unknown module)"))
+1626226909444	Marionette	INFO	Stopped listening on port 52072
+JavaScript error: resource://activity-stream/lib/ASRouter.jsm, line 987: NS_ERROR_ILLEGAL_VALUE: Component returned failure code: 0x80070057 (NS_ERROR_ILLEGAL_VALUE) [nsIObserverService.removeObserver]
+console.warn: services.settings: main/whats-new-panel sync interrupted by shutdown
+1626227380579	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-headless" "-foreground" "-no-remote" "-profile" "/var/folders/qp/62byk9gs7738gg2bzjf8p3br0000gn/T/rust_mozprofileBUJKAO"
+*** You are running in headless mode.
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new Error("", "(unknown module)"))
+1626227382928	Marionette	INFO	Listening on port 52483
+1626227382947	Marionette	WARN	TLS certificate errors will be ignored for this session
+1626227382958	Marionette	ERROR	[19] No reply from Marionette:Register
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new Error("", "(unknown module)"))
+1626227771448	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-headless" "-foreground" "-no-remote" "-profile" "/var/folders/qp/62byk9gs7738gg2bzjf8p3br0000gn/T/rust_mozprofileVt3ba1"
+*** You are running in headless mode.
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new Error("", "(unknown module)"))
+1626227773646	Marionette	INFO	Listening on port 52730
+1626227773706	Marionette	WARN	TLS certificate errors will be ignored for this session
+1626227773717	Marionette	ERROR	[19] No reply from Marionette:Register
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new Error("", "(unknown module)"))
+1626227775756	Marionette	INFO	Stopped listening on port 52730
+JavaScript error: resource://activity-stream/lib/ASRouter.jsm, line 987: NS_ERROR_ILLEGAL_VALUE: Component returned failure code: 0x80070057 (NS_ERROR_ILLEGAL_VALUE) [nsIObserverService.removeObserver]
+1626228195313	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-headless" "-foreground" "-no-remote" "-profile" "/var/folders/qp/62byk9gs7738gg2bzjf8p3br0000gn/T/rust_mozprofileF4XwYS"
+*** You are running in headless mode.
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new Error("", "(unknown module)"))
+1626228197643	Marionette	INFO	Listening on port 53062
+1626228197687	Marionette	WARN	TLS certificate errors will be ignored for this session
+1626228197698	Marionette	ERROR	[19] No reply from Marionette:Register
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new Error("", "(unknown module)"))
+1626228200686	Marionette	INFO	Stopped listening on port 53062
+1626228301685	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-headless" "-foreground" "-no-remote" "-profile" "/var/folders/qp/62byk9gs7738gg2bzjf8p3br0000gn/T/rust_mozprofileJS97yh"
+*** You are running in headless mode.
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new Error("", "(unknown module)"))
+1626228303921	Marionette	INFO	Listening on port 53165
+1626228303942	Marionette	WARN	TLS certificate errors will be ignored for this session
+1626228303955	Marionette	ERROR	[19] No reply from Marionette:Register
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new Error("", "(unknown module)"))
+1626228305899	Marionette	INFO	Stopped listening on port 53165
+JavaScript error: resource://activity-stream/lib/ASRouter.jsm, line 987: NS_ERROR_ILLEGAL_VALUE: Component returned failure code: 0x80070057 (NS_ERROR_ILLEGAL_VALUE) [nsIObserverService.removeObserver]
+
+###!!! [Parent][RunMessage] Error: Channel closing: too late to send/recv, messages will be lost
+
+1626230972701	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-headless" "-foreground" "-no-remote" "-profile" "/var/folders/qp/62byk9gs7738gg2bzjf8p3br0000gn/T/rust_mozprofile4NYf0M"
+*** You are running in headless mode.
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new Error("", "(unknown module)"))
+1626230975317	Marionette	INFO	Listening on port 54080
+1626230975375	Marionette	WARN	TLS certificate errors will be ignored for this session
+1626230975385	Marionette	ERROR	[19] No reply from Marionette:Register
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new Error("", "(unknown module)"))
+1626230977006	Marionette	INFO	Stopped listening on port 54080
+1626231061135	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-headless" "-foreground" "-no-remote" "-profile" "/var/folders/qp/62byk9gs7738gg2bzjf8p3br0000gn/T/rust_mozprofilejRi6og"
+*** You are running in headless mode.
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new Error("", "(unknown module)"))
+1626231063153	Marionette	INFO	Listening on port 54164
+1626231063204	Marionette	WARN	TLS certificate errors will be ignored for this session
+1626231063220	Marionette	ERROR	[19] No reply from Marionette:Register
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new Error("", "(unknown module)"))
+1626231066206	Marionette	INFO	Stopped listening on port 54164
+1626231269458	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-headless" "-foreground" "-no-remote" "-profile" "/var/folders/qp/62byk9gs7738gg2bzjf8p3br0000gn/T/rust_mozprofileMZEGji"
+*** You are running in headless mode.
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new Error("", "(unknown module)"))
+1626231271731	Marionette	INFO	Listening on port 54511
+1626231271824	Marionette	WARN	TLS certificate errors will be ignored for this session
+1626231271835	Marionette	ERROR	[19] No reply from Marionette:Register
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new Error("", "(unknown module)"))
+1626231274683	Marionette	INFO	Stopped listening on port 54511
+1626231308219	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-headless" "-foreground" "-no-remote" "-profile" "/var/folders/qp/62byk9gs7738gg2bzjf8p3br0000gn/T/rust_mozprofile4eHmJz"
+*** You are running in headless mode.
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new Error("", "(unknown module)"))
+1626231310283	Marionette	INFO	Listening on port 54574
+1626231310390	Marionette	WARN	TLS certificate errors will be ignored for this session
+1626231310402	Marionette	ERROR	[19] No reply from Marionette:Register
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new Error("", "(unknown module)"))
+1626231313126	Marionette	INFO	Stopped listening on port 54574
+1626231426194	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-headless" "-foreground" "-no-remote" "-profile" "/var/folders/qp/62byk9gs7738gg2bzjf8p3br0000gn/T/rust_mozprofileGtGhMD"
+*** You are running in headless mode.
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new Error("", "(unknown module)"))
+1626231428292	Marionette	INFO	Listening on port 54667
+1626231428350	Marionette	WARN	TLS certificate errors will be ignored for this session
+1626231428360	Marionette	ERROR	[19] No reply from Marionette:Register
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new Error("", "(unknown module)"))
+1626231431294	Marionette	INFO	Stopped listening on port 54667
+
+###!!! [Parent][RunMessage] Error: Channel closing: too late to send/recv, messages will be lost
+
+1626231459012	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-headless" "-foreground" "-no-remote" "-profile" "/var/folders/qp/62byk9gs7738gg2bzjf8p3br0000gn/T/rust_mozprofileS3tdbT"
+*** You are running in headless mode.
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new Error("", "(unknown module)"))
+1626231461097	Marionette	INFO	Listening on port 54731
+1626231461171	Marionette	WARN	TLS certificate errors will be ignored for this session
+1626231461181	Marionette	ERROR	[19] No reply from Marionette:Register
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new Error("", "(unknown module)"))
+1626231463887	Marionette	INFO	Stopped listening on port 54731
+1626231510744	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-headless" "-foreground" "-no-remote" "-profile" "/var/folders/qp/62byk9gs7738gg2bzjf8p3br0000gn/T/rust_mozprofileYNCwsO"
+*** You are running in headless mode.
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new Error("", "(unknown module)"))
+1626231512791	Marionette	INFO	Listening on port 54804
+1626231512903	Marionette	WARN	TLS certificate errors will be ignored for this session
+1626231512912	Marionette	ERROR	[19] No reply from Marionette:Register
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new Error("", "(unknown module)"))
+1626231514459	Marionette	INFO	Stopped listening on port 54804
+JavaScript error: resource://activity-stream/lib/ASRouter.jsm, line 987: NS_ERROR_ILLEGAL_VALUE: Component returned failure code: 0x80070057 (NS_ERROR_ILLEGAL_VALUE) [nsIObserverService.removeObserver]
+1626231901280	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-headless" "-foreground" "-no-remote" "-profile" "/var/folders/qp/62byk9gs7738gg2bzjf8p3br0000gn/T/rust_mozprofilezLM24i"
+*** You are running in headless mode.
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new Error("", "(unknown module)"))
+1626231903417	Marionette	INFO	Listening on port 55032
+1626231903445	Marionette	WARN	TLS certificate errors will be ignored for this session
+1626231903459	Marionette	ERROR	[19] No reply from Marionette:Register
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new Error("", "(unknown module)"))
+1626231915410	Marionette	INFO	Stopped listening on port 55032
+1626231941417	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-headless" "-foreground" "-no-remote" "-profile" "/var/folders/qp/62byk9gs7738gg2bzjf8p3br0000gn/T/rust_mozprofilex0svHB"
+*** You are running in headless mode.
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new Error("", "(unknown module)"))
+1626231943545	Marionette	INFO	Listening on port 55116
+1626231943594	Marionette	WARN	TLS certificate errors will be ignored for this session
+1626231943606	Marionette	ERROR	[19] No reply from Marionette:Register
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new Error("", "(unknown module)"))
+console.log: WebExtensions: reset-default-search: starting.
+console.log: WebExtensions: reset-default-search: No addons in our list are installed.
+1626252411911	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-headless" "-foreground" "-no-remote" "-profile" "/var/folders/qp/62byk9gs7738gg2bzjf8p3br0000gn/T/rust_mozprofileQv0v76"
+*** You are running in headless mode.
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new Error("", "(unknown module)"))
+1626252414167	Marionette	INFO	Listening on port 55725
+1626252414289	Marionette	WARN	TLS certificate errors will be ignored for this session
+1626252414300	Marionette	ERROR	[19] No reply from Marionette:Register
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new Error("", "(unknown module)"))
+console.log: WebExtensions: reset-default-search: starting.
+console.log: WebExtensions: reset-default-search: No addons in our list are installed.
+1626252973902	Marionette	INFO	Stopped listening on port 55725
+1626266863926	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-headless" "-foreground" "-no-remote" "-profile" "/var/folders/qp/62byk9gs7738gg2bzjf8p3br0000gn/T/rust_mozprofile3vK8z5"
+*** You are running in headless mode.
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new Error("", "(unknown module)"))
+1626266866345	Marionette	INFO	Listening on port 56474
+1626266866419	Marionette	WARN	TLS certificate errors will be ignored for this session
+1626266866429	Marionette	ERROR	[19] No reply from Marionette:Register
+console.log: WebExtensions: reset-default-search: starting.
+console.log: WebExtensions: reset-default-search: No addons in our list are installed.
+1626268968474	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-headless" "-foreground" "-no-remote" "-profile" "/var/folders/qp/62byk9gs7738gg2bzjf8p3br0000gn/T/rust_mozprofile16LbBZ"
+*** You are running in headless mode.
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new Error("", "(unknown module)"))
+1626268970749	Marionette	INFO	Listening on port 57627
+1626268970850	Marionette	WARN	TLS certificate errors will be ignored for this session
+1626268970860	Marionette	ERROR	[19] No reply from Marionette:Register
+Exiting due to channel error.
+Exiting due to channel error.
+Exiting due to channel error.
+1626269166439	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-headless" "-foreground" "-no-remote" "-profile" "/var/folders/qp/62byk9gs7738gg2bzjf8p3br0000gn/T/rust_mozprofileu0Yhkf"
+*** You are running in headless mode.
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new Error("", "(unknown module)"))
+1626269168688	Marionette	INFO	Listening on port 57790
+1626269168804	Marionette	WARN	TLS certificate errors will be ignored for this session
+1626269168815	Marionette	ERROR	[19] No reply from Marionette:Register
+console.error: Region.jsm: "Error fetching region" (new Error("TIMEOUT", "resource://gre/modules/Region.jsm", 775))
+console.error: Region.jsm: "Failed to fetch region" (new Error("TIMEOUT", "resource://gre/modules/Region.jsm", 422))
+JavaScript error: https://www.hydrocarbonprocessing.com/js/bootstrap.min.js, line 6: Error: Bootstrap's JavaScript requires jQuery
+JavaScript error: https://www.hydrocarbonprocessing.com/js/jquery.sidr.min.js, line 4: ReferenceError: jQuery is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/js/owl.carousel.min.js, line 47: ReferenceError: jQuery is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/js/jquery.cookies.js, line 47: ReferenceError: jQuery is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/js/jquery.magnific-popup.min.js, line 4: TypeError: a is not a function
+JavaScript error: https://www.hydrocarbonprocessing.com/js/expandableAd/ad-expander.js, line 131: ReferenceError: jQuery is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/js/comments.js, line 1: ReferenceError: angular is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/js/site.js?v=3, line 1: ReferenceError: $ is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/news/2021/07/marathon-galveston-bay-refinery-restarts-reformer, line 81: ReferenceError: jQuery is not defined
+JavaScript error: https://optanon.blob.core.windows.net/consent/212214fc-1d80-4dae-bb5d-efe4ecf61169.js, line 183: ReferenceError: $ is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/news/2021/07/marathon-galveston-bay-refinery-restarts-reformer, line 1327: ReferenceError: $ is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/js/bootstrap.min.js, line 6: Error: Bootstrap's JavaScript requires jQuery
+JavaScript error: https://www.hydrocarbonprocessing.com/js/jquery.sidr.min.js, line 4: ReferenceError: jQuery is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/js/owl.carousel.min.js, line 47: ReferenceError: jQuery is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/js/jquery.cookies.js, line 47: ReferenceError: jQuery is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/js/jquery.magnific-popup.min.js, line 4: TypeError: a is not a function
+JavaScript error: https://www.hydrocarbonprocessing.com/js/expandableAd/ad-expander.js, line 131: ReferenceError: jQuery is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/js/comments.js, line 1: ReferenceError: angular is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/js/site.js?v=3, line 1: ReferenceError: $ is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/news/2021/07/venezuela-resorts-to-upgraded-oil-blends-for-feeding-refineries, line 81: ReferenceError: jQuery is not defined
+JavaScript error: https://optanon.blob.core.windows.net/consent/212214fc-1d80-4dae-bb5d-efe4ecf61169.js, line 183: ReferenceError: $ is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/news/2021/07/venezuela-resorts-to-upgraded-oil-blends-for-feeding-refineries, line 1334: ReferenceError: $ is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/js/bootstrap.min.js, line 6: Error: Bootstrap's JavaScript requires jQuery
+JavaScript error: https://www.hydrocarbonprocessing.com/js/jquery.sidr.min.js, line 4: ReferenceError: jQuery is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/js/owl.carousel.min.js, line 47: ReferenceError: jQuery is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/js/jquery.cookies.js, line 47: ReferenceError: jQuery is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/js/jquery.magnific-popup.min.js, line 4: TypeError: a is not a function
+JavaScript error: https://www.hydrocarbonprocessing.com/js/expandableAd/ad-expander.js, line 131: ReferenceError: jQuery is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/js/comments.js, line 1: ReferenceError: angular is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/js/site.js?v=3, line 1: ReferenceError: $ is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/news/2021/07/re-refinery-facility-to-be-based-at-oiltanking-galveston-county-terminal, line 81: ReferenceError: jQuery is not defined
+JavaScript error: https://optanon.blob.core.windows.net/consent/212214fc-1d80-4dae-bb5d-efe4ecf61169.js, line 183: ReferenceError: $ is not defined
+1626269508124	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-headless" "-foreground" "-no-remote" "-profile" "/var/folders/qp/62byk9gs7738gg2bzjf8p3br0000gn/T/rust_mozprofilenzgudA"
+*** You are running in headless mode.
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new Error("", "(unknown module)"))
+1626269510582	Marionette	INFO	Listening on port 58054
+1626269510614	Marionette	WARN	TLS certificate errors will be ignored for this session
+1626269510623	Marionette	ERROR	[19] No reply from Marionette:Register
+JavaScript error: https://www.hydrocarbonprocessing.com/news/2021/07/re-refinery-facility-to-be-based-at-oiltanking-galveston-county-terminal, line 1334: ReferenceError: $ is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/js/bootstrap.min.js, line 6: Error: Bootstrap's JavaScript requires jQuery
+JavaScript error: https://www.hydrocarbonprocessing.com/js/jquery.sidr.min.js, line 4: ReferenceError: jQuery is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/js/owl.carousel.min.js, line 47: ReferenceError: jQuery is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/js/jquery.cookies.js, line 47: ReferenceError: jQuery is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/js/jquery.magnific-popup.min.js, line 4: TypeError: a is not a function
+JavaScript error: https://www.hydrocarbonprocessing.com/js/expandableAd/ad-expander.js, line 131: ReferenceError: jQuery is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/js/comments.js, line 1: ReferenceError: angular is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/js/site.js?v=3, line 1: ReferenceError: $ is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/news/2021/07/sinopec-launches-chinas-first-megaton-scale-carbon-capture-project, line 81: ReferenceError: jQuery is not defined
+JavaScript error: https://optanon.blob.core.windows.net/consent/212214fc-1d80-4dae-bb5d-efe4ecf61169.js, line 183: ReferenceError: $ is not defined
+console.log: WebExtensions: reset-default-search: starting.
+console.log: WebExtensions: reset-default-search: No addons in our list are installed.
+JavaScript error: https://www.hydrocarbonprocessing.com/news/2021/07/sinopec-launches-chinas-first-megaton-scale-carbon-capture-project, line 1344: ReferenceError: $ is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/js/bootstrap.min.js, line 6: Error: Bootstrap's JavaScript requires jQuery
+JavaScript error: https://www.hydrocarbonprocessing.com/js/jquery.sidr.min.js, line 4: ReferenceError: jQuery is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/js/owl.carousel.min.js, line 47: ReferenceError: jQuery is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/js/jquery.cookies.js, line 47: ReferenceError: jQuery is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/js/jquery.magnific-popup.min.js, line 4: TypeError: a is not a function
+JavaScript error: https://www.hydrocarbonprocessing.com/js/expandableAd/ad-expander.js, line 131: ReferenceError: jQuery is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/js/comments.js, line 1: ReferenceError: angular is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/js/site.js?v=3, line 1: ReferenceError: $ is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/news/2021/07/oil-rises-as-tighter-market-eyed-after-opecplus-cancels-meeting, line 81: ReferenceError: jQuery is not defined
+JavaScript error: https://optanon.blob.core.windows.net/consent/212214fc-1d80-4dae-bb5d-efe4ecf61169.js, line 183: ReferenceError: $ is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/news/2021/07/oil-rises-as-tighter-market-eyed-after-opecplus-cancels-meeting, line 1331: ReferenceError: $ is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/js/bootstrap.min.js, line 6: Error: Bootstrap's JavaScript requires jQuery
+JavaScript error: https://www.hydrocarbonprocessing.com/js/jquery.sidr.min.js, line 4: ReferenceError: jQuery is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/js/owl.carousel.min.js, line 47: ReferenceError: jQuery is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/js/jquery.cookies.js, line 47: ReferenceError: jQuery is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/js/jquery.magnific-popup.min.js, line 4: TypeError: a is not a function
+JavaScript error: https://www.hydrocarbonprocessing.com/js/expandableAd/ad-expander.js, line 131: ReferenceError: jQuery is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/js/comments.js, line 1: ReferenceError: angular is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/js/site.js?v=3, line 1: ReferenceError: $ is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/news/2021/07/new-options-for-electrochemical-sensor-development, line 79: ReferenceError: jQuery is not defined
+JavaScript error: https://optanon.blob.core.windows.net/consent/212214fc-1d80-4dae-bb5d-efe4ecf61169.js, line 183: ReferenceError: $ is not defined
+console.log: WebExtensions: reset-default-search: starting.
+console.log: WebExtensions: reset-default-search: No addons in our list are installed.
+JavaScript error: https://www.hydrocarbonprocessing.com/news/2021/07/new-options-for-electrochemical-sensor-development, line 1320: ReferenceError: $ is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/js/bootstrap.min.js, line 6: Error: Bootstrap's JavaScript requires jQuery
+JavaScript error: https://www.hydrocarbonprocessing.com/js/jquery.sidr.min.js, line 4: ReferenceError: jQuery is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/js/owl.carousel.min.js, line 47: ReferenceError: jQuery is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/js/jquery.cookies.js, line 47: ReferenceError: jQuery is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/js/jquery.magnific-popup.min.js, line 4: TypeError: a is not a function
+JavaScript error: https://www.hydrocarbonprocessing.com/js/expandableAd/ad-expander.js, line 131: ReferenceError: jQuery is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/js/comments.js, line 1: ReferenceError: angular is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/js/site.js?v=3, line 1: ReferenceError: $ is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/news/2021/07/maire-tecnimont-expands-footprint-in-india-with-170-mm-epcc-contract, line 81: ReferenceError: jQuery is not defined
+JavaScript error: https://optanon.blob.core.windows.net/consent/212214fc-1d80-4dae-bb5d-efe4ecf61169.js, line 183: ReferenceError: $ is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/news/2021/07/maire-tecnimont-expands-footprint-in-india-with-170-mm-epcc-contract, line 1325: ReferenceError: $ is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/js/bootstrap.min.js, line 6: Error: Bootstrap's JavaScript requires jQuery
+JavaScript error: https://www.hydrocarbonprocessing.com/js/jquery.sidr.min.js, line 4: ReferenceError: jQuery is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/js/owl.carousel.min.js, line 47: ReferenceError: jQuery is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/js/jquery.cookies.js, line 47: ReferenceError: jQuery is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/js/jquery.magnific-popup.min.js, line 4: TypeError: a is not a function
+JavaScript error: https://www.hydrocarbonprocessing.com/js/expandableAd/ad-expander.js, line 131: ReferenceError: jQuery is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/js/comments.js, line 1: ReferenceError: angular is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/js/site.js?v=3, line 1: ReferenceError: $ is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/news/2021/07/opecplus-abandons-oil-policy-meeting-after-saudi-uae-clash, line 79: ReferenceError: jQuery is not defined
+JavaScript error: https://optanon.blob.core.windows.net/consent/212214fc-1d80-4dae-bb5d-efe4ecf61169.js, line 183: ReferenceError: $ is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/news/2021/07/opecplus-abandons-oil-policy-meeting-after-saudi-uae-clash, line 1335: ReferenceError: $ is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/js/bootstrap.min.js, line 6: Error: Bootstrap's JavaScript requires jQuery
+JavaScript error: https://www.hydrocarbonprocessing.com/js/jquery.sidr.min.js, line 4: ReferenceError: jQuery is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/js/owl.carousel.min.js, line 47: ReferenceError: jQuery is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/js/jquery.cookies.js, line 47: ReferenceError: jQuery is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/js/jquery.magnific-popup.min.js, line 4: TypeError: a is not a function
+JavaScript error: https://www.hydrocarbonprocessing.com/js/expandableAd/ad-expander.js, line 131: ReferenceError: jQuery is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/js/comments.js, line 1: ReferenceError: angular is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/js/site.js?v=3, line 1: ReferenceError: $ is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/news/2021/07/ecoslops-to-produce-recycled-fuel-at-totalenergies-la-m%C3%A8de-platform, line 79: ReferenceError: jQuery is not defined
+JavaScript error: https://optanon.blob.core.windows.net/consent/212214fc-1d80-4dae-bb5d-efe4ecf61169.js, line 183: ReferenceError: $ is not defined
+Exiting due to channel error.
+Exiting due to channel error.
+Exiting due to channel error.
+1626270771073	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-headless" "-foreground" "-no-remote" "-profile" "/var/folders/qp/62byk9gs7738gg2bzjf8p3br0000gn/T/rust_mozprofile1x20hI"
+*** You are running in headless mode.
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new Error("", "(unknown module)"))
+1626270773400	Marionette	INFO	Listening on port 58831
+1626270773441	Marionette	WARN	TLS certificate errors will be ignored for this session
+1626270773458	Marionette	ERROR	[19] No reply from Marionette:Register
+JavaScript warning: https://www.shpgx.com/js/jquery.js, line 1: Using //@ to indicate sourceMappingURL pragmas is deprecated. Use //# instead
+JavaScript warning: https://www.shpgx.com/js/jquery.js, line 1: Using //@ to indicate sourceMappingURL pragmas is deprecated. Use //# instead
+1626270781846	Marionette	INFO	Stopped listening on port 58831
+1626270842024	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-headless" "-foreground" "-no-remote" "-profile" "/var/folders/qp/62byk9gs7738gg2bzjf8p3br0000gn/T/rust_mozprofile5evvdU"
+*** You are running in headless mode.
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new Error("", "(unknown module)"))
+1626270844161	Marionette	INFO	Listening on port 58949
+1626270844208	Marionette	WARN	TLS certificate errors will be ignored for this session
+1626270844220	Marionette	ERROR	[19] No reply from Marionette:Register
+JavaScript warning: https://www.shpgx.com/js/jquery.js, line 1: Using //@ to indicate sourceMappingURL pragmas is deprecated. Use //# instead
+JavaScript warning: https://www.shpgx.com/js/jquery.js, line 1: Using //@ to indicate sourceMappingURL pragmas is deprecated. Use //# instead
+1626270850983	Marionette	INFO	Stopped listening on port 58949
+1626270895204	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-headless" "-foreground" "-no-remote" "-profile" "/var/folders/qp/62byk9gs7738gg2bzjf8p3br0000gn/T/rust_mozprofile04jFo9"
+*** You are running in headless mode.
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new Error("", "(unknown module)"))
+1626270897253	Marionette	INFO	Listening on port 59045
+1626270897364	Marionette	WARN	TLS certificate errors will be ignored for this session
+1626270897375	Marionette	ERROR	[19] No reply from Marionette:Register
+JavaScript warning: https://www.shpgx.com/js/jquery.js, line 1: Using //@ to indicate sourceMappingURL pragmas is deprecated. Use //# instead
+JavaScript warning: https://www.shpgx.com/js/jquery.js, line 1: Using //@ to indicate sourceMappingURL pragmas is deprecated. Use //# instead
+Exiting due to channel error.
+Exiting due to channel error.
+Exiting due to channel error.
+1626271011145	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-headless" "-foreground" "-no-remote" "-profile" "/var/folders/qp/62byk9gs7738gg2bzjf8p3br0000gn/T/rust_mozprofileDfXemI"
+*** You are running in headless mode.
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new Error("", "(unknown module)"))
+1626271013338	Marionette	INFO	Listening on port 59161
+1626271013403	Marionette	WARN	TLS certificate errors will be ignored for this session
+1626271013412	Marionette	ERROR	[19] No reply from Marionette:Register
+JavaScript warning: https://www.shpgx.com/js/jquery.js, line 1: Using //@ to indicate sourceMappingURL pragmas is deprecated. Use //# instead
+JavaScript warning: https://www.shpgx.com/js/jquery.js, line 1: Using //@ to indicate sourceMappingURL pragmas is deprecated. Use //# instead
+1626271016098	Marionette	INFO	Stopped listening on port 59161
+console.error: Region.jsm: "Error fetching region" (new TypeError("NetworkError when attempting to fetch resource.", ""))
+console.error: Region.jsm: "Failed to fetch region" (new Error("NO_RESULT", "resource://gre/modules/Region.jsm", 422))
+1626271064327	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-headless" "-foreground" "-no-remote" "-profile" "/var/folders/qp/62byk9gs7738gg2bzjf8p3br0000gn/T/rust_mozprofileOvP5RD"
+*** You are running in headless mode.
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new Error("", "(unknown module)"))
+1626271066519	Marionette	INFO	Listening on port 59238
+1626271066587	Marionette	WARN	TLS certificate errors will be ignored for this session
+1626271066598	Marionette	ERROR	[19] No reply from Marionette:Register
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new Error("", "(unknown module)"))
+JavaScript warning: https://www.shpgx.com/js/jquery.js, line 1: Using //@ to indicate sourceMappingURL pragmas is deprecated. Use //# instead
+JavaScript warning: https://www.shpgx.com/js/jquery.js, line 1: Using //@ to indicate sourceMappingURL pragmas is deprecated. Use //# instead
+1626271298622	Marionette	INFO	Stopped listening on port 59238
+1626271632349	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-headless" "-foreground" "-no-remote" "-profile" "/var/folders/qp/62byk9gs7738gg2bzjf8p3br0000gn/T/rust_mozprofileyM1jKt"
+*** You are running in headless mode.
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new Error("", "(unknown module)"))
+1626271634545	Marionette	INFO	Listening on port 59572
+1626271634606	Marionette	WARN	TLS certificate errors will be ignored for this session
+1626271634621	Marionette	ERROR	[19] No reply from Marionette:Register
+JavaScript error: https://www.hydrocarbonprocessing.com/js/bootstrap.min.js, line 6: Error: Bootstrap's JavaScript requires jQuery
+JavaScript error: https://www.hydrocarbonprocessing.com/js/jquery.sidr.min.js, line 4: ReferenceError: jQuery is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/js/owl.carousel.min.js, line 47: ReferenceError: jQuery is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/js/jquery.cookies.js, line 47: ReferenceError: jQuery is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/js/jquery.magnific-popup.min.js, line 4: TypeError: a is not a function
+JavaScript error: https://www.hydrocarbonprocessing.com/js/expandableAd/ad-expander.js, line 131: ReferenceError: jQuery is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/js/site.js?v=3, line 1: ReferenceError: $ is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/news/2021/07/iea-says-refining-throughput-set-to-rise-in-july-august, line 81: ReferenceError: jQuery is not defined
+JavaScript error: https://optanon.blob.core.windows.net/consent/212214fc-1d80-4dae-bb5d-efe4ecf61169.js, line 183: ReferenceError: $ is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/news/2021/07/iea-says-refining-throughput-set-to-rise-in-july-august, line 1332: ReferenceError: $ is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/js/bootstrap.min.js, line 6: Error: Bootstrap's JavaScript requires jQuery
+JavaScript error: https://www.hydrocarbonprocessing.com/js/jquery.sidr.min.js, line 4: ReferenceError: jQuery is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/js/owl.carousel.min.js, line 47: ReferenceError: jQuery is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/js/jquery.cookies.js, line 47: ReferenceError: jQuery is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/js/jquery.magnific-popup.min.js, line 4: TypeError: a is not a function
+JavaScript error: https://www.hydrocarbonprocessing.com/js/expandableAd/ad-expander.js, line 131: ReferenceError: jQuery is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/js/site.js?v=3, line 1: ReferenceError: $ is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/news/2021/07/troubled-caribbean-refinery-seeks-bankruptcy, line 81: ReferenceError: jQuery is not defined
+JavaScript error: https://optanon.blob.core.windows.net/consent/212214fc-1d80-4dae-bb5d-efe4ecf61169.js, line 183: ReferenceError: $ is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/news/2021/07/troubled-caribbean-refinery-seeks-bankruptcy, line 1351: ReferenceError: $ is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/js/bootstrap.min.js, line 6: Error: Bootstrap's JavaScript requires jQuery
+JavaScript error: https://www.hydrocarbonprocessing.com/js/jquery.sidr.min.js, line 4: ReferenceError: jQuery is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/js/owl.carousel.min.js, line 47: ReferenceError: jQuery is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/js/jquery.cookies.js, line 47: ReferenceError: jQuery is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/js/jquery.magnific-popup.min.js, line 4: TypeError: a is not a function
+JavaScript error: https://www.hydrocarbonprocessing.com/js/expandableAd/ad-expander.js, line 131: ReferenceError: jQuery is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/js/site.js?v=3, line 1: ReferenceError: $ is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/news/2021/07/honeywell-uop-technology-will-allow-state-government-to-meet-regional-emission-standards, line 81: ReferenceError: jQuery is not defined
+JavaScript error: https://optanon.blob.core.windows.net/consent/212214fc-1d80-4dae-bb5d-efe4ecf61169.js, line 183: ReferenceError: $ is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/news/2021/07/honeywell-uop-technology-will-allow-state-government-to-meet-regional-emission-standards, line 1326: ReferenceError: $ is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/js/bootstrap.min.js, line 6: Error: Bootstrap's JavaScript requires jQuery
+JavaScript error: https://www.hydrocarbonprocessing.com/js/jquery.sidr.min.js, line 4: ReferenceError: jQuery is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/js/owl.carousel.min.js, line 47: ReferenceError: jQuery is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/js/jquery.cookies.js, line 47: ReferenceError: jQuery is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/js/jquery.magnific-popup.min.js, line 4: TypeError: a is not a function
+JavaScript error: https://www.hydrocarbonprocessing.com/js/expandableAd/ad-expander.js, line 131: ReferenceError: jQuery is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/js/site.js?v=3, line 1: ReferenceError: $ is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/news/2021/07/haldor-topsoe-to-build-catalyst-plant-to-meet-increasing-demand-for-refining-catalysts, line 81: ReferenceError: jQuery is not defined
+JavaScript error: https://optanon.blob.core.windows.net/consent/212214fc-1d80-4dae-bb5d-efe4ecf61169.js, line 183: ReferenceError: $ is not defined
+console.log: WebExtensions: reset-default-search: starting.
+console.log: WebExtensions: reset-default-search: No addons in our list are installed.
+JavaScript error: https://www.hydrocarbonprocessing.com/news/2021/07/haldor-topsoe-to-build-catalyst-plant-to-meet-increasing-demand-for-refining-catalysts, line 1343: ReferenceError: $ is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/js/bootstrap.min.js, line 6: Error: Bootstrap's JavaScript requires jQuery
+JavaScript error: https://www.hydrocarbonprocessing.com/js/jquery.sidr.min.js, line 4: ReferenceError: jQuery is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/js/owl.carousel.min.js, line 47: ReferenceError: jQuery is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/js/jquery.cookies.js, line 47: ReferenceError: jQuery is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/js/jquery.magnific-popup.min.js, line 4: TypeError: a is not a function
+JavaScript error: https://www.hydrocarbonprocessing.com/js/expandableAd/ad-expander.js, line 131: ReferenceError: jQuery is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/js/site.js?v=3, line 1: ReferenceError: $ is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/news/2021/07/swiss-becomes-first-commercial-airline-to-fly-with-neste-my-sustainable-aviation-fuel, line 81: ReferenceError: jQuery is not defined
+JavaScript error: https://optanon.blob.core.windows.net/consent/212214fc-1d80-4dae-bb5d-efe4ecf61169.js, line 183: ReferenceError: $ is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/news/2021/07/swiss-becomes-first-commercial-airline-to-fly-with-neste-my-sustainable-aviation-fuel, line 1322: ReferenceError: $ is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/js/bootstrap.min.js, line 6: Error: Bootstrap's JavaScript requires jQuery
+JavaScript error: https://www.hydrocarbonprocessing.com/js/jquery.sidr.min.js, line 4: ReferenceError: jQuery is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/js/owl.carousel.min.js, line 47: ReferenceError: jQuery is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/js/jquery.cookies.js, line 47: ReferenceError: jQuery is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/js/jquery.magnific-popup.min.js, line 4: TypeError: a is not a function
+JavaScript error: https://www.hydrocarbonprocessing.com/js/expandableAd/ad-expander.js, line 131: ReferenceError: jQuery is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/js/site.js?v=3, line 1: ReferenceError: $ is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/news/2021/07/shell-proposes-large-scale-ccs-facility-in-alberta, line 81: ReferenceError: jQuery is not defined
+JavaScript error: https://optanon.blob.core.windows.net/consent/212214fc-1d80-4dae-bb5d-efe4ecf61169.js, line 183: ReferenceError: $ is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/news/2021/07/shell-proposes-large-scale-ccs-facility-in-alberta, line 1330: ReferenceError: $ is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/js/bootstrap.min.js, line 6: Error: Bootstrap's JavaScript requires jQuery
+JavaScript error: https://www.hydrocarbonprocessing.com/js/jquery.sidr.min.js, line 4: ReferenceError: jQuery is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/js/owl.carousel.min.js, line 47: ReferenceError: jQuery is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/js/jquery.cookies.js, line 47: ReferenceError: jQuery is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/js/jquery.magnific-popup.min.js, line 4: TypeError: a is not a function
+JavaScript error: https://www.hydrocarbonprocessing.com/js/expandableAd/ad-expander.js, line 131: ReferenceError: jQuery is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/js/site.js?v=3, line 1: ReferenceError: $ is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/news/2021/07/chevron-eyes-permanent-shutdown-of-pasadena-texas-fcc, line 81: ReferenceError: jQuery is not defined
+JavaScript error: https://optanon.blob.core.windows.net/consent/212214fc-1d80-4dae-bb5d-efe4ecf61169.js, line 183: ReferenceError: $ is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/news/2021/07/chevron-eyes-permanent-shutdown-of-pasadena-texas-fcc, line 1343: ReferenceError: $ is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/js/bootstrap.min.js, line 6: Error: Bootstrap's JavaScript requires jQuery
+JavaScript error: https://www.hydrocarbonprocessing.com/js/jquery.sidr.min.js, line 4: ReferenceError: jQuery is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/js/owl.carousel.min.js, line 47: ReferenceError: jQuery is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/js/jquery.cookies.js, line 47: ReferenceError: jQuery is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/js/jquery.magnific-popup.min.js, line 4: TypeError: a is not a function
+JavaScript error: https://www.hydrocarbonprocessing.com/js/expandableAd/ad-expander.js, line 131: ReferenceError: jQuery is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/js/site.js?v=3, line 1: ReferenceError: $ is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/news/2021/07/saudi-oman-call-for-continued-oil-cooperation-between-opec-and-allies, line 81: ReferenceError: jQuery is not defined
+JavaScript error: https://optanon.blob.core.windows.net/consent/212214fc-1d80-4dae-bb5d-efe4ecf61169.js, line 183: ReferenceError: $ is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/news/2021/07/saudi-oman-call-for-continued-oil-cooperation-between-opec-and-allies, line 1327: ReferenceError: $ is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/js/bootstrap.min.js, line 6: Error: Bootstrap's JavaScript requires jQuery
+JavaScript error: https://www.hydrocarbonprocessing.com/js/jquery.sidr.min.js, line 4: ReferenceError: jQuery is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/js/owl.carousel.min.js, line 47: ReferenceError: jQuery is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/js/jquery.cookies.js, line 47: ReferenceError: jQuery is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/js/jquery.magnific-popup.min.js, line 4: TypeError: a is not a function
+JavaScript error: https://www.hydrocarbonprocessing.com/js/expandableAd/ad-expander.js, line 131: ReferenceError: jQuery is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/js/site.js?v=3, line 1: ReferenceError: $ is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/news/2021/07/norways-acc-to-offer-co2-capture-and-storage-service, line 81: ReferenceError: jQuery is not defined
+JavaScript error: https://optanon.blob.core.windows.net/consent/212214fc-1d80-4dae-bb5d-efe4ecf61169.js, line 183: ReferenceError: $ is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/news/2021/07/norways-acc-to-offer-co2-capture-and-storage-service, line 1331: ReferenceError: $ is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/js/bootstrap.min.js, line 6: Error: Bootstrap's JavaScript requires jQuery
+JavaScript error: https://www.hydrocarbonprocessing.com/js/jquery.sidr.min.js, line 4: ReferenceError: jQuery is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/js/owl.carousel.min.js, line 47: ReferenceError: jQuery is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/js/jquery.cookies.js, line 47: ReferenceError: jQuery is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/js/jquery.magnific-popup.min.js, line 4: TypeError: a is not a function
+JavaScript error: https://www.hydrocarbonprocessing.com/js/expandableAd/ad-expander.js, line 131: ReferenceError: jQuery is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/js/site.js?v=3, line 1: ReferenceError: $ is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/news/2021/07/largest-eu-funded-research-project-reaches-important-milestone, line 81: ReferenceError: jQuery is not defined
+JavaScript error: https://optanon.blob.core.windows.net/consent/212214fc-1d80-4dae-bb5d-efe4ecf61169.js, line 183: ReferenceError: $ is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/news/2021/07/largest-eu-funded-research-project-reaches-important-milestone, line 1346: ReferenceError: $ is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/js/bootstrap.min.js, line 6: Error: Bootstrap's JavaScript requires jQuery
+JavaScript error: https://www.hydrocarbonprocessing.com/js/jquery.sidr.min.js, line 4: ReferenceError: jQuery is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/js/owl.carousel.min.js, line 47: ReferenceError: jQuery is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/js/jquery.cookies.js, line 47: ReferenceError: jQuery is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/js/jquery.magnific-popup.min.js, line 4: TypeError: a is not a function
+JavaScript error: https://www.hydrocarbonprocessing.com/js/expandableAd/ad-expander.js, line 131: ReferenceError: jQuery is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/js/site.js?v=3, line 1: ReferenceError: $ is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/news/2021/07/group-collaborates-to-help-decarbonize-the-industrial-basin-of-normandy-in-france, line 81: ReferenceError: jQuery is not defined
+JavaScript error: https://optanon.blob.core.windows.net/consent/212214fc-1d80-4dae-bb5d-efe4ecf61169.js, line 183: ReferenceError: $ is not defined
+JavaScript error: https://www.hydrocarbonprocessing.com/news/2021/07/group-collaborates-to-help-decarbonize-the-industrial-basin-of-normandy-in-france, line 1328: ReferenceError: $ is not defined
+1626309677063	Marionette	INFO	Stopped listening on port 59572
+1626399151053	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-headless" "-foreground" "-no-remote" "-profile" "/var/folders/qp/62byk9gs7738gg2bzjf8p3br0000gn/T/rust_mozprofileCM1a88"
+*** You are running in headless mode.
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new Error("", "(unknown module)"))
+1626399153720	Marionette	INFO	Listening on port 60725
+1626399153751	Marionette	WARN	TLS certificate errors will be ignored for this session
+1626399153765	Marionette	ERROR	[19] No reply from Marionette:Register
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new Error("", "(unknown module)"))
+1626399157735	Marionette	INFO	Stopped listening on port 60725

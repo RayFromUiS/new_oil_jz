@@ -161,3 +161,13 @@ class FbBjxItem(NewsOedigitalItem):
 
 class GfBjxItem(NewsOedigitalItem):
     pass
+
+
+class PetroEconomistItem(NewsOedigitalItem):
+    pass
+
+class HydroProcessItem(NewsOedigitalItem):
+    pass
+
+class ShaiPgxItem(NewsOedigitalItem):
+    pass

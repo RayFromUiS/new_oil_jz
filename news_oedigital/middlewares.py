@@ -13,6 +13,7 @@ import os
 import os.path
 import logging
 import pickle
+import scrapy
 from scrapy.exceptions import IgnoreRequest
 from scrapy.http.cookies import CookieJar
 
@@ -100,6 +101,20 @@ class NewsOedigitalDownloaderMiddleware:
 
         if response.status == 404 or response==403:
             raise IgnoreRequest('skip the request',response.url)
+
+        # if response.css('div.article-fade'):
+        #     formdata = {
+        #         "ctl00$ctl00$ctl00$ctl00$ContentPlaceHolderDefault$mainContent$mainContent$txtEmail":
+        #             "dongdong2_18@163.com",
+        #         "ctl00$ctl00$ctl00$ctl00$ContentPlaceHolderDefault$mainContent$mainContent$txtPassword": \
+        #             "woai5laopo"
+        #     }
+        #     log_in_url = response.css('div.article-fade').css('a')[0].attrib.get('href')
+        #     log_in_url = response.urljoin(log_in_url)
+        #     return scrapy.FormRequest.from_response(url=log_in_url,
+        #                                             formdata=formdata,
+        #                                             method='POST',
+        #                                             )
         # Must either;
         # - return a Response object
         # - return a Request object

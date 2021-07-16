@@ -21,6 +21,47 @@ def create_table(engine):
     Base.metadata.create_all(engine)
 
 
+class ShaiPgx(Base):
+    __tablename__ = 'shai_pgx'
+    id = Column(Integer, primary_key=True)
+    title = Column(String(1024))
+    pre_title = Column(String(2048))
+    author = Column(String(255))
+    pub_time = Column(String(255))
+    preview_img_link = Column(String(2048))
+    content = Column(Text)
+    categories = Column(String(255))
+    crawl_time = Column(String(255))
+    url = Column(String(1024))
+
+class HydroProcess(Base):
+    __tablename__ = 'hydro_process'
+    id = Column(Integer, primary_key=True)
+    title = Column(String(1024))
+    pre_title = Column(String(2048))
+    author = Column(String(255))
+    pub_time = Column(String(255))
+    preview_img_link = Column(String(2048))
+    content = Column(Text)
+    categories = Column(String(255))
+    crawl_time = Column(String(255))
+    url = Column(String(1024))
+
+class PetroEconomist(Base):
+    __tablename__ = 'petro_economist'
+    id = Column(Integer, primary_key=True)
+    title = Column(String(1024))
+    pre_title = Column(String(2048))
+    author = Column(String(255))
+    pub_time = Column(String(255))
+    preview_img_link = Column(String(2048))
+    content = Column(Text)
+    categories = Column(String(255))
+    crawl_time = Column(String(255))
+    url = Column(String(1024))
+
+
+
 class OeNews(Base):
     __tablename__ = 'news_oil_oe'
 

@@ -162,6 +162,9 @@ ITEM_PIPELINES = {
     'news_oedigital.pipelines.SolarZoomPipeline': 337,
     'news_oedigital.pipelines.FbBjxPipeline': 338,
     'news_oedigital.pipelines.GfBjxPipeline': 339,
+    'news_oedigital.pipelines.PetroEconomistPipeline': 340,
+    'news_oedigital.pipelines.HydroProcessPipeline': 341,
+    'news_oedigital.pipelines.ShaiPgxPipeline': 342
 
 }
 
