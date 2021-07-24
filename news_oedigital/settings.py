@@ -164,7 +164,11 @@ ITEM_PIPELINES = {
     'news_oedigital.pipelines.GfBjxPipeline': 339,
     'news_oedigital.pipelines.PetroEconomistPipeline': 340,
     'news_oedigital.pipelines.HydroProcessPipeline': 341,
-    'news_oedigital.pipelines.ShaiPgxPipeline': 342
+    'news_oedigital.pipelines.ShaiPgxPipeline': 342,
+    'news_oedigital.pipelines.MarineTechPipeline': 343,
+    'news_oedigital.pipelines.MarineExecPipeline': 344,
+    'news_oedigital.pipelines.SplashOffshorePipeline': 345,
+    'news_oedigital.pipelines.AmericanNewsPipeline': 346,
 
 }
 

@@ -171,3 +171,15 @@ class HydroProcessItem(NewsOedigitalItem):
 
 class ShaiPgxItem(NewsOedigitalItem):
     pass
+
+
+class MarineTechItem(NewsOedigitalItem):
+    pass
+class MarineExecItem(NewsOedigitalItem):
+    pass
+
+class SplashOffshoreItem(NewsOedigitalItem):
+    pass
+
+class AmericanNewsItem(NewsOedigitalItem):
+    pass

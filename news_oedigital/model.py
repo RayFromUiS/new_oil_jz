@@ -21,6 +21,60 @@ def create_table(engine):
     Base.metadata.create_all(engine)
 
 
+
+class AmericanNews(Base):
+    __tablename__ = 'american_news'
+    id = Column(Integer, primary_key=True)
+    title = Column(String(1024))
+    pre_title = Column(String(2048))
+    author = Column(String(255))
+    pub_time = Column(String(255))
+    preview_img_link = Column(String(2048))
+    content = Column(Text)
+    categories = Column(String(255))
+    crawl_time = Column(String(255))
+    url = Column(String(1024))
+
+class SplashOffshore(Base):
+    __tablename__ = 'splash_offshore'
+    id = Column(Integer, primary_key=True)
+    title = Column(String(1024))
+    pre_title = Column(String(2048))
+    author = Column(String(255))
+    pub_time = Column(String(255))
+    preview_img_link = Column(String(2048))
+    content = Column(Text)
+    categories = Column(String(255))
+    crawl_time = Column(String(255))
+    url = Column(String(1024))
+
+class MarineExec(Base):
+    __tablename__ = 'marine_exec'
+    id = Column(Integer, primary_key=True)
+    title = Column(String(1024))
+    pre_title = Column(String(2048))
+    author = Column(String(255))
+    pub_time = Column(String(255))
+    preview_img_link = Column(String(2048))
+    content = Column(Text)
+    categories = Column(String(255))
+    crawl_time = Column(String(255))
+    url = Column(String(1024))
+
+class MarineTech(Base):
+    __tablename__ = 'marine_tech'
+    id = Column(Integer, primary_key=True)
+    title = Column(String(1024))
+    pre_title = Column(String(2048))
+    author = Column(String(255))
+    pub_time = Column(String(255))
+    preview_img_link = Column(String(2048))
+    content = Column(Text)
+    categories = Column(String(255))
+    crawl_time = Column(String(255))
+    url = Column(String(1024))
+
+
 class ShaiPgx(Base):
     __tablename__ = 'shai_pgx'
     id = Column(Integer, primary_key=True)

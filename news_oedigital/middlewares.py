@@ -22,6 +22,8 @@ from scrapy.http import HtmlResponse
 from news_oedigital import settings
 import re
 
+
+
 class NewsOedigitalSpiderMiddleware:
     # Not all methods need to be defined. If a method is not defined,
     # scrapy acts as if the spider middleware does not modify the
@@ -101,7 +103,8 @@ class NewsOedigitalDownloaderMiddleware:
 
         if response.status == 404 or response==403:
             raise IgnoreRequest('skip the request',response.url)
-
+        if re.search('Click here to subscribe to Petroleum News',response.css('a::text').get()):
+            raise IgnoreRequest
         # if response.css('div.article-fade'):
         #     formdata = {
         #         "ctl00$ctl00$ctl00$ctl00$ContentPlaceHolderDefault$mainContent$mainContent$txtEmail":
