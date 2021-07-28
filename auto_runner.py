@@ -68,7 +68,7 @@ def run_scraper():
     process.crawl(ShaiPgxSpider)
     process.crawl(MarineTechSpider)
     process.crawl(SplashOffshoreSpider)
-        process.crawl(MarineExecSpider)
+    process.crawl(MarineExecSpider)
     # process.crawl(MarineTechSpider)
     process.start()
 

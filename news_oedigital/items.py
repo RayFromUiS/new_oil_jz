@@ -183,3 +183,6 @@ class SplashOffshoreItem(NewsOedigitalItem):
 
 class AmericanNewsItem(NewsOedigitalItem):
     pass
+
+class OilGasIqItem(NewsOedigitalItem):
+    pass

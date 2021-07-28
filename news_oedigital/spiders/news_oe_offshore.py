@@ -58,8 +58,10 @@ class OilGasIqSpider(scrapy.Spider):
 
     def start_requests(self):
         for url in self.start_urls:
-            yield scrapy.Request(url=url,
+            yield SeleniumRequest(url=url,
                                  callback=self.parse_page_links,
+                                  wait_time=30,
+                                  wait_until=EC.presence_of_element_located((By.ID,'macy-container'))
                                  # cb_kwargs={'current_page': 1}
                                  )
 
