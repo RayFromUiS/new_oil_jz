@@ -169,6 +169,7 @@ ITEM_PIPELINES = {
     'news_oedigital.pipelines.MarineExecPipeline': 344,
     'news_oedigital.pipelines.SplashOffshorePipeline': 345,
     'news_oedigital.pipelines.AmericanNewsPipeline': 346,
+    'news_oedigital.pipelines.OilGasIqPipeline': 347
 
 }
 

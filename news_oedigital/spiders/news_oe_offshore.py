@@ -61,52 +61,65 @@ class OilGasIqSpider(scrapy.Spider):
             yield SeleniumRequest(url=url,
                                  callback=self.parse_page_links,
                                   wait_time=30,
-                                  wait_until=EC.presence_of_element_located((By.ID,'macy-container'))
+                                  wait_until=EC.presence_of_element_located((By.ID,'macy-container')),
+                                  script='window.scrollTo(0, document.body.scrollHeight);'
+
                                  # cb_kwargs={'current_page': 1}
                                  )
 
     def parse_page_links(self,response):
-        articles = response.css('ul.pr-feed div.article-content')
+        # driver = response.meta.get('driver')
+        # driver.execute_script("window.scrollTo(0,document.body.scrollHeight)")
+        # from scrapy.shell import inspect_response
+        # inspect_response(response,self)
+        # driver = response.meta.get('driver')
+        # driver.execute_script("window.scrollTo(0,document.body.scrollHeight)")
+        articles = response.css('div#macy-container article')
         for article in articles:
-            preview_img_link = article.css('img').attrib.get('src')
-            pub_time = article.css('span.date::text').get()
-            title = article.css('a.title::text').get()
-            title_url = article.css('a.title ').attrib.get('href')
+            preview_img_link = article.css('div.post-thumbnail-wrap img').attrib.get('data-src')
+            # pub_time = article.css('span.date::text').get()
+            title = article.css('h3.article-title a::text').get()
+            title_url = article.css('h3.article-title a').attrib.get('href')
             # author = article.css('span.author-name::text').get()
-
-            result = self.session.query(AmericanNews) \
-                .filter(or_(AmericanNews.url == response.urljoin(title_url),AmericanNews.title == title)) \
+            result = self.session.query(OilGasIq) \
+                .filter(or_(OilGasIq.url == title_url,OilGasIq.title == title)) \
                 .first()
             # results.append(result)
             if not result and title_url:
-                yield response.follow(url = title_url,
+                yield SeleniumRequest(url = title_url,
                                       callback=self.parse_item,
+                                      # wait_time=30,
+                                      # wait_until=EC.presence_of_element_located((By.CSS_SELECTOR,'page-content')),
                                       cb_kwargs={
                                           'title':title,
                                           'preview_img_link':preview_img_link,
                                           # 'author':author,
-                                          'pub_time':pub_time
+                                          # 'pub_time':pub_time
                                       })
 
-        page_ref =  response.css('ul.pagination li a')[-1].attrib.get('href')
+        # page_ref =  response.css('ul.pagination li a')[-1].attrib.get('href')
+        #
+        # if page_ref:
+        #     # current_page +=1re
+        #     yield response.follow(url=page_ref,
+        #                           callback=self.parse_page_links,
+        #                           # cb_kwargs={'current_page':current_page}
+        #                           )
+    def parse_item(self,response,preview_img_link,title):
 
-        if page_ref:
-            # current_page +=1
-            yield response.follow(url=page_ref,
-                                  callback=self.parse_page_links,
-                                  # cb_kwargs={'current_page':current_page}
-                                  )
-    def parse_item(self,response,preview_img_link,pub_time,title):
-        item = AmericanNewsItem()
+        # from scrapy.shell import inspect_response
+        # inspect_response(response,self)
+        item = OilGasIqItem()
 
         item['url'] = response.url
         item['title'] = title
         # pub_time =response.css('article.article-node').css('p.datePublished::text').get().strip()
-        item['pub_time'] = pub_time
+        # item['pub_time'] = pub_time
         item['preview_img_link'] = preview_img_link
         item['pre_title'] = None
         item['author'] = None
-        item['categories'] = str(response.css('span.post-cat-wrap a.post-cat::text').getall())
+        categories = response.css('div.tags a::text').getall()
+        item['categories'] =  str([cate.strip() for cate in categories if cate])
         item['content'] = response.css('article#the-post').get()
         item['crawl_time'] = datetime.now().strftime('%m/%d/%Y %H:%M')
         # #

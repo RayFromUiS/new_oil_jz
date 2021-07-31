@@ -48574,3 +48574,182 @@ Exiting due to channel error.
 Exiting due to channel error.
 Exiting due to channel error.
 Exiting due to channel error.
+1627649983935	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-headless" "-foreground" "-no-remote" "-profile" "/var/folders/qp/62byk9gs7738gg2bzjf8p3br0000gn/T/rust_mozprofileEEYuS7"
+*** You are running in headless mode.
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new Error("", "(unknown module)"))
+1627649986773	Marionette	INFO	Listening on port 58506
+1627649986831	Marionette	WARN	TLS certificate errors will be ignored for this session
+1627649986842	Marionette	ERROR	[19] No reply from Marionette:Register
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new Error("", "(unknown module)"))
+1627650425019	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-headless" "-foreground" "-no-remote" "-profile" "/var/folders/qp/62byk9gs7738gg2bzjf8p3br0000gn/T/rust_mozprofileJLnodX"
+*** You are running in headless mode.
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new Error("", "(unknown module)"))
+1627650427245	Marionette	INFO	Listening on port 59020
+1627650427284	Marionette	WARN	TLS certificate errors will be ignored for this session
+1627650427297	Marionette	ERROR	[19] No reply from Marionette:Register
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new Error("", "(unknown module)"))
+1627650476806	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-headless" "-foreground" "-no-remote" "-profile" "/var/folders/qp/62byk9gs7738gg2bzjf8p3br0000gn/T/rust_mozprofileUMTSyR"
+*** You are running in headless mode.
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new Error("", "(unknown module)"))
+1627650479325	Marionette	INFO	Listening on port 59097
+1627650479400	Marionette	WARN	TLS certificate errors will be ignored for this session
+1627650479425	Marionette	ERROR	[19] No reply from Marionette:Register
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new Error("", "(unknown module)"))
+console.log: WebExtensions: reset-default-search: starting.
+console.log: WebExtensions: reset-default-search: No addons in our list are installed.
+1627650532058	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-headless" "-foreground" "-no-remote" "-profile" "/var/folders/qp/62byk9gs7738gg2bzjf8p3br0000gn/T/rust_mozprofile0KnFtt"
+*** You are running in headless mode.
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new Error("", "(unknown module)"))
+1627650534440	Marionette	INFO	Listening on port 59193
+1627650534512	Marionette	WARN	TLS certificate errors will be ignored for this session
+1627650534524	Marionette	ERROR	[19] No reply from Marionette:Register
+JavaScript error: https://j.6sc.co/6si.min.js, line 1: TypeError: i is null
+JavaScript warning: https://www.oilandgasiq.com/js/app_web.js, line 1: unreachable code after return statement
+1627650564267	Marionette	INFO	Stopped listening on port 59193
+JavaScript error: resource://activity-stream/lib/ASRouter.jsm, line 987: NS_ERROR_ILLEGAL_VALUE: Component returned failure code: 0x80070057 (NS_ERROR_ILLEGAL_VALUE) [nsIObserverService.removeObserver]
+JavaScript error: , line 0: TypeError: NetworkError when attempting to fetch resource.
+
+###!!! [Parent][RunMessage] Error: Channel closing: too late to send/recv, messages will be lost
+
+1627650830411	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-headless" "-foreground" "-no-remote" "-profile" "/var/folders/qp/62byk9gs7738gg2bzjf8p3br0000gn/T/rust_mozprofilecY1lpx"
+*** You are running in headless mode.
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new Error("", "(unknown module)"))
+1627650832652	Marionette	INFO	Listening on port 59480
+1627650832680	Marionette	WARN	TLS certificate errors will be ignored for this session
+1627650832690	Marionette	ERROR	[19] No reply from Marionette:Register
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new Error("", "(unknown module)"))
+JavaScript error: https://j.6sc.co/6si.min.js, line 1: TypeError: i is null
+JavaScript warning: https://www.oilandgasiq.com/js/app_web.js, line 1: unreachable code after return statement
+JavaScript warning: https://pagead2.googlesyndication.com/bg/5DoHiAB8gciOXy4tN-30Samgrf9Qq3bIy1sciudvWGA.js line 1 > eval line 66 > eval line 1 > eval, line 1: WebGL warning: <Create>: Can't use WebGL in headless mode (https://bugzil.la/1375585).
+JavaScript warning: https://pagead2.googlesyndication.com/bg/5DoHiAB8gciOXy4tN-30Samgrf9Qq3bIy1sciudvWGA.js line 1 > eval line 66 > eval line 1 > eval, line 1: Failed to create WebGL context: WebGL creation failed: 
+* Can't use WebGL in headless mode (https://bugzil.la/1375585).
+console.log: WebExtensions: reset-default-search: starting.
+console.log: WebExtensions: reset-default-search: No addons in our list are installed.
+console.log: WebExtensions: reset-default-search: starting.
+console.log: WebExtensions: reset-default-search: No addons in our list are installed.
+console.log: WebExtensions: reset-default-search: starting.
+console.log: WebExtensions: reset-default-search: No addons in our list are installed.
+1627651653590	Marionette	INFO	Stopped listening on port 59480
+
+###!!! [Parent][MessageChannel] Error: (msgtype=0x1F0011,name=PBackgroundStorage::Msg_Observe) Channel error: cannot send/recv
+
+
+###!!! [Parent][MessageChannel] Error: (msgtype=0x1F0011,name=PBackgroundStorage::Msg_Observe) Channel error: cannot send/recv
+
+JavaScript error: , line 0: TypeError: NetworkError when attempting to fetch resource.
+JavaScript error: , line 0: TypeError: NetworkError when attempting to fetch resource.
+1627651664460	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-headless" "-foreground" "-no-remote" "-profile" "/var/folders/qp/62byk9gs7738gg2bzjf8p3br0000gn/T/rust_mozprofilerX3zmo"
+*** You are running in headless mode.
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new Error("", "(unknown module)"))
+1627651666713	Marionette	INFO	Listening on port 60026
+1627651666818	Marionette	WARN	TLS certificate errors will be ignored for this session
+1627651666828	Marionette	ERROR	[19] No reply from Marionette:Register
+JavaScript error: https://j.6sc.co/6si.min.js, line 1: TypeError: i is null
+JavaScript warning: https://www.oilandgasiq.com/js/app_web.js, line 1: unreachable code after return statement
+JavaScript warning: https://pagead2.googlesyndication.com/bg/5DoHiAB8gciOXy4tN-30Samgrf9Qq3bIy1sciudvWGA.js line 1 > eval line 4411 > eval line 1 > eval, line 1: WebGL warning: <Create>: Can't use WebGL in headless mode (https://bugzil.la/1375585).
+JavaScript warning: https://pagead2.googlesyndication.com/bg/5DoHiAB8gciOXy4tN-30Samgrf9Qq3bIy1sciudvWGA.js line 1 > eval line 4411 > eval line 1 > eval, line 1: Failed to create WebGL context: WebGL creation failed: 
+* Can't use WebGL in headless mode (https://bugzil.la/1375585).
+JavaScript error: https://j.6sc.co/6si.min.js, line 1: TypeError: i is null
+JavaScript warning: https://www.oilandgasiq.com/js/app_web.js, line 1: unreachable code after return statement
+JavaScript warning: https://www.oilandgasiq.com/js/app_web.js, line 1: unreachable code after return statement
+JavaScript warning: https://www.oilandgasiq.com/js/app_web.js, line 1: unreachable code after return statement
+Exiting due to channel error.
+Exiting due to channel error.
+Exiting due to channel error.
+1627651965140	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-headless" "-foreground" "-no-remote" "-profile" "/var/folders/qp/62byk9gs7738gg2bzjf8p3br0000gn/T/rust_mozprofile2pD7Xh"
+*** You are running in headless mode.
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new Error("", "(unknown module)"))
+1627651967408	Marionette	INFO	Listening on port 60406
+1627651967503	Marionette	WARN	TLS certificate errors will be ignored for this session
+1627651967513	Marionette	ERROR	[19] No reply from Marionette:Register
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new Error("", "(unknown module)"))
+JavaScript error: https://j.6sc.co/6si.min.js, line 1: TypeError: i is null
+JavaScript warning: https://www.oilandgasiq.com/js/app_web.js, line 1: unreachable code after return statement
+JavaScript warning: https://pagead2.googlesyndication.com/bg/5DoHiAB8gciOXy4tN-30Samgrf9Qq3bIy1sciudvWGA.js line 1 > eval line 3984 > eval, line 1: WebGL warning: <Create>: Can't use WebGL in headless mode (https://bugzil.la/1375585).
+JavaScript warning: https://pagead2.googlesyndication.com/bg/5DoHiAB8gciOXy4tN-30Samgrf9Qq3bIy1sciudvWGA.js line 1 > eval line 3984 > eval, line 1: Failed to create WebGL context: WebGL creation failed: 
+* Can't use WebGL in headless mode (https://bugzil.la/1375585).
+JavaScript error: https://j.6sc.co/6si.min.js, line 1: TypeError: i is null
+JavaScript warning: https://www.oilandgasiq.com/js/app_web.js, line 1: unreachable code after return statement
+JavaScript warning: https://www.oilandgasiq.com/js/app_web.js, line 1: unreachable code after return statement
+JavaScript warning: https://www.oilandgasiq.com/js/app_web.js, line 1: unreachable code after return statement
+1627652268221	Marionette	INFO	Stopped listening on port 60406
+1627652368990	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-headless" "-foreground" "-no-remote" "-profile" "/var/folders/qp/62byk9gs7738gg2bzjf8p3br0000gn/T/rust_mozprofiletdKk7J"
+*** You are running in headless mode.
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new Error("", "(unknown module)"))
+1627652371256	Marionette	INFO	Listening on port 60815
+1627652371356	Marionette	WARN	TLS certificate errors will be ignored for this session
+1627652371367	Marionette	ERROR	[19] No reply from Marionette:Register
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new Error("", "(unknown module)"))
+JavaScript error: https://j.6sc.co/6si.min.js, line 1: TypeError: i is null
+JavaScript warning: https://www.oilandgasiq.com/js/app_web.js, line 1: unreachable code after return statement
+JavaScript error: , line 0: uncaught exception: undefined
+JavaScript error: https://www.oilandgasiq.com/js/app_web.js, line 1: Error: Request aborted
+JavaScript error: , line 0: TypeError: NetworkError when attempting to fetch resource.
+JavaScript error: , line 0: TypeError: NetworkError when attempting to fetch resource.
+JavaScript error: https://j.6sc.co/6si.min.js, line 1: TypeError: i is null
+JavaScript warning: https://www.oilandgasiq.com/js/app_web.js, line 1: unreachable code after return statement
+JavaScript warning: https://www.oilandgasiq.com/js/app_web.js, line 1: unreachable code after return statement
+JavaScript warning: https://www.oilandgasiq.com/js/app_web.js, line 1: unreachable code after return statement
+Exiting due to channel error.
+Exiting due to channel error.
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+Exiting due to channel error.
+1627652632273	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-headless" "-foreground" "-no-remote" "-profile" "/var/folders/qp/62byk9gs7738gg2bzjf8p3br0000gn/T/rust_mozprofilefZKTL5"
+*** You are running in headless mode.
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new Error("", "(unknown module)"))
+1627652634432	Marionette	INFO	Listening on port 61110
+1627652634544	Marionette	WARN	TLS certificate errors will be ignored for this session
+1627652634555	Marionette	ERROR	[19] No reply from Marionette:Register
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new Error("", "(unknown module)"))
+JavaScript error: https://j.6sc.co/6si.min.js, line 1: TypeError: i is null
+JavaScript warning: https://www.oilandgasiq.com/js/app_web.js, line 1: unreachable code after return statement
+JavaScript error: https://www.oilandgasiq.com/js/app_web.js, line 1: Error: Request aborted
+JavaScript error: , line 0: uncaught exception: undefined
+JavaScript error: https://j.6sc.co/6si.min.js, line 1: TypeError: i is null
+JavaScript warning: https://www.oilandgasiq.com/js/app_web.js, line 1: unreachable code after return statement
+JavaScript error: https://j.6sc.co/6si.min.js, line 1: TypeError: i is null
+JavaScript warning: https://www.oilandgasiq.com/js/app_web.js, line 1: unreachable code after return statement
+JavaScript warning: https://www.oilandgasiq.com/js/app_web.js, line 1: unreachable code after return statement
+1627652788844	Marionette	INFO	Stopped listening on port 61110
+1627652813305	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-headless" "-foreground" "-no-remote" "-profile" "/var/folders/qp/62byk9gs7738gg2bzjf8p3br0000gn/T/rust_mozprofileCC1W1x"
+*** You are running in headless mode.
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new Error("", "(unknown module)"))
+1627652815489	Marionette	INFO	Listening on port 61388
+1627652815570	Marionette	WARN	TLS certificate errors will be ignored for this session
+1627652815579	Marionette	ERROR	[19] No reply from Marionette:Register
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new Error("", "(unknown module)"))
+JavaScript error: https://j.6sc.co/6si.min.js, line 1: TypeError: i is null
+JavaScript warning: https://www.oilandgasiq.com/js/app_web.js, line 1: unreachable code after return statement
+JavaScript error: https://www.oilandgasiq.com/js/app_web.js, line 1: Error: Request aborted
+JavaScript error: https://j.6sc.co/6si.min.js, line 1: TypeError: i is null
+JavaScript warning: https://www.oilandgasiq.com/js/app_web.js, line 1: unreachable code after return statement
+JavaScript warning: https://www.oilandgasiq.com/js/app_web.js, line 1: unreachable code after return statement
+JavaScript error: https://j.6sc.co/6si.min.js, line 1: TypeError: i is null
+JavaScript warning: https://www.oilandgasiq.com/js/app_web.js, line 1: unreachable code after return statement
+1627652845297	Marionette	INFO	Stopped listening on port 61388
+1627652886159	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-headless" "-foreground" "-no-remote" "-profile" "/var/folders/qp/62byk9gs7738gg2bzjf8p3br0000gn/T/rust_mozprofileJ83t0O"
+*** You are running in headless mode.
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new Error("", "(unknown module)"))
+1627652888273	Marionette	INFO	Listening on port 61639
+1627652888326	Marionette	WARN	TLS certificate errors will be ignored for this session
+1627652888336	Marionette	ERROR	[19] No reply from Marionette:Register
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new Error("", "(unknown module)"))
+JavaScript error: https://j.6sc.co/6si.min.js, line 1: TypeError: i is null
+JavaScript warning: https://www.oilandgasiq.com/js/app_web.js, line 1: unreachable code after return statement
+JavaScript error: https://www.oilandgasiq.com/js/app_web.js, line 1: Error: Request aborted
+JavaScript error: , line 0: uncaught exception: undefined
+JavaScript error: , line 0: TypeError: NetworkError when attempting to fetch resource.
+JavaScript error: , line 0: TypeError: NetworkError when attempting to fetch resource.
+JavaScript error: https://j.6sc.co/6si.min.js, line 1: TypeError: i is null
+JavaScript warning: https://www.oilandgasiq.com/js/app_web.js, line 1: unreachable code after return statement
+JavaScript warning: https://www.oilandgasiq.com/js/app_web.js, line 1: unreachable code after return statement
+JavaScript warning: https://www.oilandgasiq.com/js/app_web.js, line 1: unreachable code after return statement
+1627653064731	Marionette	INFO	Stopped listening on port 61639
+1627653116097	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-headless" "-foreground" "-no-remote" "-profile" "/var/folders/qp/62byk9gs7738gg2bzjf8p3br0000gn/T/rust_mozprofiletH5f8e"
+*** You are running in headless mode.
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new Error("", "(unknown module)"))
+1627653118280	Marionette	INFO	Listening on port 62033
+1627653118356	Marionette	WARN	TLS certificate errors will be ignored for this session
+1627653118366	Marionette	ERROR	[19] No reply from Marionette:Register
+console.log: WebExtensions: reset-default-search: starting.
+console.log: WebExtensions: reset-default-search: No addons in our list are installed.
